@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+# From https://github.com/kivy/kivy-ios
+
+import sys
+import subprocess
+from os import environ
+
+libs = []
+objects = []
+output = None
+
+
+i = 1
+while i < len(sys.argv):
+    opt = sys.argv[i]
+    i += 1
+
+    if opt == "-o":
+        output = sys.argv[i]
+        i += 1
+        continue
+
+    if opt.startswith("-l") or opt.startswith("-L"):
+        libs.append(opt)
+        continue
+
+    if opt in ("-r", "-pipe", "-no-cpp-precomp"):
+        continue
+
+    if opt in ("--sysroot", "-isysroot", "-framework", "-undefined",
+            "-macosx_version_min"):
+        i += 1
+        continue
+
+    if opt.startswith("-I"):
+        continue
+
+    if opt.startswith("-m"):
+        continue
+
+    if opt.startswith("-f"):
+        continue
+
+    if opt.startswith("-O"):
+        continue
+
+    if opt.startswith("-g"):
+        continue
+
+    if opt.startswith("-D"):
+        continue
+
+    if opt.startswith("-"):
+        print sys.argv
+        print "Unknown option: ", opt
+        sys.exit(1)
+
+    if not opt.endswith('.o'):
+        continue
+
+    objects.append(opt)
+
+
+f = file(output, "w")
+f.close()
+
+f = file(output + ".libs", "w")
+f.write(" ".join(libs))
+f.close()
+
+print 'Liblink redirect linking with', objects
+subprocess.call([
+    '%s/usr/bin/ld' % environ.get('DEVROOT'), '-r',
+    '-o', output + '.o', '-arch', 'armv7'] + objects)
+# subprocess.call([
+# "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin10-llvm-gcc-4.2",
+# "-isysroot", environ.get('SDKROOT'),
+# "-r", "-march=armv7", "-mcpu=arm176jzf", "-mcpu=cortex-a8", "-o", output + ".o" ] + objects)

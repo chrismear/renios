@@ -1,0 +1,17 @@
+diff -rupN Python-2.7.3-orig/Include/pyport.h Python-2.7.3-patched/Include/pyport.h
+--- Python-2.7.3-orig/Include/pyport.h	2012-04-10 00:07:29.000000000 +0100
++++ Python-2.7.3-patched/Include/pyport.h	2012-12-30 23:31:22.000000000 +0000
+@@ -186,9 +186,11 @@ typedef Py_intptr_t     Py_ssize_t;
+ #endif
+ 
+ /* Largest positive value of type Py_ssize_t. */
+-#define PY_SSIZE_T_MAX ((Py_ssize_t)(((size_t)-1)>>1))
++//#define PY_SSIZE_T_MAX ((Py_ssize_t)(((size_t)-1)>>1))
+ /* Smallest negative value of type Py_ssize_t. */
+-#define PY_SSIZE_T_MIN (-PY_SSIZE_T_MAX-1)
++//#define PY_SSIZE_T_MIN (-PY_SSIZE_T_MAX-1)
++#define PY_SSIZE_T_MAX TMP_MAX
++#define PY_SSIZE_T_MIN -TMP_MAX
+ 
+ #if SIZEOF_PID_T > SIZEOF_LONG
+ #   error "Python doesn't support sizeof(pid_t) > sizeof(long)"
