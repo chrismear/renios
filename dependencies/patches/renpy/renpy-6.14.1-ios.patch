@@ -1,0 +1,163 @@
+diff --git a/module/IMG_savepng.c b/module/IMG_savepng.c
+index 54a4032..c44a616 100644
+--- a/module/IMG_savepng.c
++++ b/module/IMG_savepng.c
+@@ -26,7 +26,7 @@
+  */
+ #include <stdlib.h>
+ #include <SDL/SDL.h>
+-#include <SDL/SDL_byteorder.h>
++#include <SDL/SDL_endian.h>
+ #include <png.h>
+ #include <zlib.h>
+ #include "IMG_savepng.h"
+@@ -110,47 +110,16 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 		png_set_compression_level(png_ptr,compression);
+ 
+ 	fmt=surf->format;
+-	if(fmt->BitsPerPixel==8){ /* Paletted */
++	if (fmt->Amask) {
+ 		png_set_IHDR(png_ptr,info_ptr,
+-			surf->w,surf->h,8,PNG_COLOR_TYPE_PALETTE,
++			surf->w,surf->h,8,PNG_COLOR_TYPE_RGB_ALPHA,
++			PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,
++			PNG_FILTER_TYPE_DEFAULT);
++	} else {
++		png_set_IHDR(png_ptr,info_ptr,
++			surf->w,surf->h,8,PNG_COLOR_TYPE_RGB,
+ 			PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,
+ 			PNG_FILTER_TYPE_DEFAULT);
+-		palette=(png_colorp) malloc(fmt->palette->ncolors * sizeof(png_color));
+-		if (!palette) {
+-			SDL_SetError("Couldn't create memory for palette");
+-			goto savedone;
+-		}
+-		for (i=0;i<fmt->palette->ncolors;i++) {
+-			palette[i].red=fmt->palette->colors[i].r;
+-			palette[i].green=fmt->palette->colors[i].g;
+-			palette[i].blue=fmt->palette->colors[i].b;
+-		}
+-		png_set_PLTE(png_ptr,info_ptr,palette,fmt->palette->ncolors);
+-		if (surf->flags&SDL_SRCCOLORKEY) {
+-			palette_alpha=(Uint8 *)malloc((fmt->colorkey+1)*sizeof(Uint8));
+-			if (!palette_alpha) {
+-				SDL_SetError("Couldn't create memory for palette transparency");
+-				goto savedone;
+-			}
+-			/* FIXME: memset? */
+-			for (i=0;i<(fmt->colorkey+1);i++) {
+-				palette_alpha[i]=255;
+-			}
+-			palette_alpha[fmt->colorkey]=0;
+-			png_set_tRNS(png_ptr,info_ptr,palette_alpha,fmt->colorkey+1,NULL);
+-		}
+-	}else{ /* Truecolor */
+-		if (fmt->Amask) {
+-			png_set_IHDR(png_ptr,info_ptr,
+-				surf->w,surf->h,8,PNG_COLOR_TYPE_RGB_ALPHA,
+-				PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,
+-				PNG_FILTER_TYPE_DEFAULT);
+-		} else {
+-			png_set_IHDR(png_ptr,info_ptr,
+-				surf->w,surf->h,8,PNG_COLOR_TYPE_RGB,
+-				PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,
+-				PNG_FILTER_TYPE_DEFAULT);
+-		}
+ 	}
+ 	png_write_info(png_ptr, info_ptr);
+ 
+@@ -228,10 +197,10 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 				SDL_SetError("Couldn't allocate temp surface");
+ 				goto savedone;
+ 			}
+-			if(surf->flags&SDL_SRCALPHA){
+-				temp_alpha=fmt->alpha;
++			if(surf->flags&SDL_TRUE){
++				// temp_alpha=fmt->alpha;
+ 				used_alpha=1;
+-				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
++				// SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
+ 			}else{
+ 				used_alpha=0;
+ 			}
+@@ -241,7 +210,7 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 				goto savedone;
+ 			}
+ 			if (used_alpha) {
+-				SDL_SetAlpha(surf,SDL_SRCALPHA,(Uint8)temp_alpha); /* Restore alpha settings*/
++				// SDL_SetAlpha(surf,SDL_TRUE,(Uint8)temp_alpha); /* Restore alpha settings*/
+ 			}
+ 			for(i=0;i<tempsurf->h;i++){
+ 				row_pointers[i]= ((png_byte*)tempsurf->pixels) + i*tempsurf->pitch;
+diff --git a/module/setuplib.py b/module/setuplib.py
+index 48cd065..dc7f980 100644
+--- a/module/setuplib.py
++++ b/module/setuplib.py
+@@ -9,6 +9,7 @@ import distutils.core
+ 
+ # This flag determines if we are compiling for Android or not.
+ android = "RENPY_ANDROID" in os.environ
++ios = "RENIOS_IOS" in os.environ
+ 
+ # The cython command.
+ cython_command = os.environ.get("RENPY_CYTHON", None)
+@@ -19,7 +20,7 @@ cython_command = os.environ.get("RENPY_CYTHON", None)
+ 
+ # The install variable is a list of directories that have Ren'Py
+ # dependencies installed in them.
+-if not android:
++if not (android or ios):
+     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
+     install = install.split("::")
+     install = [ os.path.abspath(i) for i in install ]
+@@ -45,7 +46,7 @@ def include(header, directory=None, optional=True):
+         If given, returns False rather than abandoning the process.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+@@ -84,7 +85,7 @@ def library(name, optional=False):
+         rather than reporting an error.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+diff --git a/renpy/__init__.py b/renpy/__init__.py
+index 91239c9..b94adc4 100644
+--- a/renpy/__init__.py
++++ b/renpy/__init__.py
+@@ -265,14 +265,21 @@ windows = False
+ macintosh = False
+ linux = False
+ android = False
++ios = False
+ 
+-import platform
++# Ren'iOS
++# mac_ver() tries to use expat, which we don't have in our Python.
++# Remove this checking code, and hard-code platform as 'ios'.
+ 
+-if platform.win32_ver()[0]:
+-    windows = True
+-elif platform.mac_ver()[0]:
+-    macintosh = True
+-else:
+-    linux = True
++# import platform
++
++# if platform.win32_ver()[0]:
++#     windows = True
++# elif platform.mac_ver()[0]:
++#     macintosh = True
++# else:
++#     linux = True
++
++ios = True
+     
+ # The android init code in renpy.py will set linux=False and android=True.
