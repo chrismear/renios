@@ -24,10 +24,10 @@ fi
 
 # Set up build locations
 export RENIOSDEPROOT="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
-export BUILDROOT="$KIVYIOSROOT/build"
-export TMPROOT="$KIVYIOSROOT/tmp"
-export DESTROOT="$KIVYIOSROOT/tmp/root"
-export CACHEROOT="$KIVYIOSROOT/cache"
+export BUILDROOT="$RENIOSDEPROOT/build"
+export TMPROOT="$RENIOSDEPROOT/tmp"
+export DESTROOT="$RENIOSDEPROOT/tmp/root"
+export CACHEROOT="$RENIOSDEPROOT/cache"
 
 # Flags for ARM cross-compilation
 export ARM_CC="$CCACHE $DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2"
