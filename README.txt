@@ -1,3 +1,8 @@
 Ren'iOS
 
-Ren'iOS is a port of Ren'Py that runs on iOS.
+Ren'iOS creates a version of Ren'Py that runs on iOS.
+
+Requirements
+
+Xcode
+Mercurial
