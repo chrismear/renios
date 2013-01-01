@@ -30,7 +30,7 @@ export DESTROOT="$RENIOSDEPROOT/tmp/root"
 export CACHEROOT="$RENIOSDEPROOT/cache"
 
 # Flags for ARM cross-compilation
-export ARM_CC="$CCACHE $DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2"
+export ARM_CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2"
 export ARM_AR="$DEVROOT/usr/bin/ar"
 export ARM_LD="$DEVROOT/usr/bin/ld"
 export ARM_CFLAGS="-march=armv7 -mcpu=arm176jzf -mcpu=cortex-a8"
@@ -41,7 +41,7 @@ export ARM_LDFLAGS="-isysroot $SDKROOT"
 export ARM_LDFLAGS="$ARM_LDFLAGS -miphoneos-version-min=$SDKVER"
 
 # Release or debug?
-#export ARM_CFLAGS="$ARM_CFLAGS -O3"
+# export ARM_CFLAGS="$ARM_CFLAGS -O3"
 export ARM_CFLAGS="$ARM_CFLAGS -O0 -g"
 
 # create build directory if not found
@@ -59,6 +59,7 @@ export RENPY_VERSION=6.14.1
 export PYGAME_VERSION=1.9.1
 export SDL_VERSION=1.2.15
 export FREETYPE_VERSION=2.3.12
+export FRIBIDI_VERSION=0.19.2
 #export SDL2_REVISION=46d985073364
 
 # one method to deduplicate some symbol in libraries
