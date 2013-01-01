@@ -1,0 +1,615 @@
+diff --git a/build-scripts/iosbuild.sh b/build-scripts/iosbuild.sh
+new file mode 100755
+index 0000000..f89b6d3
+--- /dev/null
++++ b/build-scripts/iosbuild.sh
+@@ -0,0 +1,287 @@
++#!/bin/sh
++#
++# Build a fat binary for iOS
++# Based on fatbuild.sh and code from the Ignifuga Game Engine
++
++# Number of CPUs (for make -j)
++NCPU=`sysctl -n hw.ncpu`
++if test x$NJOB = x; then
++    NJOB=$NCPU
++fi
++
++# SDK path
++XCODE_PATH=`xcode-select --print-path`
++if [ -z "$XCODE_PATH" ]; then
++    echo "Could not find XCode location (use xcode-select -switch to set the correct path)"
++    exit 1
++fi
++
++prepare_environment() {
++    ARCH=$1
++    
++    if test x$SDK_VERSION = x; then
++      export SDK_VERSION=`xcodebuild -showsdks | grep iphoneos | sed "s|.*iphoneos||"`
++      if [ -z "$XCODE_PATH" ]; then
++          echo "Could not find a valid iOS SDK"
++          exit 1
++      fi  
++    fi
++    
++    case $ARCH in
++        armv6)
++            DEV_PATH="$XCODE_PATH/Platforms/iPhoneOS.platform/Developer"
++            SDK_PATH="$DEV_PATH/SDKs/iPhoneOS$SDK_VERSION.sdk"
++            ;;
++        armv7)
++            DEV_PATH="$XCODE_PATH/Platforms/iPhoneOS.platform/Developer"
++            SDK_PATH="$DEV_PATH/SDKs/iPhoneOS$SDK_VERSION.sdk"
++            ;;
++        i386)
++            DEV_PATH="$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer"
++            SDK_PATH="$DEV_PATH/SDKs/iPhoneSimulator$SDK_VERSION.sdk"
++            ;;
++        *)
++            echo "Unknown Architecture $ARCH"
++            exit 1
++            ;;
++    esac
++
++    if [ ! -d "$SDK_PATH" ]; then
++        echo "Could not find iOS SDK at $SDK_PATH"
++        exit 1
++    fi
++
++    if test x$MIN_OS_VERSION = x; then
++        export MIN_OS_VERSION="3.0"
++    fi
++    
++    # Environment flags
++    CFLAGS="-g -O2 -pipe -no-cpp-precomp -isysroot $SDK_PATH \
++            -miphoneos-version-min=$MIN_OS_VERSION -I$SDK_PATH/usr/include/"
++    LDFLAGS="-L$SDK_PATH/usr/lib/ -isysroot $SDK_PATH \
++             -miphoneos-version-min=$MIN_OS_VERSION -static-libgcc"
++    export CXXFLAGS="$CFLAGS"
++    export CXXCPP="$DEV_PATH/usr/bin/llvm-cpp-4.2"
++    export CPP="$CXXCPP"
++    export CXX="$DEV_PATH/usr/bin/llvm-g++-4.2"
++    export CC="$DEV_PATH/usr/bin/llvm-gcc-4.2"
++    export LD="$DEV_PATH/usr/bin/ld"
++    export AR="$DEV_PATH/usr/bin/ar"
++    export AS="$DEV_PATH/usr/bin/ls"
++    export NM="$DEV_PATH/usr/bin/nm"
++    export RANLIB="$DEV_PATH/usr/bin/ranlib"
++    export STRIP="$DEV_PATH/usr/bin/strip"
++    
++    # We dynamically load X11, so using the system X11 headers is fine.
++
++    # Ren'iOS: Leaving X11 in here causes errors during compile, so we've
++    # taken it out again.
++
++    # Ren'iOS: The cdrom audio feature is not relevant, and causes compile
++    # errors when it can't find the CoreServices and Carbon frameworks
++    # in the iOS SDK.
++
++    # Ren'iOS: Cocoa video driver doesn't make sense on iOS; we'll be using
++    # the OpenGL driver instead.
++    CONFIG_FLAGS="--disable-shared --enable-static --disable-video-x11 --disable-cdrom --disable-video-cocoa"
++    
++    case $ARCH in
++        armv6)
++            export CONFIG_FLAGS="$CONFIG_FLAGS --host=armv6-apple-darwin"
++            export CFLAGS="$CFLAGS -arch armv6"
++            export LDFLAGS="$LDFLAGS -arch armv6"
++            ;;
++        armv7)
++            export CONFIG_FLAGS="$CONFIG_FLAGS --host=armv7-apple-darwin"
++            export CFLAGS="$CFLAGS -arch armv7"
++            export LDFLAGS="$LDFLAGS -arch armv7"
++            ;;
++        i386)
++            export CONFIG_FLAGS="$CONFIG_FLAGS --host=i386-apple-darwin"
++            export CFLAGS="$CFLAGS -arch i386"
++            export LDFLAGS="$LDFLAGS -arch i386"
++            ;;
++        *)
++            echo "Unknown Architecture $ARCH"
++            exit 1
++            ;;
++    esac
++}
++
++prepare_environment "armv6"
++echo "Building with iOS SDK v$SDK_VERSION for iOS >= $MIN_OS_VERSION"
++
++#
++# Find the configure script
++#
++srcdir=`dirname $0`/..
++srcdir=`cd $srcdir && pwd`
++auxdir=$srcdir/build-scripts
++cd $srcdir
++
++#
++# Figure out which phase to build:
++# all,
++# configure, configure-armv6, configure-armv7, configure-i386
++# make, make-armv6, make-armv7, make-i386, merge
++# clean
++if test x"$1" = x; then
++    phase=all
++else
++    phase="$1"
++fi
++case $phase in
++    all)
++        configure_armv6="yes"
++        configure_armv7="yes"
++        configure_i386="yes"
++        make_armv6="yes"
++        make_armv7="yes"
++        make_i386="yes"
++        merge="yes"
++        ;;
++    configure)
++        configure_armv6="yes"
++        configure_armv7="yes"
++        configure_i386="yes"
++        ;;
++    configure-armv6)
++        configure_armv6="yes"
++        ;;
++    configure-armv7)
++        configure_armv7="yes"
++        ;;
++    configure-i386)
++        configure_i386="yes"
++        ;;
++    make)
++        make_armv6="yes"
++        make_armv7="yes"
++        make_i386="yes"
++        merge="yes"
++        ;;
++    make-armv6)
++        make_armv6="yes"
++        ;;
++    make-armv7)
++        make_armv7="yes"
++        ;;
++    make-i386)
++        make_i386="yes"
++        ;;
++    merge)
++        merge="yes"
++        ;;
++    clean)
++        clean_armv6="yes"
++        clean_armv7="yes"
++        clean_i386="yes"
++        ;;
++    clean-armv6)
++        clean_armv6="yes"
++        ;;
++    clean-armv7)
++        clean_armv7="yes"
++        ;;
++    clean-i386)
++        clean_i386="yes"
++        ;;
++    *)
++        echo "Usage: $0 [all|configure[-armv6|-armv7|-i386]|make[-armv6|-armv7|-i386]|merge|clean[-armv6|-armv7|-i386]]"
++        exit 1
++        ;;
++esac
++
++#
++# Create the build directories
++#
++for dir in build build/armv6 build/armv7 build/i386; do
++    if test -d $dir; then
++        :
++    else
++        mkdir $dir || exit 1
++    fi
++done
++
++#
++# Build the armv6 binary
++#
++prepare_environment "armv6"
++if test x$configure_armv6 = xyes; then
++    (cd build/armv6 && \
++     sh ../../configure $CONFIG_FLAGS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS") || exit 2
++     # configure is not yet fully ready for iOS, some manual patching is required
++     cp include/* build/armv6/include
++     cp include/SDL_config_iphoneos.h build/armv6/include/SDL_config.h || exit 2
++     sed -i "" -e "s|^EXTRA_CFLAGS.*|EXTRA_CFLAGS=-I./include|g" build/armv6/Makefile || exit 2
++     sed -i "" -e "s|^EXTRA_LDFLAGS.*|EXTRA_LDFLAGS=-lm|g" build/armv6/Makefile || exit 2
++fi
++if test x$make_armv6 = xyes; then
++    (cd build/armv6 && make -j$NJOB) || exit 3
++fi
++#
++# Build the armv7 binary
++#
++prepare_environment "armv7"
++if test x$configure_armv7 = xyes; then
++    (cd build/armv7 && \
++     sh ../../configure $CONFIG_FLAGS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS") || exit 2
++     # configure is not yet fully ready for iOS, some manual patching is required
++     cp include/* build/armv7/include
++     cp include/SDL_config_iphoneos.h build/armv7/include/SDL_config.h || exit 2
++     sed -i "" -e "s|^EXTRA_CFLAGS.*|EXTRA_CFLAGS=-I./include|g" build/armv7/Makefile || exit 2
++     sed -i "" -e "s|^EXTRA_LDFLAGS.*|EXTRA_LDFLAGS=-lm|g" build/armv7/Makefile || exit 2
++fi
++if test x$make_armv7 = xyes; then
++    (cd build/armv7 && make -j$NJOB) || exit 3
++fi
++#
++# Build the i386 binary
++#
++prepare_environment "i386"
++if test x$configure_i386 = xyes; then
++    (cd build/i386 && \
++     sh ../../configure $CONFIG_FLAGS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS") || exit 2
++     # configure is not yet fully ready for iOS, some manual patching is required
++     cp include/* build/i386/include
++     cp include/SDL_config_iphoneos.h build/i386/include/SDL_config.h || exit 2
++     sed -i "" -e "s|^EXTRA_CFLAGS.*|EXTRA_CFLAGS=-I./include|g" build/i386/Makefile || exit 2
++     sed -i "" -e "s|^EXTRA_LDFLAGS.*|EXTRA_LDFLAGS=-lm|g" build/i386/Makefile || exit 2
++fi
++if test x$make_i386 = xyes; then
++    (cd build/i386 && make -j$NJOB) || exit 3
++fi
++
++#
++# Combine into fat binary
++#
++if test x$merge = xyes; then
++    output=ios/lib
++    sh $auxdir/mkinstalldirs build/$output
++    cd build
++    target=`find . -mindepth 4 -maxdepth 4 -type f -name '*.dylib' | head -1 | sed 's|.*/||'`
++    (lipo -create -o $output/libSDL2.a armv6/build/.libs/libSDL2.a armv7/build/.libs/libSDL2.a i386/build/.libs/libSDL2.a &&
++     lipo -create -o $output/libSDL2main.a armv6/build/libSDL2main.a armv7/build/libSDL2main.a i386/build/libSDL2main.a &&
++     cp -r armv6/include ios
++     echo "Build complete!" &&
++     echo "Files can be found under the build/ios directory.") || exit 4
++    cd ..
++fi
++
++#
++# Clean up
++#
++do_clean()
++{
++    echo $*
++    $* || exit 6
++}
++if test x$clean_armv6 = xyes; then
++    do_clean rm -r build/armv6
++fi
++if test x$clean_armv7 = xyes; then
++    do_clean rm -r build/armv7
++fi
++if test x$clean_i386 = xyes; then
++    do_clean rm -r build/i386
++fi
+diff --git a/configure b/configure
+index 4363500..d795186 100755
+--- a/configure
++++ b/configure
+@@ -30045,7 +30045,8 @@ _ACEOF
+             have_timers=yes
+         fi
+         # The Mac OS X platform requires special setup.
+-        SDLMAIN_SOURCES="$srcdir/src/main/macosx/*.m"
++        # Ren'iOS: Don't want an OS X application template compiled in.
++        # SDLMAIN_SOURCES="$srcdir/src/main/macosx/*.m"
+         SDLMAIN_LDFLAGS="-static"
+         EXTRA_CFLAGS="$EXTRA_CFLAGS -fpascal-strings"
+         SDL_LIBS="-lSDLmain $SDL_LIBS"
+diff --git a/include/SDL_config_iphoneos.h b/include/SDL_config_iphoneos.h
+new file mode 100644
+index 0000000..a0fe5fc
+--- /dev/null
++++ b/include/SDL_config_iphoneos.h
+@@ -0,0 +1,151 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2012 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++
++#ifndef _SDL_config_iphoneos_h
++#define _SDL_config_iphoneos_h
++
++#include "SDL_platform.h"
++
++#ifdef __LP64__
++#define SIZEOF_VOIDP 8
++#else
++#define SIZEOF_VOIDP 4
++#endif
++
++#define HAVE_GCC_ATOMICS	1
++
++#define HAVE_ALLOCA_H		1
++#define HAVE_SYS_TYPES_H	1
++#define HAVE_STDIO_H	1
++#define STDC_HEADERS	1
++#define HAVE_STRING_H	1
++#define HAVE_INTTYPES_H	1
++#define HAVE_STDINT_H	1
++#define HAVE_CTYPE_H	1
++#define HAVE_MATH_H	1
++#define HAVE_SIGNAL_H	1
++
++/* C library functions */
++#define HAVE_MALLOC	1
++#define HAVE_CALLOC	1
++#define HAVE_REALLOC	1
++#define HAVE_FREE	1
++#define HAVE_ALLOCA	1
++#define HAVE_GETENV	1
++#define HAVE_SETENV	1
++#define HAVE_PUTENV	1
++#define HAVE_SETENV	1
++#define HAVE_UNSETENV	1
++#define HAVE_QSORT	1
++#define HAVE_ABS	1
++#define HAVE_BCOPY	1
++#define HAVE_MEMSET	1
++#define HAVE_MEMCPY	1
++#define HAVE_MEMMOVE	1
++#define HAVE_MEMCMP	1
++#define HAVE_STRLEN	1
++#define HAVE_STRLCPY	1
++#define HAVE_STRLCAT	1
++#define HAVE_STRDUP	1
++#define HAVE_STRCHR	1
++#define HAVE_STRRCHR	1
++#define HAVE_STRSTR	1
++#define HAVE_STRTOL	1
++#define HAVE_STRTOUL	1
++#define HAVE_STRTOLL	1
++#define HAVE_STRTOULL	1
++#define HAVE_STRTOD	1
++#define HAVE_ATOI	1
++#define HAVE_ATOF	1
++#define HAVE_STRCMP	1
++#define HAVE_STRNCMP	1
++#define HAVE_STRCASECMP	1
++#define HAVE_STRNCASECMP 1
++#define HAVE_SSCANF	1
++#define HAVE_SNPRINTF	1
++#define HAVE_VSNPRINTF	1
++#define HAVE_M_PI	1
++#define HAVE_ATAN	1
++#define HAVE_ATAN2	1
++#define HAVE_CEIL	1
++#define HAVE_COPYSIGN	1
++#define HAVE_COS	1
++#define HAVE_COSF	1
++#define HAVE_FABS	1
++#define HAVE_FLOOR	1
++#define HAVE_LOG	1
++#define HAVE_POW	1
++#define HAVE_SCALBN	1
++#define HAVE_SIN	1
++#define HAVE_SINF	1
++#define HAVE_SQRT	1
++#define HAVE_SIGACTION	1
++#define HAVE_SETJMP	1
++#define HAVE_NANOSLEEP	1
++#define HAVE_SYSCONF	1
++#define HAVE_SYSCTLBYNAME 1
++
++/* enable iPhone version of Core Audio driver */
++#define SDL_AUDIO_DRIVER_COREAUDIO 1
++/* Enable the dummy audio driver (src/audio/dummy/\*.c) */
++#define SDL_AUDIO_DRIVER_DUMMY	1
++
++/* Enable the stub haptic driver (src/haptic/dummy/\*.c) */
++#define SDL_HAPTIC_DISABLED	1
++
++/* Enable Unix style SO loading */
++/* Technically this works, but it violates the iPhone developer agreement */
++/* #define SDL_LOADSO_DLOPEN 1 */
++
++/* Enable the stub shared object loader (src/loadso/dummy/\*.c) */
++#define SDL_LOADSO_DISABLED	1
++
++/* Enable various threading systems */
++#define SDL_THREAD_PTHREAD	1
++#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX	1
++
++/* Enable various timer systems */
++#define SDL_TIMER_UNIX	1
++
++/* Supported video drivers */
++#define SDL_VIDEO_DRIVER_UIKIT	1
++#define SDL_VIDEO_DRIVER_DUMMY	1
++
++/* enable OpenGL ES */
++#define SDL_VIDEO_OPENGL_ES	1
++#define SDL_VIDEO_RENDER_OGL_ES	1
++#define SDL_VIDEO_RENDER_OGL_ES2	1
++
++/* Enable system power support */
++#define SDL_POWER_UIKIT 1
++
++/* enable iPhone keyboard support */
++#define SDL_IPHONE_KEYBOARD 1
++
++/* enable joystick subsystem */
++#define SDL_JOYSTICK_DISABLED 0
++
++/* Set max recognized G-force from accelerometer
++   See src/joystick/uikit/SDLUIAccelerationDelegate.m for notes on why this is needed
++ */
++#define SDL_IPHONE_MAX_GFORCE 5.0
++
++#endif /* _SDL_config_iphoneos_h */
+diff --git a/include/SDL_platform.h b/include/SDL_platform.h
+index 48540a8..29408c5 100644
+--- a/include/SDL_platform.h
++++ b/include/SDL_platform.h
+@@ -68,8 +68,18 @@
+ #define __LINUX__	1
+ #endif
+ #if defined(__APPLE__)
++#include "AvailabilityMacros.h"
++#include "TargetConditionals.h"
++#if TARGET_OS_IPHONE
++/* if compiling for iPhone */
++#undef __IPHONEOS__
++#define __IPHONEOS__ 1
++#undef __MACOSX__
++#else
++/* if not compiling for iPhone */
+ #undef __MACOSX__
+ #define __MACOSX__	1
++#endif /* TARGET_OS_IPHONE */
+ #elif defined(macintosh)
+ #undef __MACOS__
+ #define __MACOS__	1
+diff --git a/src/audio/macosx/SDL_coreaudio.c b/src/audio/macosx/SDL_coreaudio.c
+index 31316d1..155f690 100644
+--- a/src/audio/macosx/SDL_coreaudio.c
++++ b/src/audio/macosx/SDL_coreaudio.c
+@@ -20,14 +20,6 @@
+     slouken@libsdl.org
+ */
+ #include "SDL_config.h"
+-
+-#include <CoreAudio/CoreAudio.h>
+-#include <CoreServices/CoreServices.h>
+-#include <AudioUnit/AudioUnit.h>
+-#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
+-#include <AudioUnit/AUNTComponent.h>
+-#endif
+-
+ #include "SDL_audio.h"
+ #include "../SDL_audio_c.h"
+ #include "../SDL_sysaudio.h"
+@@ -101,8 +93,8 @@ static OSStatus     audioCallback (void                            *inRefCon,
+                                    AudioBufferList                 *ioData)
+ {
+     SDL_AudioDevice *this = (SDL_AudioDevice *)inRefCon;
+-    UInt32 remaining, len;
+     AudioBuffer *abuf;
++    UInt32 remaining, len;
+     void *ptr;
+     UInt32 i;
+ 
+@@ -212,8 +204,13 @@ void Core_CloseAudio(_THIS)
+ int Core_OpenAudio(_THIS, SDL_AudioSpec *spec)
+ {
+     OSStatus result = noErr;
++#if MACOSX_COREAUDIO
+     Component comp;
+     ComponentDescription desc;
++#else
++    AudioComponentDescription desc;
++    AudioComponent comp = NULL;
++#endif
+     struct AURenderCallbackStruct callback;
+     AudioStreamBasicDescription requestedDesc;
+ 
+@@ -236,24 +233,32 @@ int Core_OpenAudio(_THIS, SDL_AudioSpec *spec)
+ 
+     /* Locate the default output audio unit */
+     desc.componentType = kAudioUnitType_Output;
+-    desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+     desc.componentFlags = 0;
+     desc.componentFlagsMask = 0;
+-    
++
++#if MACOSX_COREAUDIO
++    desc.componentSubType = kAudioUnitSubType_DefaultOutput;    
+     comp = FindNextComponent (NULL, &desc);
++#else
++    desc.componentSubType = kAudioUnitSubType_RemoteIO;
++    comp = AudioComponentFindNext(NULL, &desc);
++#endif
++
+     if (comp == NULL) {
+-        SDL_SetError ("Failed to start CoreAudio: FindNextComponent returned NULL");
++        SDL_SetError ("Failed to start CoreAudio: FindNextComponent/AudioComponentFindNext returned NULL");
+         return -1;
+     }
+     
+     /* Open & initialize the default output audio unit */
++#if MACOSX_COREAUDIO
+     result = OpenAComponent (comp, &outputAudioUnit);
+     CHECK_RESULT("OpenAComponent")
+-
+-    result = AudioUnitInitialize (outputAudioUnit);
+-    CHECK_RESULT("AudioUnitInitialize")
+-                
++#else
++    result = AudioComponentInstanceNew(comp, &outputAudioUnit);
++    CHECK_RESULT("AudioComponentInstanceNew");
++#endif
++    
+     /* Set the input format of the audio unit. */
+     result = AudioUnitSetProperty (outputAudioUnit,
+                                kAudioUnitProperty_StreamFormat,
+@@ -281,6 +286,9 @@ int Core_OpenAudio(_THIS, SDL_AudioSpec *spec)
+     bufferOffset = bufferSize = this->spec.size;
+     buffer = SDL_malloc(bufferSize);
+ 
++        result = AudioUnitInitialize (outputAudioUnit);
++    CHECK_RESULT("AudioUnitInitialize")
++
+     /* Finally, start processing of the audio unit */
+     result = AudioOutputUnitStart (outputAudioUnit);
+     CHECK_RESULT("AudioOutputUnitStart")    
+diff --git a/src/audio/macosx/SDL_coreaudio.h b/src/audio/macosx/SDL_coreaudio.h
+index c11bc03..987b3da 100644
+--- a/src/audio/macosx/SDL_coreaudio.h
++++ b/src/audio/macosx/SDL_coreaudio.h
+@@ -26,6 +26,20 @@
+ 
+ #include "../SDL_sysaudio.h"
+ 
++#if !defined(__IPHONEOS__)
++#define MACOSX_COREAUDIO 1
++#endif
++
++#if MACOSX_COREAUDIO
++#include <CoreAudio/CoreAudio.h>
++#include <CoreServices/CoreServices.h>
++#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
++#include <AudioUnit/AUNTComponent.h>
++#endif
++#endif
++
++#include <AudioUnit/AudioUnit.h>
++
+ /* Hidden "this" pointer for the video functions */
+ #define _THIS	SDL_AudioDevice *this
+ 
+@@ -34,6 +48,9 @@ struct SDL_PrivateAudioData {
+ 	void *buffer;
+ 	UInt32 bufferOffset;
+ 	UInt32 bufferSize;
++#if MACOSX_COREAUDIO
++    AudioDeviceID deviceID;
++#endif
+ };
+ 
+ /* Old variable names */

@@ -56,8 +56,9 @@ try mkdir -p $DESTROOT
 
 export PYTHON_VERSION=2.7.3
 export RENPY_VERSION=6.14.1
-export SDL_REVISION=46d985073364
 export PYGAME_VERSION=1.9.1
+export SDL_VERSION=1.2.15
+#export SDL2_REVISION=46d985073364
 
 # one method to deduplicate some symbol in libraries
 function deduplicate() {
