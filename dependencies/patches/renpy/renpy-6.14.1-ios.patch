@@ -1,3 +1,88 @@
+diff --git a/module/glcompat.h b/module/glcompat.h
+index 0921592..f9b3633 100644
+--- a/module/glcompat.h
++++ b/module/glcompat.h
+@@ -13,6 +13,20 @@
+ #if defined ANDROID
+ 
+ #define RENPY_GLES_1
++#include <GLES/gl.h>
++#include <GLES/glext.h>
++
++#elif __APPLE__
++
++#include "TargetConditionals.h"
++
++#if TARGET_OS_IPHONE    
++
++#define RENPY_GLES_1
++#include <ES1/gl.h>
++#include <ES1/glext.h>
++
++#endif
+ 
+ #elif defined ANGLE
+ 
+@@ -27,9 +41,6 @@
+ 
+ #if defined RENPY_GLES_1
+ 
+-#include <GLES/gl.h>
+-#include <GLES/glext.h>
+-
+ #define glOrtho glOrthof
+ 
+ #define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
+@@ -51,7 +62,6 @@
+ 
+ #endif
+ 
+-
+ #if defined RENPY_GLES_2
+ 
+ #include <EGL/egl.h>
+diff --git a/module/setup.py b/module/setup.py
+index 828f3fd..cd9cd7a 100644
+--- a/module/setup.py
++++ b/module/setup.py
+@@ -8,7 +8,7 @@ import os
+ os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+ 
+ import setuplib
+-from setuplib import android, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
++from setuplib import android, ios, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
+ 
+ # These control the level of optimization versus debugging.
+ setuplib.extra_compile_args = [ "-Wno-unused-function" ]
+@@ -72,7 +72,7 @@ if has_fribidi and not android:
+ # Sound.
+ pymodule("pysdlsound.__init__")
+ 
+-if not android:
++if not (android or ios):
+ 
+     sound = [ "avformat", "avcodec", "avutil", "z" ]
+     if has_swscale:
+@@ -91,6 +91,8 @@ cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+ # Gl.
+ if android:
+     glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
++elif ios:
++    glew_libs = [ 'OpenGLES' ]
+ elif has_libglew:
+     glew_libs = [ 'GLEW' ]
+ else:
+@@ -98,8 +100,8 @@ else:
+ 
+ cython("renpy.gl.gldraw", libs=glew_libs )
+ cython("renpy.gl.gltexture", libs=glew_libs)
+-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
+-cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
++cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not (android or ios))
++cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not (android or ios))
+ cython("renpy.gl.glenviron_limited", libs=glew_libs)
+ cython("renpy.gl.glrtt_copy", libs=glew_libs)
+ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 diff --git a/module/setuplib.py b/module/setuplib.py
 index 48cd065..dc7f980 100644
 --- a/module/setuplib.py
