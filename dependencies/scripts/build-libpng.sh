@@ -28,6 +28,8 @@ echo 'Building libpng'
 try make
 try make install
 
+popd
+
 echo 'Moving libpng build products into place'
 try cp $DESTROOT/lib/libpng12.a $BUILDROOT/lib
 
