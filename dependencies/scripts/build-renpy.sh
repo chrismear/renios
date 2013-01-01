@@ -27,7 +27,7 @@ OLD_CFLAGS="$CFLAGS"
 OLD_LDSHARED="$LDSHARED"
 export CC="$ARM_CC"
 export CFLAGS="$ARM_CFLAGS"
-export CFLAGS="$CFLAGS -I$BUILDROOT/include -I$BUILDROOT/include/SDL"
+export CFLAGS="$CFLAGS -I$BUILDROOT/include -I$BUILDROOT/include/SDL -I$BUILDROOT/include/freetype"
 export LDSHARED="$RENIOSDEPROOT/scripts/liblink"
 
 HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
