@@ -60,7 +60,7 @@ export PYGAME_VERSION=1.9.1
 export SDL_VERSION=1.2.15
 export FREETYPE_VERSION=2.3.12
 export FRIBIDI_VERSION=0.19.2
-#export SDL2_REVISION=46d985073364
+export SDL2_REVISION=25bfc0f21c56
 
 # one method to deduplicate some symbol in libraries
 function deduplicate() {

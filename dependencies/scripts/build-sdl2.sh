@@ -6,13 +6,13 @@
 if [ ! -d $TMPROOT/SDL ] ; then
   echo 'Cloning SDL source'
   try pushd $TMPROOT
-  try hg clone -u $SDL_REVISION http://hg.libsdl.org/SDL SDL
+  try hg clone -u $SDL2_REVISION http://hg.libsdl.org/SDL SDL
   try cd SDL
   try popd
 fi
 
 pushd $TMPROOT/SDL
-try hg up -r $SDL_REVISION
+try hg up -r $SDL2_REVISION
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
 xcodebuild -project SDL.xcodeproj -target libSDL -configuration Release -sdk iphoneos$SDKVER
@@ -21,6 +21,7 @@ popd
 popd
 
 cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Release-iphoneos/libSDL2.a $BUILDROOT/lib
+rm -rdf $BUILDROOT/include/SDL
 cp -a $TMPROOT/SDL/include $BUILDROOT/include/SDL
 
 mkdir -p $BUILDROOT/pkgconfig
