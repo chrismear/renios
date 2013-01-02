@@ -1,0 +1,1403 @@
+diff --git a/Setup.in b/Setup.in
+index 4bb6c1c..50ce39e 100644
+--- a/Setup.in
++++ b/Setup.in
+@@ -47,7 +47,7 @@ gfxdraw src/gfxdraw.c $(SDL) $(GFX) $(DEBUG)
+ #SDL as a dependency. these should not be altered
+ 
+ base src/base.c $(SDL) $(DEBUG)
+-cdrom src/cdrom.c $(SDL) $(DEBUG)
++#cdrom src/cdrom.c $(SDL) $(DEBUG)
+ color src/color.c $(SDL) $(DEBUG)
+ constants src/constants.c $(SDL) $(DEBUG)
+ display src/display.c $(SDL) $(DEBUG)
+diff --git a/config.py b/config.py
+index f60d64c..0364aef 100644
+--- a/config.py
++++ b/config.py
+@@ -111,7 +111,10 @@ def writesetupfile(deps, basepath, additional_lines):
+ 
+ def main():
+     additional_platform_setup = []
+-    if (sys.platform == 'win32' and
++    if os.environ['RENIOS_IOS'] == '1':
++        print_('Using iOS configuration...\n')
++        import config_ios as CFG
++    elif (sys.platform == 'win32' and
+         # Note that msys builds supported for 2.6 and greater. Use prebuilt.
+         (sys.version_info >= (2, 6) or not is_msys_mingw())):
+         print_('Using WINDOWS configuration...\n')
+diff --git a/config_ios.py b/config_ios.py
+new file mode 100644
+index 0000000..2d9a0ab
+--- /dev/null
++++ b/config_ios.py
+@@ -0,0 +1,132 @@
++"""Config for iOS w/ frameworks"""
++
++import os, sys, string
++from glob import glob
++from distutils.sysconfig import get_python_inc
++
++class Dependency:
++    libext = '.a'
++    def __init__(self, name, checkhead, checklib, libs):
++        self.name = name
++        self.inc_dir = None
++        self.lib_dir = None
++        self.libs = libs
++        self.found = 0
++        self.checklib = checklib + self.libext
++        self.checkhead = checkhead
++        self.cflags = ''
++
++    def configure(self, incdirs, libdirs):
++        incname = self.checkhead
++        libnames = self.checklib, self.name.lower()
++        for dir in incdirs:
++            path = os.path.join(dir, incname)
++            if os.path.isfile(path):
++                self.inc_dir = dir
++                break
++        for dir in libdirs:
++            for name in libnames:
++                path = os.path.join(dir, name)
++                if os.path.isfile(path):
++                    self.lib_dir = dir
++                    break
++        if self.lib_dir and self.inc_dir:
++            print (self.name + '        '[len(self.name):] + ': found')
++            self.found = 1
++        else:
++            print (self.name + '        '[len(self.name):] + ': not found')
++
++class FrameworkDependency(Dependency):
++    def configure(self, incdirs, libdirs):
++        # Only search for frameworks found in the iOS SDK
++        BASE_DIRS = [os.environ['SDKROOT'] + '/System/']
++        for n in BASE_DIRS:
++            n += 'Library/Frameworks/'
++            # iOS frameworks store libs directly inside the .framework directory.
++            fmwk = n + self.libs + '.framework/'
++            if os.path.isfile(fmwk + self.libs):
++                print ('Framework ' + self.libs + ' found')
++                self.found = 1
++                self.inc_dir = fmwk + 'Headers'
++                self.cflags = (
++                    '-Xlinker "-framework" -Xlinker "' + self.libs + '"' +
++                    ' -Xlinker "-F' + n + '"')
++                self.origlib = self.libs
++                self.libs = ''
++                return
++        print ('Framework ' + self.libs + ' not found')
++
++
++class DependencyPython:
++    def __init__(self, name, module, header):
++        self.name = name
++        self.lib_dir = ''
++        self.inc_dir = ''
++        self.libs = []
++        self.cflags = ''
++        self.found = 0
++        self.ver = '0'
++        self.module = module
++        self.header = header
++
++    def configure(self, incdirs, libdirs):
++        self.found = 1
++        if self.module:
++            try:
++                self.ver = __import__(self.module).__version__
++            except ImportError:
++                self.found = 0
++        if self.found and self.header:
++            fullpath = os.path.join(get_python_inc(0), self.header)
++            if not os.path.isfile(fullpath):
++                found = 0
++            else:
++                self.inc_dir = os.path.split(fullpath)[0]
++        if self.found:
++            print (self.name + '        '[len(self.name):] + ': found', self.ver)
++        else:
++            print (self.name + '        '[len(self.name):] + ': not found')
++
++DEPS = [
++    Dependency('SDL', 'SDL.h', 'libSDL2', ['SDL2']),
++    Dependency('FONT', 'SDL_ttf.h', 'libSDL_ttf', ['SDL_ttf']),
++    Dependency('IMAGE', 'SDL_image.h', 'libSDL_image', ['SDL_image']),
++    Dependency('MIXER', 'SDL_mixer.h', 'libSDL_mixer', ['SDL_mixer']),
++    Dependency('SMPEG', 'smpeg.h', 'libsmpeg', ['smpeg']),
++    Dependency('PNG', 'png.h', 'libpng', ['png']),
++    Dependency('JPEG', 'jpeglib.h', 'libjpeg', ['jpeg']),
++    Dependency('SCRAP', '', '', []),
++    Dependency('PORTMIDI', 'portmidi.h', 'libportmidi', ['portmidi']),
++    FrameworkDependency('PORTTIME', 'CoreMIDI.h', 'CoreMIDI', 'CoreMIDI'),
++]
++
++
++def main():
++    global DEPS
++
++    print ('Hunting dependencies...')
++
++    # Look for dependencies among the ReniOS dependency build products,
++    # and in the iOS SDK.
++    incdirs = [
++               os.environ['BUILDROOT'] + '/include',
++               os.environ['BUILDROOT'] + '/include/SDL',
++               os.environ['SDKROOT'] + '/usr/include'
++              ]
++    print incdirs
++    libdirs = [
++               os.environ['BUILDROOT'] + '/lib',
++               os.environ['SDKROOT'] + '/usr/lib'
++              ]
++    print libdirs
++
++    newconfig = []
++    for d in DEPS:
++        d.configure(incdirs, libdirs)
++    DEPS[0].cflags = '-Ddarwin ' + DEPS[0].cflags
++    return DEPS
++
++
++if __name__ == '__main__':
++    print ("""This is the configuration subscript for iOS.
++             Please run "config.py" for full configuration.""")
+diff --git a/src/_arraysurfarray.c b/src/_arraysurfarray.c
+index dc20b29..2e95a64 100644
+--- a/src/_arraysurfarray.c
++++ b/src/_arraysurfarray.c
+@@ -25,7 +25,8 @@
+ #include "pgcompat.h"
+ #include "pygamedocs.h"
+ #include "pgarrinter.h"
+-#include <SDL_byteorder.h>
++#include <SDL_compat.h>
++#include <SDL_endian.h>
+ 
+ static int
+ _get_array_interface(PyObject *obj,
+@@ -193,9 +194,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint8, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint8, Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -223,9 +221,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint16, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint16, Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -250,9 +245,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D(Uint16, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D(Uint16, Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -272,9 +264,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D_24(Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D_24(Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -316,9 +305,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D_24(Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D_24(Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -335,9 +321,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint32, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint32, Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+@@ -362,9 +345,6 @@ blit_array(PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D(Uint32, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D(Uint32, Uint64);
+-                break;
+             default:
+                 Py_DECREF(cobj);
+                 if (!PySurface_UnlockBy(surfobj, (PyObject *) arrayobj)) {
+diff --git a/src/_numericsurfarray.c b/src/_numericsurfarray.c
+index 4ee8571..a13c16f 100644
+--- a/src/_numericsurfarray.c
++++ b/src/_numericsurfarray.c
+@@ -23,7 +23,41 @@
+ #include "pygame.h"
+ #include "pygamedocs.h"
+ #include "numeric_arrayobject.h"
+-#include <SDL_byteorder.h>
++#include <SDL_compat.h>
++#include <SDL_endian.h>
++
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
+ 
+ static PyObject*
+ pixels3d (PyObject* self, PyObject* arg)
+@@ -558,7 +592,7 @@ array_colorkey (PyObject* self, PyObject* arg)
+     if(!array)
+         return NULL;
+     
+-    colorkey = surf->format->colorkey;
++    colorkey = surf->map->info.colorkey;
+     if (!(surf->flags & SDL_SRCCOLORKEY)) /*no pixel alpha*/
+     {
+         memset (((PyArrayObject*)array)->data, 255,
+@@ -889,9 +923,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint8, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint8, Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -914,9 +945,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint16, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint16, Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -937,9 +965,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D(Uint16, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D(Uint16, Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -962,9 +987,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D_24(Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D_24(Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -985,9 +1007,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D_24(Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D_24(Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -1010,9 +1029,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_2D(Uint32, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_2D(Uint32, Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+@@ -1033,9 +1049,6 @@ blit_array (PyObject* self, PyObject* arg)
+             case sizeof (Uint32):
+                 COPYMACRO_3D(Uint32, Uint32);
+                 break;
+-            case sizeof (Uint64):
+-                COPYMACRO_3D(Uint32, Uint64);
+-                break;
+             default:
+                 if (!PySurface_UnlockBy (surfobj, (PyObject *) array))
+                     return NULL;
+diff --git a/src/alphablit.c b/src/alphablit.c
+index 1573c17..dfda7ea 100644
+--- a/src/alphablit.c
++++ b/src/alphablit.c
+@@ -24,7 +24,47 @@
+ 
+ #include "surface.h"
+ 
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
+ /* The structure passed to the low level blit functions */
++/*
++ * Ren'iOS:
++ * Variables of this type are never actually passed into an SDL function; they are only
++ * used internally in this file to manually perform blit operations.
++ * 
++ * Therefore, it doesn't matter that this struct definition doesn't match up with SDL's
++ * own internal definition; although it's a bit confusing.
++ */
+ typedef struct
+ {
+     int              width;
+@@ -39,22 +79,24 @@ typedef struct
+     SDL_PixelFormat *dst;
+     Uint32           src_flags;
+     Uint32           dst_flags;
+-} SDL_BlitInfo;
++    int              srcAlpha;
++    Uint32           srcColorkey;
++} pygame_BlitInfo;
+ 
+-static void alphablit_alpha (SDL_BlitInfo * info);
+-static void alphablit_colorkey (SDL_BlitInfo * info);
+-static void alphablit_solid (SDL_BlitInfo * info);
+-static void blit_blend_add (SDL_BlitInfo * info);
+-static void blit_blend_sub (SDL_BlitInfo * info);
+-static void blit_blend_mul (SDL_BlitInfo * info);
+-static void blit_blend_min (SDL_BlitInfo * info);
+-static void blit_blend_max (SDL_BlitInfo * info);
++static void alphablit_alpha (pygame_BlitInfo * info);
++static void alphablit_colorkey (pygame_BlitInfo * info);
++static void alphablit_solid (pygame_BlitInfo * info);
++static void blit_blend_add (pygame_BlitInfo * info);
++static void blit_blend_sub (pygame_BlitInfo * info);
++static void blit_blend_mul (pygame_BlitInfo * info);
++static void blit_blend_min (pygame_BlitInfo * info);
++static void blit_blend_max (pygame_BlitInfo * info);
+ 
+-static void blit_blend_rgba_add (SDL_BlitInfo * info);
+-static void blit_blend_rgba_sub (SDL_BlitInfo * info);
+-static void blit_blend_rgba_mul (SDL_BlitInfo * info);
+-static void blit_blend_rgba_min (SDL_BlitInfo * info);
+-static void blit_blend_rgba_max (SDL_BlitInfo * info);
++static void blit_blend_rgba_add (pygame_BlitInfo * info);
++static void blit_blend_rgba_sub (pygame_BlitInfo * info);
++static void blit_blend_rgba_mul (pygame_BlitInfo * info);
++static void blit_blend_rgba_min (pygame_BlitInfo * info);
++static void blit_blend_rgba_max (pygame_BlitInfo * info);
+ 
+ 
+ 
+@@ -97,17 +139,17 @@ SoftBlitPyGame (SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * dst,
+     /* Set up source and destination buffer pointers, and BLIT! */
+     if (okay && srcrect->w && srcrect->h)
+     {
+-        SDL_BlitInfo    info;
++        pygame_BlitInfo    info;
+ 
+         /* Set up the blit information */
+ 	info.width = srcrect->w;
+ 	info.height = srcrect->h;
+-        info.s_pixels = (Uint8 *) src->pixels + src->offset +
++        info.s_pixels = (Uint8 *) src->pixels +
+             (Uint16) srcrect->y * src->pitch +
+             (Uint16) srcrect->x * src->format->BytesPerPixel;
+ 	info.s_pxskip = src->format->BytesPerPixel;
+         info.s_skip = src->pitch - info.width * src->format->BytesPerPixel;
+-        info.d_pixels = (Uint8 *) dst->pixels + dst->offset +
++        info.d_pixels = (Uint8 *) dst->pixels + 
+             (Uint16) dstrect->y * dst->pitch +
+             (Uint16) dstrect->x * dst->format->BytesPerPixel;
+ 	info.d_pxskip = dst->format->BytesPerPixel;
+@@ -117,6 +159,9 @@ SoftBlitPyGame (SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * dst,
+ 	info.src_flags = src->flags;
+ 	info.dst_flags = dst->flags;
+ 
++    info.srcAlpha = src->map->info.a;
++    info.srcColorkey = src->map->info.colorkey;
++
+         if (info.d_pixels > info.s_pixels)
+ 	{
+ 	    int span = info.width * info.src->BytesPerPixel;
+@@ -239,7 +284,7 @@ SoftBlitPyGame (SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * dst,
+ 
+ 
+ static void
+-blit_blend_rgba_add (SDL_BlitInfo * info)
++blit_blend_rgba_add (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -379,7 +424,7 @@ blit_blend_rgba_add (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_rgba_sub (SDL_BlitInfo * info)
++blit_blend_rgba_sub (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -519,7 +564,7 @@ blit_blend_rgba_sub (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_rgba_mul (SDL_BlitInfo * info)
++blit_blend_rgba_mul (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -659,7 +704,7 @@ blit_blend_rgba_mul (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_rgba_min (SDL_BlitInfo * info)
++blit_blend_rgba_min (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -798,7 +843,7 @@ blit_blend_rgba_min (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_rgba_max (SDL_BlitInfo * info)
++blit_blend_rgba_max (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -954,7 +999,7 @@ blit_blend_rgba_max (SDL_BlitInfo * info)
+ 
+ 
+ static void
+-blit_blend_add (SDL_BlitInfo * info)
++blit_blend_add (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -1141,7 +1186,7 @@ blit_blend_add (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_sub (SDL_BlitInfo * info)
++blit_blend_sub (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -1328,7 +1373,7 @@ blit_blend_sub (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_mul (SDL_BlitInfo * info)
++blit_blend_mul (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -1518,7 +1563,7 @@ blit_blend_mul (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_min (SDL_BlitInfo * info)
++blit_blend_min (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -1710,7 +1755,7 @@ blit_blend_min (SDL_BlitInfo * info)
+ }
+ 
+ static void
+-blit_blend_max (SDL_BlitInfo * info)
++blit_blend_max (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -1935,7 +1980,7 @@ blit_blend_max (SDL_BlitInfo * info)
+ 
+ 
+ static void 
+-alphablit_alpha (SDL_BlitInfo * info)
++alphablit_alpha (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -2041,7 +2086,7 @@ alphablit_alpha (SDL_BlitInfo * info)
+ }
+ 
+ static void 
+-alphablit_colorkey (SDL_BlitInfo * info)
++alphablit_colorkey (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -2057,8 +2102,8 @@ alphablit_colorkey (SDL_BlitInfo * info)
+     int             srcbpp = srcfmt->BytesPerPixel;
+     int             dstbpp = dstfmt->BytesPerPixel;
+     int             dR, dG, dB, dA, sR, sG, sB, sA;
+-    int             alpha = srcfmt->alpha;
+-    Uint32          colorkey = srcfmt->colorkey;
++    int             alpha = info->srcAlpha;
++    Uint32          colorkey = info->srcColorkey;
+     Uint32          pixel;
+     int             srcppa = (info->src_flags & SDL_SRCALPHA && srcfmt->Amask);
+     int             dstppa = (info->dst_flags & SDL_SRCALPHA && dstfmt->Amask);
+@@ -2180,7 +2225,7 @@ alphablit_colorkey (SDL_BlitInfo * info)
+ }
+ 
+ static void 
+-alphablit_solid (SDL_BlitInfo * info)
++alphablit_solid (pygame_BlitInfo * info)
+ {
+     int             n;
+     int             width = info->width;
+@@ -2196,7 +2241,7 @@ alphablit_solid (SDL_BlitInfo * info)
+     int             srcbpp = srcfmt->BytesPerPixel;
+     int             dstbpp = dstfmt->BytesPerPixel;
+     int             dR, dG, dB, dA, sR, sG, sB, sA;
+-    int             alpha = srcfmt->alpha;
++    int             alpha = info->srcAlpha;
+     int             pixel;
+     int             srcppa = (info->src_flags & SDL_SRCALPHA && srcfmt->Amask);
+     int             dstppa = (info->dst_flags & SDL_SRCALPHA && dstfmt->Amask);
+diff --git a/src/constants.c b/src/constants.c
+index 6bc6fe3..58039ba 100644
+--- a/src/constants.c
++++ b/src/constants.c
+@@ -92,7 +92,7 @@ MODINIT_DEFINE(constants)
+     DEC_CONST(RESIZABLE);
+     DEC_CONST(ASYNCBLIT);
+     DEC_CONST(OPENGL);
+-    DEC_CONST(OPENGLBLIT);
++    // DEC_CONST(OPENGLBLIT);
+     DEC_CONST(ANYFORMAT);
+     DEC_CONST(HWPALETTE);
+     DEC_CONST(DOUBLEBUF);
+@@ -134,7 +134,7 @@ MODINIT_DEFINE(constants)
+ #endif
+ 
+ #if SDL_VERSION_ATLEAST(1, 2, 10)
+-    DEC_CONST(GL_SWAP_CONTROL);
++    // DEC_CONST(GL_SWAP_CONTROL);
+     DEC_CONST(GL_ACCELERATED_VISUAL);
+ #else
+     PyModule_AddIntConstant(module, "GL_SWAP_CONTROL", -1);
+@@ -221,7 +221,7 @@ MODINIT_DEFINE(constants)
+ 
+ 
+ 
+-    DEC_CONST(NOEVENT);
++    // DEC_CONST(NOEVENT);
+     DEC_CONST(ACTIVEEVENT);
+     DEC_CONST(KEYDOWN);
+     DEC_CONST(KEYUP);
+@@ -238,7 +238,7 @@ MODINIT_DEFINE(constants)
+     DEC_CONST(QUIT);
+     DEC_CONST(SYSWMEVENT);
+     DEC_CONST(USEREVENT);
+-    DEC_CONST(NUMEVENTS);
++    // DEC_CONST(NUMEVENTS);
+     
+     DEC_CONST(HAT_CENTERED);
+     DEC_CONST(HAT_UP);
+@@ -251,7 +251,7 @@ MODINIT_DEFINE(constants)
+     DEC_CONST(HAT_LEFTUP);
+     
+     DEC_CONSTK(K_UNKNOWN);
+-    DEC_CONSTK(K_FIRST);
++    // DEC_CONSTK(K_FIRST);
+     DEC_CONSTK(K_BACKSPACE);
+     DEC_CONSTK(K_TAB);
+     DEC_CONSTK(K_CLEAR);
+@@ -388,7 +388,7 @@ MODINIT_DEFINE(constants)
+     DEC_CONSTK(K_MENU);
+     DEC_CONSTK(K_POWER);
+     DEC_CONSTK(K_EURO);
+-    DEC_CONSTK(K_LAST);
++    // DEC_CONSTK(K_LAST);
+     
+     DEC_CONSTN(KMOD_NONE);
+     DEC_CONSTN(KMOD_LSHIFT);
+diff --git a/src/event.c b/src/event.c
+index 7f5d739..012a4a3 100644
+--- a/src/event.c
++++ b/src/event.c
+@@ -164,10 +164,10 @@ name_from_eventtype (int type)
+ 	return "VideoResize";
+     case SDL_VIDEOEXPOSE:
+ 	return "VideoExpose";
+-    case SDL_NOEVENT:
++    case SDL_FIRSTEVENT:
+         return "NoEvent";
+     }
+-    if (type >= SDL_USEREVENT && type < SDL_NUMEVENTS)
++    if (type >= SDL_USEREVENT && type < SDL_LASTEVENT)
+         return "UserEvent";
+     return "Unknown";
+ }
+@@ -358,7 +358,7 @@ dict_from_event (SDL_Event* event)
+         break;
+ /* SDL_VIDEOEXPOSE and SDL_QUIT have no attributes */
+     }
+-    if (event->type >= SDL_USEREVENT && event->type < SDL_NUMEVENTS)
++    if (event->type >= SDL_USEREVENT && event->type < SDL_LASTEVENT)
+         insobj (dict, "code", PyInt_FromLong (event->user.code));
+ 
+     return dict;
+@@ -434,7 +434,7 @@ event_str (PyObject* self)
+ static int
+ event_nonzero (PyEventObject *self)
+ {
+-    return self->type != SDL_NOEVENT;
++    return self->type != SDL_FIRSTEVENT;
+ }
+ 
+ static PyNumberMethods event_as_number = {
+@@ -552,7 +552,7 @@ PyEvent_New (SDL_Event* event)
+     }
+     else
+     {
+-        e->type = SDL_NOEVENT;
++        e->type = SDL_FIRSTEVENT;
+         e->dict = PyDict_New ();
+     }
+     return (PyObject*)e;
+@@ -683,7 +683,17 @@ static PyObject*
+ event_clear (PyObject* self, PyObject* args)
+ {
+     SDL_Event event;
+-    int mask = 0;
++
++    /*
++     * SDL2 uses a range of event type values, rather than constructing a bitmask,
++     * to filter events by type.
++     * We use two variables to represent the highest and lowest of the range
++     * we are constructing, and then gradually push the range out as we
++     * add more event types to consider.
++     */
++    // int mask = 0;
++    int lowestEvent = SDL_LASTEVENT;
++    int highestEvent = SDL_FIRSTEVENT;
+     int loop, num;
+     PyObject* type;
+     int val;
+@@ -694,7 +704,10 @@ event_clear (PyObject* self, PyObject* args)
+     VIDEO_INIT_CHECK ();
+ 
+     if (PyTuple_Size (args) == 0)
+-        mask = SDL_ALLEVENTS;
++    {
++        lowestEvent = SDL_FIRSTEVENT;
++        highestEvent = SDL_LASTEVENT;
++    }
+     else
+     {
+         type = PyTuple_GET_ITEM (args, 0);
+@@ -707,11 +720,19 @@ event_clear (PyObject* self, PyObject* args)
+                     return RAISE
+                         (PyExc_TypeError,
+                          "type sequence must contain valid event types");
+-                mask |= SDL_EVENTMASK (val);
++                if (val < lowestEvent)
++                    lowestEvent = val;
++                if (val > highestEvent)
++                    highestEvent = val;
++                // mask |= SDL_EVENTMASK (val);
+             }
+         }
+         else if (IntFromObj (type, &val))
+-            mask = SDL_EVENTMASK (val);
++        {
++            lowestEvent = val;
++            highestEvent = val;
++            // mask = SDL_EVENTMASK (val);
++        }
+         else
+             return RAISE (PyExc_TypeError,
+                           "get type must be numeric or a sequence");
+@@ -719,7 +740,7 @@ event_clear (PyObject* self, PyObject* args)
+ 
+     SDL_PumpEvents ();
+ 
+-    while (SDL_PeepEvents (&event, 1, SDL_GETEVENT, mask) == 1)
++    while (SDL_PeepEvents (&event, 1, SDL_GETEVENT, lowestEvent, highestEvent) == 1)
+     {}
+ 
+     Py_RETURN_NONE;
+@@ -729,7 +750,9 @@ static PyObject*
+ event_get (PyObject* self, PyObject* args)
+ {
+     SDL_Event event;
+-    int mask = 0;
++    // int mask = 0;
++    int lowestEvent = SDL_LASTEVENT;
++    int highestEvent = SDL_FIRSTEVENT;
+     int loop, num;
+     PyObject* type, *list, *e;
+     int val;
+@@ -740,7 +763,10 @@ event_get (PyObject* self, PyObject* args)
+     VIDEO_INIT_CHECK ();
+ 
+     if (PyTuple_Size (args) == 0)
+-        mask = SDL_ALLEVENTS;
++    {
++        lowestEvent = SDL_FIRSTEVENT;
++        highestEvent = SDL_LASTEVENT;
++    }
+     else
+     {
+         type = PyTuple_GET_ITEM (args, 0);
+@@ -753,11 +779,19 @@ event_get (PyObject* self, PyObject* args)
+                     return RAISE
+                         (PyExc_TypeError,
+                          "type sequence must contain valid event types");
+-                mask |= SDL_EVENTMASK (val);
++                if (val < lowestEvent)
++                    lowestEvent = val;
++                if (val > highestEvent)
++                    highestEvent = val;
++                // mask |= SDL_EVENTMASK (val);
+             }
+         }
+         else if (IntFromObj (type, &val))
+-            mask = SDL_EVENTMASK (val);
++        {
++            lowestEvent = val;
++            highestEvent = val;
++            // mask = SDL_EVENTMASK (val);
++        }
+         else
+             return RAISE (PyExc_TypeError,
+                           "get type must be numeric or a sequence");
+@@ -769,7 +803,7 @@ event_get (PyObject* self, PyObject* args)
+ 
+     SDL_PumpEvents ();
+ 
+-    while (SDL_PeepEvents (&event, 1, SDL_GETEVENT, mask) == 1)
++    while (SDL_PeepEvents (&event, 1, SDL_GETEVENT, lowestEvent, highestEvent) == 1)
+     {
+         e = PyEvent_New (&event);
+         if (!e)
+@@ -789,7 +823,9 @@ event_peek (PyObject* self, PyObject* args)
+ {
+     SDL_Event event;
+     int result;
+-    int mask = 0;
++    // int mask = 0;
++    int lowestEvent = SDL_LASTEVENT;
++    int highestEvent = SDL_FIRSTEVENT;
+     int loop, num, noargs=0;
+     PyObject* type;
+     int val;
+@@ -801,7 +837,9 @@ event_peek (PyObject* self, PyObject* args)
+ 
+     if (PyTuple_Size (args) == 0)
+     {
+-        mask = SDL_ALLEVENTS;
++        // mask = SDL_ALLEVENTS;
++        lowestEvent = SDL_FIRSTEVENT;
++        highestEvent = SDL_LASTEVENT;
+         noargs=1;
+     }
+     else
+@@ -816,18 +854,26 @@ event_peek (PyObject* self, PyObject* args)
+                     return RAISE
+                         (PyExc_TypeError,
+                          "type sequence must contain valid event types");
+-                mask |= SDL_EVENTMASK (val);
++                if (val < lowestEvent)
++                    lowestEvent = val;
++                if (val > highestEvent)
++                    highestEvent = val;
++                // mask |= SDL_EVENTMASK (val);
+             }
+         }
+         else if (IntFromObj (type, &val))
+-            mask = SDL_EVENTMASK (val);
++        {
++            lowestEvent = val;
++            highestEvent = val;
++            // mask = SDL_EVENTMASK (val);
++        }
+         else
+             return RAISE (PyExc_TypeError,
+                           "peek type must be numeric or a sequence");
+     }
+ 
+     SDL_PumpEvents ();
+-    result = SDL_PeepEvents (&event, 1, SDL_PEEKEVENT, mask);
++    result = SDL_PeepEvents (&event, 1, SDL_PEEKEVENT, lowestEvent, highestEvent);
+ 
+     if (noargs)
+         return PyEvent_New (&event);
+@@ -867,7 +913,7 @@ event_post (PyObject* self, PyObject* args)
+ static int
+ CheckEventInRange(int evt)
+ {
+-    return evt >= 0 && evt < SDL_NUMEVENTS;
++    return evt >= 0 && evt < SDL_LASTEVENT;
+ }
+ 
+ static PyObject*
+diff --git a/src/image.c b/src/image.c
+index 57a675d..fdeb178 100644
+--- a/src/image.c
++++ b/src/image.c
+@@ -29,6 +29,39 @@
+ #include "pygamedocs.h"
+ #include "pgopengl.h"
+ 
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
++
+ struct _module_state {
+     int is_extended;
+ };
+@@ -343,7 +376,7 @@ image_tostring (PyObject* self, PyObject* arg)
+     Bloss = surf->format->Bloss;
+     Aloss = surf->format->Aloss;
+     hascolorkey = (surf->flags & SDL_SRCCOLORKEY) && !Amask;
+-    colorkey = surf->format->colorkey;
++    colorkey = surf->map->info.colorkey;
+ 
+     if (!strcmp (format, "P"))
+     {
+@@ -1167,7 +1200,7 @@ SaveTGA_RW (SDL_Surface *surface, SDL_RWops *out, int rle)
+ 	h.type = TGA_TYPE_INDEXED;
+ 	if (surface->flags & SDL_SRCCOLORKEY)
+         {
+-	    ckey = surface->format->colorkey;
++	    ckey = surface->map->info.colorkey;
+ 	    h.cmap_bits = 32;
+ 	}
+         else
+@@ -1254,11 +1287,11 @@ SaveTGA_RW (SDL_Surface *surface, SDL_RWops *out, int rle)
+     /* Temporarily remove colourkey and alpha from surface so copies are
+        opaque */
+     surf_flags = surface->flags & (SDL_SRCALPHA | SDL_SRCCOLORKEY);
+-    surf_alpha = surface->format->alpha;
++    surf_alpha = surface->map->info.a;
+     if (surf_flags & SDL_SRCALPHA)
+ 	SDL_SetAlpha (surface, 0, 255);
+     if (surf_flags & SDL_SRCCOLORKEY)
+-	SDL_SetColorKey (surface, 0, surface->format->colorkey);
++	SDL_SetColorKey (surface, 0, surface->map->info.colorkey);
+ 
+     r.x = 0;
+     r.w = surface->w;
+@@ -1287,7 +1320,7 @@ SaveTGA_RW (SDL_Surface *surface, SDL_RWops *out, int rle)
+     if (surf_flags & SDL_SRCALPHA)
+ 	SDL_SetAlpha (surface, SDL_SRCALPHA, (Uint8)surf_alpha);
+     if (surf_flags & SDL_SRCCOLORKEY)
+-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, surface->format->colorkey);
++	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, surface->map->info.colorkey);
+ 
+ error:
+     free (rlebuf);
+diff --git a/src/mask.c b/src/mask.c
+index dabf3e5..c87a291 100644
+--- a/src/mask.c
++++ b/src/mask.c
+@@ -39,6 +39,38 @@
+ #define M_PI 3.14159265358979323846
+ #endif
+ 
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
+ static PyTypeObject PyMask_Type;
+ 
+ /* mask object methods */
+@@ -527,7 +559,7 @@ static PyObject* mask_from_surface(PyObject* self, PyObject* args)
+                 }
+             } else {
+                 /*  test against the colour key. */
+-                if (format->colorkey != color) {
++                if (surf->map->info.colorkey != color) {
+                     bitmask_setbit(mask, x, y);
+                 }
+             }
+diff --git a/src/mouse.c b/src/mouse.c
+index 194bcb0..b8b97cb 100644
+--- a/src/mouse.c
++++ b/src/mouse.c
+@@ -171,6 +171,14 @@ interror:
+ static PyObject*
+ mouse_get_cursor (PyObject* self)
+ {
++    /*
++     * Ren'iOS:
++     * Ren'Py doesn't use get_cursor (it draws its own cursors), and it's
++     * not used internally by pygame, so we can fudge this function.
++     */
++    return NULL;
++
++#if 0
+     SDL_Cursor *cursor = NULL;
+     PyObject* xordata, *anddata;
+     int size, loop, w, h, spotx, spoty;
+@@ -204,6 +212,7 @@ mouse_get_cursor (PyObject* self)
+     }
+ 
+     return Py_BuildValue ("((ii)(ii)NN)", w, h, spotx, spoty, xordata, anddata);
++#endif
+ }
+ 
+ static PyMethodDef _mouse_methods[] =
+diff --git a/src/surface.c b/src/surface.c
+index 1984d96..003fa36 100644
+--- a/src/surface.c
++++ b/src/surface.c
+@@ -28,6 +28,39 @@
+ #include "structmember.h"
+ #include "pgcompat.h"
+ 
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
++
+ int
+ PySurface_Blit (PyObject * dstobj, PyObject * srcobj, SDL_Rect * dstrect,
+                 SDL_Rect * srcrect, int the_args);
+@@ -1020,7 +1053,7 @@ surf_get_colorkey (PyObject *self)
+     if (!(surf->flags & SDL_SRCCOLORKEY))
+         Py_RETURN_NONE;
+ 
+-    SDL_GetRGBA (surf->format->colorkey, surf->format, &r, &g, &b, &a);
++    SDL_GetRGBA (surf->map->info.colorkey, surf->format, &r, &g, &b, &a);
+     return Py_BuildValue ("(bbbb)", r, g, b, a);
+ }
+ 
+@@ -1088,7 +1121,7 @@ surf_get_alpha (PyObject *self)
+         return RAISE (PyExc_SDLError, "display Surface quit");
+ 
+     if (surf->flags & SDL_SRCALPHA)
+-        return PyInt_FromLong (surf->format->alpha);
++        return PyInt_FromLong (surf->map->info.a);
+ 
+     Py_RETURN_NONE;
+ }
+@@ -1462,7 +1495,7 @@ surf_blit (PyObject *self, PyObject *args, PyObject *keywds)
+         return RAISE (PyExc_SDLError, "display Surface quit");
+ 
+     if (dest->flags & SDL_OPENGL &&
+-        !(dest->flags & (SDL_OPENGLBLIT & ~SDL_OPENGL)))
++        !(dest->flags & (~SDL_OPENGL)))
+         return RAISE (PyExc_SDLError,
+                       "Cannot blit to OPENGL Surfaces (OPENGLBLIT is ok)");
+ 
+@@ -1536,7 +1569,7 @@ surf_scroll (PyObject *self, PyObject *args, PyObject *keywds)
+     }
+ 
+     if (surf->flags & SDL_OPENGL &&
+-        !(surf->flags & (SDL_OPENGLBLIT & ~SDL_OPENGL)))
++        !(surf->flags & (~SDL_OPENGL)))
+     {
+         return RAISE (PyExc_SDLError,
+                       "Cannot scroll an OPENGL Surfaces (OPENGLBLIT is ok)");
+@@ -1722,7 +1755,7 @@ surf_set_masks (PyObject *self, PyObject *args)
+ {
+     SDL_Surface *surf = PySurface_AsSurface (self);
+     /* Need to use 64bit vars so this works on 64 bit pythons. */
+-    Uint64 r, g, b, a;
++    Uint32 r, g, b, a;
+ 
+     if (!PyArg_ParseTuple (args, "(kkkk)", &r, &g, &b, &a))
+         return NULL;
+@@ -1762,7 +1795,7 @@ static PyObject*
+ surf_set_shifts (PyObject *self, PyObject *args)
+ {
+     SDL_Surface *surf = PySurface_AsSurface (self);
+-    Uint64 r, g, b, a;
++    Uint32 r, g, b, a;
+ 
+     if (!PyArg_ParseTuple (args, "(kkkk)", &r, &g, &b, &a))
+         return NULL;
+@@ -1838,10 +1871,10 @@ surf_subsurface (PyObject *self, PyObject *args)
+         SDL_SetPalette (sub, SDL_LOGPAL, surf->format->palette->colors, 0,
+                         surf->format->palette->ncolors);
+     if (surf->flags & SDL_SRCALPHA)
+-        SDL_SetAlpha (sub, surf->flags & SDL_SRCALPHA, format->alpha);
++        SDL_SetAlpha (sub, surf->flags & SDL_SRCALPHA, surf->map->info.a);
+     if (surf->flags & SDL_SRCCOLORKEY)
+         SDL_SetColorKey (sub, surf->flags & (SDL_SRCCOLORKEY | SDL_RLEACCEL),
+-                         format->colorkey);
++                         surf->map->info.colorkey);
+ 
+     data = PyMem_New (struct SubSurface_Data, 1);
+     if (!data)
+@@ -1969,7 +2002,7 @@ surf_get_bounding_rect (PyObject *self, PyObject *args, PyObject *kwargs)
+     if (surf->flags & SDL_SRCCOLORKEY)
+     {
+         has_colorkey = 1;
+-        SDL_GetRGBA (surf->format->colorkey,
++        SDL_GetRGBA (surf->map->info.colorkey,
+                      surf->format,
+                      &keyr, &keyg, &keyb, &a);
+     }
+@@ -2187,10 +2220,14 @@ surface_do_overlap (SDL_Surface *src, SDL_Rect *srcrect,
+ 	return 0;
+     }
+ 
+-    srcpixels = ((Uint8 *) src->pixels + src->offset +
++    /*
++     * Ren'iOS:
++     * SDL_Surface.offset doesn't seem to exist in SDL2...?
++     */
++    srcpixels = ((Uint8 *) src->pixels +
+ 		  srcy * src->pitch +
+ 		  srcx * src->format->BytesPerPixel);
+-    dstpixels = ((Uint8 *) dst->pixels + src->offset +
++    dstpixels = ((Uint8 *) dst->pixels +
+ 		  dsty * dst->pitch +
+ 		  dstx * dst->format->BytesPerPixel);
+ 
+diff --git a/src/surface_fill.c b/src/surface_fill.c
+index a1c0704..a884b7b 100644
+--- a/src/surface_fill.c
++++ b/src/surface_fill.c
+@@ -36,7 +36,7 @@ surface_fill_blend_add (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+     int result = -1;
+     int ppa = (surface->flags & SDL_SRCALPHA && fmt->Amask);
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -122,7 +122,7 @@ surface_fill_blend_sub (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+     int result = -1;
+     int ppa = (surface->flags & SDL_SRCALPHA && fmt->Amask);
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -207,7 +207,7 @@ surface_fill_blend_mult (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+     int result = -1;
+     int ppa = (surface->flags & SDL_SRCALPHA && fmt->Amask);
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -292,7 +292,7 @@ surface_fill_blend_min (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+     int result = -1;
+     int ppa = (surface->flags & SDL_SRCALPHA && fmt->Amask);
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -377,7 +377,7 @@ surface_fill_blend_max (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+     int result = -1;
+     int ppa = (surface->flags & SDL_SRCALPHA && fmt->Amask);
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -471,7 +471,7 @@ surface_fill_blend_rgba_add (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+ 	return surface_fill_blend_add (surface, rect, color);
+     }
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -540,7 +540,7 @@ surface_fill_blend_rgba_sub (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+ 	return surface_fill_blend_sub (surface, rect, color);
+     }
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -608,7 +608,7 @@ surface_fill_blend_rgba_mult (SDL_Surface *surface, SDL_Rect *rect, Uint32 color
+ 	return surface_fill_blend_mult (surface, rect, color);
+     }
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -676,7 +676,7 @@ surface_fill_blend_rgba_min (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+ 	return surface_fill_blend_min (surface, rect, color);
+     }
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+@@ -744,7 +744,7 @@ surface_fill_blend_rgba_max (SDL_Surface *surface, SDL_Rect *rect, Uint32 color)
+ 	return surface_fill_blend_max (surface, rect, color);
+     }
+ 
+-    pixels = (Uint8 *) surface->pixels + surface->offset +
++    pixels = (Uint8 *) surface->pixels +
+         (Uint16) rect->y * surface->pitch + (Uint16) rect->x * bpp;
+     skip = surface->pitch - width * bpp;
+ 
+diff --git a/src/time.c b/src/time.c
+index c2dec42..8873494 100644
+--- a/src/time.c
++++ b/src/time.c
+@@ -25,7 +25,7 @@
+ #include "pygamedocs.h"
+ 
+ #define WORST_CLOCK_ACCURACY 12
+-static SDL_TimerID event_timers[SDL_NUMEVENTS] = {NULL};
++static SDL_TimerID event_timers[SDL_LASTEVENT] = {NULL};
+ 
+ static Uint32
+ timer_callback (Uint32 interval, void* param)
+@@ -147,11 +147,11 @@ time_set_timer (PyObject* self, PyObject* arg)
+ {
+     SDL_TimerID newtimer;
+     int ticks = 0;
+-    intptr_t event = SDL_NOEVENT;
++    intptr_t event = SDL_FIRSTEVENT;
+     if (!PyArg_ParseTuple (arg, "ii", &event, &ticks))
+         return NULL;
+     
+-    if (event <= SDL_NOEVENT || event >= SDL_NUMEVENTS)
++    if (event <= SDL_FIRSTEVENT || event >= SDL_LASTEVENT)
+         return RAISE (PyExc_ValueError,
+                       "Event id must be between NOEVENT(0) and NUMEVENTS(32)");
+ 
+diff --git a/src/transform.c b/src/transform.c
+index c997deb..fc8d88e 100644
+--- a/src/transform.c
++++ b/src/transform.c
+@@ -31,6 +31,38 @@
+ #include <string.h>
+ #include "scale.h"
+ 
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
++
+ 
+ typedef void (* SMOOTHSCALE_FILTER_P)(Uint8 *, Uint8 *, int, int, int, int, int);
+ struct _module_state {
+@@ -98,11 +130,11 @@ newsurf_fromsurf (SDL_Surface* surf, int width, int height)
+                        surf->format->palette->ncolors);
+     if (surf->flags & SDL_SRCCOLORKEY)
+         SDL_SetColorKey (newsurf, (surf->flags&SDL_RLEACCEL) | SDL_SRCCOLORKEY,
+-                         surf->format->colorkey);
++                         surf->map->info.colorkey);
+ 
+     if (surf->flags&SDL_SRCALPHA)
+     {
+-        result = SDL_SetAlpha (newsurf, surf->flags, surf->format->alpha);
++        result = SDL_SetAlpha (newsurf, surf->flags, surf->map->info.a);
+         if (result == -1)
+             return (SDL_Surface*) (RAISE (PyExc_SDLError, SDL_GetError ()));
+     }
+@@ -648,7 +680,7 @@ surf_rotate (PyObject* self, PyObject* arg)
+ 
+     /* get the background color */
+     if (surf->flags & SDL_SRCCOLORKEY)
+-        bgcolor = surf->format->colorkey;
++        bgcolor = surf->map->info.colorkey;
+     else
+     {
+         SDL_LockSurface (surf);

@@ -19,7 +19,7 @@ try pushd $TMPROOT/pygame-${PYGAME_VERSION}release
 
 # Patch
 echo 'Patching pygame source'
-try patch -p1 < $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-ios.patch
+try patch -p1 < $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-sdl2-ios.patch
 
 # Set environment variables for Python module cross-compile
 OLD_CC="$CC"
@@ -37,9 +37,9 @@ export RENIOS_IOS=1
 $HOSTPYTHON config.py
 
 echo 'Building pygame'
-$HOSTPYTHON setup.py build_ext -g
+try $HOSTPYTHON setup.py build_ext -g
 rm -rdf iosbuild
-$HOSTPYTHON setup.py install --root iosbuild
+try $HOSTPYTHON setup.py install --root iosbuild
 
 bd=$TMPROOT/pygame-${PYGAME_VERSION}release/build/lib.macosx-*/pygame
 try $RENIOSDEPROOT/scripts/biglink $BUILDROOT/lib/libpygame.a $bd
