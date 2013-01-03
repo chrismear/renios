@@ -1,0 +1,128 @@
+#!/bin/bash
+
+. $(dirname $0)/environment.sh
+
+# http://libav.org/releases/libav-0.7.6.tar.gz
+
+if [ ! -f $CACHEROOT/libav-$LIBAV_VERSION.tar.gz ]; then
+  echo 'Downloading libav sources'
+  try curl -L http://libav.org/releases/libav-$LIBAV_VERSION.tar.gz > $CACHEROOT/libav-$LIBAV_VERSION.tar.gz
+fi
+if [ ! -d $TMPROOT/libav-$LIBAV_VERSION ]; then
+  try rm -rf $TMPROOT/libav-$LIBAV_VERSION
+  try tar xvf $CACHEROOT/libav-$LIBAV_VERSION.tar.gz
+  try mv libav-$LIBAV_VERSION $TMPROOT
+fi
+
+# if [ -f $TMPROOT/libav-$LIBAV_VERSION/libfreetype-arm7.a ]; then
+#   exit 0;
+# fi
+
+set -x
+
+# With a little help from
+# https://gist.github.com/1162907
+# plus the renpy-deps config.
+
+  # --as="$RENIOSDEPROOT/scripts/gas-preprocessor.pl $ARM_CC" \
+
+
+# try cp $RENIOSDEPROOT/scripts/gas-preprocessor.pl $TMPROOT/libav-$LIBAV_VERSION/
+
+# lib not found, compile it
+pushd $TMPROOT/libav-$LIBAV_VERSION
+try ./configure --prefix=$DESTROOT \
+  --disable-asm \
+  --cc="$ARM_CC" \
+  --sysroot="$SDKROOT" \
+  --target-os=darwin \
+  --arch=arm \
+  --cpu=cortex-a8 \
+  --extra-cflags="$ARM_CFLAGS" \
+  --extra-ldflags="$ARM_LDFLAGS" \
+  --enable-cross-compile \
+  --enable-static \
+  --disable-shared \
+  --enable-memalign-hack \
+  --enable-runtime-cpudetect \
+  --disable-encoders \
+  --disable-muxers \
+  --disable-bzlib \
+  --disable-demuxers \
+  --enable-demuxer=au \
+  --enable-demuxer=avi \
+  --enable-demuxer=flac \
+  --enable-demuxer=m4v \
+  --enable-demuxer=matroska \
+  --enable-demuxer=mov \
+  --enable-demuxer=mp3 \
+  --enable-demuxer=mpegps \
+  --enable-demuxer=mpegts \
+  --enable-demuxer=mpegtsraw \
+  --enable-demuxer=mpegvideo \
+  --enable-demuxer=ogg \
+  --enable-demuxer=wav \
+  --enable-demuxer=webm \
+  --disable-decoders \
+  --enable-decoder=flac \
+  --enable-decoder=mp2 \
+  --enable-decoder=mp3 \
+  --enable-decoder=mp3on4 \
+  --enable-decoder=mpeg1video \
+  --enable-decoder=mpeg2video \
+  --enable-decoder=mpegvideo \
+  --enable-decoder=msmpeg4v1 \
+  --enable-decoder=msmpeg4v2 \
+  --enable-decoder=msmpeg4v3 \
+  --enable-decoder=mpeg4 \
+  --enable-decoder=pcm_dvd \
+  --enable-decoder=pcm_s16be \
+  --enable-decoder=pcm_s16le \
+  --enable-decoder=pcm_s8 \
+  --enable-decoder=pcm_u16be \
+  --enable-decoder=pcm_u16le \
+  --enable-decoder=pcm_u8 \
+  --enable-decoder=theora \
+  --enable-decoder=vorbis \
+  --enable-decoder=vp3 \
+  --enable-decoder=vp8 \
+  --disable-parsers \
+  --enable-parser=mpegaudio \
+  --enable-parser=mpegvideo \
+  --enable-parser=mpeg4video \
+  --enable-parser=vp3 \
+  --enable-parser=vp8 \
+  --disable-protocols \
+  --enable-protocol=file \
+  --disable-devices \
+  --disable-vdpau \
+  --disable-filters \
+  --disable-bsfs 
+try make clean
+try make
+try make install
+
+# copy to buildroot
+
+try cp $DESTROOT/lib/libavcodec.a $BUILDROOT/lib
+try cp $DESTROOT/lib/libavdevice.a $BUILDROOT/lib
+try cp $DESTROOT/lib/libavfilter.a $BUILDROOT/lib
+try cp $DESTROOT/lib/libavformat.a $BUILDROOT/lib
+try cp $DESTROOT/lib/libavutil.a $BUILDROOT/lib
+try cp $DESTROOT/lib/libswscale.a $BUILDROOT/lib
+
+try rm -rdf $BUILDROOT/include/libavcodec
+try cp -a $DESTROOT/include/libavcodec $BUILDROOT/include
+try rm -rdf $BUILDROOT/include/libavdevice
+try cp -a $DESTROOT/include/libavdevice $BUILDROOT/include
+try rm -rdf $BUILDROOT/include/libavfilter
+try cp -a $DESTROOT/include/libavfilter $BUILDROOT/include
+try rm -rdf $BUILDROOT/include/libavformat
+try cp -a $DESTROOT/include/libavformat $BUILDROOT/include
+try rm -rdf $BUILDROOT/include/libavutil
+try cp -a $DESTROOT/include/libavutil $BUILDROOT/include
+try rm -rdf $BUILDROOT/include/libswscale
+try cp -a $DESTROOT/include/libswscale $BUILDROOT/include
+
+
+popd

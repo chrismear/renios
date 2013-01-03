@@ -63,6 +63,7 @@ export FRIBIDI_VERSION=0.19.2
 export SDL2_REVISION=45187a87d35b
 export SDL2_TTF_REVISION=15fdede47c58
 export SDL2_IMAGE_REVISION=4a8d59cbf927
+export LIBAV_VERSION=0.7.6
 
 # one method to deduplicate some symbol in libraries
 function deduplicate() {
