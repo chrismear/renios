@@ -1,0 +1,375 @@
+diff --git a/module/IMG_savepng.c b/module/IMG_savepng.c
+index 54a4032..90465b8 100644
+--- a/module/IMG_savepng.c
++++ b/module/IMG_savepng.c
+@@ -26,9 +26,11 @@
+  */
+ #include <stdlib.h>
+ #include <SDL/SDL.h>
+-#include <SDL/SDL_byteorder.h>
++#include <SDL/SDL_compat.h>
++#include <SDL/SDL_endian.h>
+ #include <png.h>
+ #include <zlib.h>
++#include "sdl_blitmap.h"
+ #include "IMG_savepng.h"
+ 
+ #ifndef png_voidp
+@@ -127,17 +129,17 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 		}
+ 		png_set_PLTE(png_ptr,info_ptr,palette,fmt->palette->ncolors);
+ 		if (surf->flags&SDL_SRCCOLORKEY) {
+-			palette_alpha=(Uint8 *)malloc((fmt->colorkey+1)*sizeof(Uint8));
++			palette_alpha=(Uint8 *)malloc((surf->map->info.colorkey+1)*sizeof(Uint8));
+ 			if (!palette_alpha) {
+ 				SDL_SetError("Couldn't create memory for palette transparency");
+ 				goto savedone;
+ 			}
+ 			/* FIXME: memset? */
+-			for (i=0;i<(fmt->colorkey+1);i++) {
++			for (i=0;i<(surf->map->info.colorkey+1);i++) {
+ 				palette_alpha[i]=255;
+ 			}
+-			palette_alpha[fmt->colorkey]=0;
+-			png_set_tRNS(png_ptr,info_ptr,palette_alpha,fmt->colorkey+1,NULL);
++			palette_alpha[surf->map->info.colorkey]=0;
++			png_set_tRNS(png_ptr,info_ptr,palette_alpha,surf->map->info.colorkey+1,NULL);
+ 		}
+ 	}else{ /* Truecolor */
+ 		if (fmt->Amask) {
+@@ -229,7 +231,7 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 				goto savedone;
+ 			}
+ 			if(surf->flags&SDL_SRCALPHA){
+-				temp_alpha=fmt->alpha;
++				temp_alpha=surf->map->info.a;
+ 				used_alpha=1;
+ 				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
+ 			}else{
+diff --git a/module/glcompat.h b/module/glcompat.h
+index 0921592..f9b3633 100644
+--- a/module/glcompat.h
++++ b/module/glcompat.h
+@@ -13,6 +13,20 @@
+ #if defined ANDROID
+ 
+ #define RENPY_GLES_1
++#include <GLES/gl.h>
++#include <GLES/glext.h>
++
++#elif __APPLE__
++
++#include "TargetConditionals.h"
++
++#if TARGET_OS_IPHONE    
++
++#define RENPY_GLES_1
++#include <ES1/gl.h>
++#include <ES1/glext.h>
++
++#endif
+ 
+ #elif defined ANGLE
+ 
+@@ -27,9 +41,6 @@
+ 
+ #if defined RENPY_GLES_1
+ 
+-#include <GLES/gl.h>
+-#include <GLES/glext.h>
+-
+ #define glOrtho glOrthof
+ 
+ #define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
+@@ -51,7 +62,6 @@
+ 
+ #endif
+ 
+-
+ #if defined RENPY_GLES_2
+ 
+ #include <EGL/egl.h>
+diff --git a/module/sdl_blitmap.h b/module/sdl_blitmap.h
+new file mode 100644
+index 0000000..15232c6
+--- /dev/null
++++ b/module/sdl_blitmap.h
+@@ -0,0 +1,31 @@
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
+diff --git a/module/setup.py b/module/setup.py
+index 828f3fd..cd9cd7a 100644
+--- a/module/setup.py
++++ b/module/setup.py
+@@ -8,7 +8,7 @@ import os
+ os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+ 
+ import setuplib
+-from setuplib import android, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
++from setuplib import android, ios, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
+ 
+ # These control the level of optimization versus debugging.
+ setuplib.extra_compile_args = [ "-Wno-unused-function" ]
+@@ -72,7 +72,7 @@ if has_fribidi and not android:
+ # Sound.
+ pymodule("pysdlsound.__init__")
+ 
+-if not android:
++if not (android or ios):
+ 
+     sound = [ "avformat", "avcodec", "avutil", "z" ]
+     if has_swscale:
+@@ -91,6 +91,8 @@ cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+ # Gl.
+ if android:
+     glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
++elif ios:
++    glew_libs = [ 'OpenGLES' ]
+ elif has_libglew:
+     glew_libs = [ 'GLEW' ]
+ else:
+@@ -98,8 +100,8 @@ else:
+ 
+ cython("renpy.gl.gldraw", libs=glew_libs )
+ cython("renpy.gl.gltexture", libs=glew_libs)
+-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
+-cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
++cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not (android or ios))
++cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not (android or ios))
+ cython("renpy.gl.glenviron_limited", libs=glew_libs)
+ cython("renpy.gl.glrtt_copy", libs=glew_libs)
+ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
+diff --git a/module/setuplib.py b/module/setuplib.py
+index 48cd065..dc7f980 100644
+--- a/module/setuplib.py
++++ b/module/setuplib.py
+@@ -9,6 +9,7 @@ import distutils.core
+ 
+ # This flag determines if we are compiling for Android or not.
+ android = "RENPY_ANDROID" in os.environ
++ios = "RENIOS_IOS" in os.environ
+ 
+ # The cython command.
+ cython_command = os.environ.get("RENPY_CYTHON", None)
+@@ -19,7 +20,7 @@ cython_command = os.environ.get("RENPY_CYTHON", None)
+ 
+ # The install variable is a list of directories that have Ren'Py
+ # dependencies installed in them.
+-if not android:
++if not (android or ios):
+     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
+     install = install.split("::")
+     install = [ os.path.abspath(i) for i in install ]
+@@ -45,7 +46,7 @@ def include(header, directory=None, optional=True):
+         If given, returns False rather than abandoning the process.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+@@ -84,7 +85,7 @@ def library(name, optional=False):
+         rather than reporting an error.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+diff --git a/renpy/__init__.py b/renpy/__init__.py
+index 91239c9..b94adc4 100644
+--- a/renpy/__init__.py
++++ b/renpy/__init__.py
+@@ -265,14 +265,21 @@ windows = False
+ macintosh = False
+ linux = False
+ android = False
++ios = False
+ 
+-import platform
++# Ren'iOS
++# mac_ver() tries to use expat, which we don't have in our Python.
++# Remove this checking code, and hard-code platform as 'ios'.
+ 
+-if platform.win32_ver()[0]:
+-    windows = True
+-elif platform.mac_ver()[0]:
+-    macintosh = True
+-else:
+-    linux = True
++# import platform
++
++# if platform.win32_ver()[0]:
++#     windows = True
++# elif platform.mac_ver()[0]:
++#     macintosh = True
++# else:
++#     linux = True
++
++ios = True
+     
+ # The android init code in renpy.py will set linux=False and android=True.
+diff --git a/renpy/display/core.py b/renpy/display/core.py
+index 48102dc..f422084 100644
+--- a/renpy/display/core.py
++++ b/renpy/display/core.py
+@@ -66,10 +66,10 @@ time_base = None
+ 
+ def init_time():
+     global time_base
+-    time_base = time.time() - pygame.time.get_ticks() / 1000.0
++    time_base = time.time() - pygame.pygametime.get_ticks() / 1000.0
+ 
+ def get_time():
+-    return time_base + pygame.time.get_ticks() / 1000.0
++    return time_base + pygame.pygametime.get_ticks() / 1000.0
+ 
+ 
+ def displayable_by_tag(layer, tag):
+@@ -1166,7 +1166,7 @@ class Interface(object):
+             self.safe_mode = True
+             
+         # Setup periodic event.
+-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
++        pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
+ 
+         # Don't grab the screen.
+         pygame.event.set_grab(False)
+@@ -1564,7 +1564,7 @@ class Interface(object):
+ 
+         ev = pygame.event.poll()
+ 
+-        if ev.type == pygame.NOEVENT:
++        if ev.type == pygame.FIRSTEVENT:
+             # Seems to prevent the CPU from speeding up.
+             renpy.display.draw.event_peek_sleep()
+             return None
+@@ -1727,9 +1727,9 @@ class Interface(object):
+ 
+             android.sound.pause_all()
+ 
+-            pygame.time.set_timer(PERIODIC, 0)
+-            pygame.time.set_timer(REDRAW, 0)
+-            pygame.time.set_timer(TIMEEVENT, 0)
++            pygame.pygametime.set_timer(PERIODIC, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
+ 
+             # The game has to be saved.
+             renpy.loadsave.save("_reload-1")
+@@ -1740,7 +1740,7 @@ class Interface(object):
+             # auto-reload.
+             renpy.loadsave.unlink_save("_reload-1")
+ 
+-            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
++            pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
+ 
+             android.sound.unpause_all()
+             
+@@ -2141,7 +2141,7 @@ class Interface(object):
+                     needs_redraw = False
+                     first_pass = False
+ 
+-                    pygame.time.set_timer(REDRAW, 0)
++                    pygame.pygametime.set_timer(REDRAW, 0)
+                     pygame.event.clear([REDRAW])
+                     old_redraw_time = None
+                     
+@@ -2192,14 +2192,14 @@ class Interface(object):
+                             time_left = redraw_time - get_time()
+                             time_left = min(time_left, 3600)
+                             redraw_in = time_left
+-                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
++                            pygame.pygametime.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                             old_redraw_time = redraw_time
+                     else:
+-                        pygame.time.set_timer(REDRAW, 0)
++                        pygame.pygametime.set_timer(REDRAW, 0)
+ 
+                     # Handle the timeout timer.
+                     if not self.timeout_time:
+-                        pygame.time.set_timer(TIMEEVENT, 0)
++                        pygame.pygametime.set_timer(TIMEEVENT, 0)
+                         ev = None
+                     else:
+                         time_left = self.timeout_time - get_time() 
+@@ -2209,13 +2209,13 @@ class Interface(object):
+                         if time_left < 0:
+                             self.timeout_time = None
+                             ev = self.time_event
+-                            pygame.time.set_timer(TIMEEVENT, 0)
++                            pygame.pygametime.set_timer(TIMEEVENT, 0)
+                         else:
+                             ev = None
+ 
+                             if self.timeout_time != old_timeout_time:
+                                 # Always set to at least 1ms.
+-                                pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
++                                pygame.pygametime.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
+                                 old_timeout_time = self.timeout_time
+ 
+                     # Handle autosaving, as necessary.
+@@ -2230,7 +2230,7 @@ class Interface(object):
+                         else:
+                             ev = self.event_wait()
+                         
+-                    if ev.type == pygame.NOEVENT:
++                    if ev.type == pygame.FIRSTEVENT:
+                         continue
+ 
+                     if renpy.config.profile:
+@@ -2387,8 +2387,8 @@ class Interface(object):
+             # We no longer disable periodic between interactions.
+             # pygame.time.set_timer(PERIODIC, 0)
+ 
+-            pygame.time.set_timer(TIMEEVENT, 0)
+-            pygame.time.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
+ 
+             renpy.game.context().runtime += end_time - start_time
+ 
+diff --git a/renpy/display/swdraw.py b/renpy/display/swdraw.py
+index 380da14..575404b 100644
+--- a/renpy/display/swdraw.py
++++ b/renpy/display/swdraw.py
+@@ -909,7 +909,7 @@ class SWDraw(object):
+             return True
+         
+         next_frame = self.next_frame
+-        now = pygame.time.get_ticks()
++        now = pygame.pygametime.get_ticks()
+ 
+         frametime = 1000.0 / framerate
+ 
