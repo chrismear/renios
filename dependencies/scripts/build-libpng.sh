@@ -32,6 +32,7 @@ popd
 
 echo 'Moving libpng build products into place'
 try cp $DESTROOT/lib/libpng12.a $BUILDROOT/lib
+try ln -s libpng12.a $BUILDROOT/lib/libpng.a
 
 try cp -a $DESTROOT/include/libpng12 $BUILDROOT/include
 
