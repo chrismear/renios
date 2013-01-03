@@ -15,17 +15,22 @@ pushd $TMPROOT/SDL
 try hg up -r $SDL2_REVISION
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
-xcodebuild -project SDL.xcodeproj -target libSDL -configuration Release -sdk iphoneos$SDKVER
+try xcodebuild -project SDL.xcodeproj -target libSDL -configuration Debug -sdk iphoneos$SDKVER clean
+try xcodebuild -project SDL.xcodeproj -target libSDL -configuration Debug -sdk iphoneos$SDKVER
 popd
 
 popd
 
-cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Release-iphoneos/libSDL2.a $BUILDROOT/lib
+cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL.a $BUILDROOT/lib
 rm -rdf $BUILDROOT/include/SDL
-cp -a $TMPROOT/SDL/include $BUILDROOT/include/SDL
+cp -a $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/usr/local/include $BUILDROOT/include/SDL
+
+try mkdir -p $BUILDROOT/bin
+try sed s:BUILDROOT:$BUILDROOT: <$RENIOSDEPROOT/src/sdl2/sdl-config >$BUILDROOT/bin/sdl-config
+try chmod a+x $BUILDROOT/bin/sdl-config
 
 mkdir -p $BUILDROOT/pkgconfig
-cat>$BUILDROOT/pkgconfig/sdl.pc<<EOF
+cat>$BUILDROOT/pkgconfig/sdl2.pc<<EOF
 # sdl pkg-config source file
 
 prefix=$BUILDROOT
@@ -33,12 +38,12 @@ exec_prefix=\${prefix}
 libdir=\${exec_prefix}/lib
 includedir=\${prefix}/include
 
-Name: sdl
+Name: sdl2
 Description: Simple DirectMedia Layer is a cross-platform multimedia library designed to provide low level access to audio, keyboard, mouse, joystick, 3D hardware via OpenGL, and 2D video framebuffer.
-Version: 1.2.15
+Version: 2.0.0
 Requires:
 Conflicts:
 Libs: -L\${libdir}  -lSDLmain -lSDL   -Wl,-framework,Cocoa
-Libs.private: \${libdir}/libSDLmain.a \${libdir}/libSDL.a  -Wl,-framework,OpenGL  -Wl,-framework,Cocoa -Wl,-framework,ApplicationServices -Wl,-framework,Carbon -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,IOKit
+Libs.private: \${libdir}/libSDL.a  -Wl,-framework,OpenGL  -Wl,-framework,Cocoa -Wl,-framework,ApplicationServices -Wl,-framework,Carbon -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,IOKit
 Cflags: -I\${includedir}/SDL -D_GNU_SOURCE=1 -D_THREAD_SAFE
 EOF
