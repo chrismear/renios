@@ -12,12 +12,12 @@ if [ ! -d $TMPROOT/SDL ] ; then
 fi
 
 pushd $TMPROOT/SDL
-try hg up -r $SDL2_REVISION
 try hg revert --all
 try hg purge
+try hg up -r $SDL2_REVISION
 
 echo 'Patching SDL source'
-try patch -p1 < $RENIOSDEPROOT/patches/sdl2/sdl2-$SDL2_REVISION-ios.patch
+try patch -p1 < $RENIOSDEPROOT/patches/sdl2/sdl2-$SDL2_REVISION-compat.patch
 
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
@@ -27,7 +27,8 @@ popd
 
 popd
 
-cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL.a $BUILDROOT/lib
+# Yes, copy it over to a different name.
+cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL2.a $BUILDROOT/lib/libSDL.a
 rm -rdf $BUILDROOT/include/SDL
 cp -a $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/usr/local/include $BUILDROOT/include/SDL
 
