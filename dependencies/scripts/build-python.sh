@@ -28,6 +28,7 @@ try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-ssize-t-max
 try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-dynload.patch
 
 try cp $RENIOSDEPROOT/src/python/ModulesSetup Modules/Setup.local
+try cp $RENIOSDEPROOT/src/python/_scproxy.py Lib/_scproxy.py
 
 echo 'Building for native machine'
 try ./configure CC="clang -Qunused-arguments -fcolor-diagnostics"
