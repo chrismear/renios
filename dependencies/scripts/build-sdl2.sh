@@ -13,6 +13,12 @@ fi
 
 pushd $TMPROOT/SDL
 try hg up -r $SDL2_REVISION
+try hg revert --all
+try hg purge
+
+echo 'Patching SDL source'
+try patch -p1 < $RENIOSDEPROOT/patches/sdl2/sdl2-$SDL2_REVISION-ios.patch
+
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
 try xcodebuild -project SDL.xcodeproj -target libSDL -configuration Debug -sdk iphoneos$SDKVER clean

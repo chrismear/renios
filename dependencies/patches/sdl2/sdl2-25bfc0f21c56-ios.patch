@@ -1,0 +1,2177 @@
+diff --git a/Xcode-iOS/SDL/SDL.xcodeproj/project.pbxproj b/Xcode-iOS/SDL/SDL.xcodeproj/project.pbxproj
+index d2482e0..582f282 100755
+--- a/Xcode-iOS/SDL/SDL.xcodeproj/project.pbxproj
++++ b/Xcode-iOS/SDL/SDL.xcodeproj/project.pbxproj
+@@ -115,9 +115,10 @@
+ 		56EA86FC13E9EC2B002E47EB /* SDL_coreaudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 56EA86FA13E9EC2B002E47EB /* SDL_coreaudio.h */; };
+ 		56ED04E1118A8EE200A56AA6 /* SDL_power.c in Sources */ = {isa = PBXBuildFile; fileRef = 56ED04E0118A8EE200A56AA6 /* SDL_power.c */; };
+ 		56ED04E3118A8EFD00A56AA6 /* SDL_syspower.m in Sources */ = {isa = PBXBuildFile; fileRef = 56ED04E2118A8EFD00A56AA6 /* SDL_syspower.m */; };
++		8B22EF5C1695B618000CCDC6 /* SDL_uikitmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B22EF581695B617000CCDC6 /* SDL_uikitmodes.h */; };
++		8B22EF5D1695B618000CCDC6 /* SDL_uikitmodes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B22EF591695B617000CCDC6 /* SDL_uikitmodes.m */; };
+ 		93CB792313FC5E5200BD3E05 /* SDL_uikitviewcontroller.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CB792213FC5E5200BD3E05 /* SDL_uikitviewcontroller.h */; };
+ 		93CB792613FC5F5300BD3E05 /* SDL_uikitviewcontroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 93CB792513FC5F5300BD3E05 /* SDL_uikitviewcontroller.m */; };
+-		FD24846D0E5655AE0021E198 /* SDL_uikitkeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = FD24846B0E5655AE0021E198 /* SDL_uikitkeyboard.h */; };
+ 		FD3F495C0DEA5B2100C5B771 /* begin_code.h in Headers */ = {isa = PBXBuildFile; fileRef = FD99B8CC0DD52EB400FB1D6B /* begin_code.h */; settings = {ATTRIBUTES = (Public, ); }; };
+ 		FD3F495D0DEA5B2100C5B771 /* close_code.h in Headers */ = {isa = PBXBuildFile; fileRef = FD99B8CD0DD52EB400FB1D6B /* close_code.h */; settings = {ATTRIBUTES = (Public, ); }; };
+ 		FD3F495F0DEA5B2100C5B771 /* SDL_audio.h in Headers */ = {isa = PBXBuildFile; fileRef = FD99B8CF0DD52EB400FB1D6B /* SDL_audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
+@@ -365,10 +366,11 @@
+ 		56EA86FA13E9EC2B002E47EB /* SDL_coreaudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDL_coreaudio.h; path = coreaudio/SDL_coreaudio.h; sourceTree = "<group>"; };
+ 		56ED04E0118A8EE200A56AA6 /* SDL_power.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SDL_power.c; path = ../../src/power/SDL_power.c; sourceTree = SOURCE_ROOT; };
+ 		56ED04E2118A8EFD00A56AA6 /* SDL_syspower.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDL_syspower.m; path = ../../src/power/uikit/SDL_syspower.m; sourceTree = SOURCE_ROOT; };
++		8B22EF581695B617000CCDC6 /* SDL_uikitmodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_uikitmodes.h; sourceTree = "<group>"; };
++		8B22EF591695B617000CCDC6 /* SDL_uikitmodes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDL_uikitmodes.m; sourceTree = "<group>"; };
+ 		93CB792213FC5E5200BD3E05 /* SDL_uikitviewcontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_uikitviewcontroller.h; sourceTree = "<group>"; };
+ 		93CB792513FC5F5300BD3E05 /* SDL_uikitviewcontroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDL_uikitviewcontroller.m; sourceTree = "<group>"; };
+ 		FD0BBFEF0E3933DD00D833B1 /* SDL_uikitview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_uikitview.h; sourceTree = "<group>"; };
+-		FD24846B0E5655AE0021E198 /* SDL_uikitkeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_uikitkeyboard.h; sourceTree = "<group>"; };
+ 		FD3F4A700DEA620800C5B771 /* SDL_getenv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_getenv.c; sourceTree = "<group>"; };
+ 		FD3F4A710DEA620800C5B771 /* SDL_iconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_iconv.c; sourceTree = "<group>"; };
+ 		FD3F4A720DEA620800C5B771 /* SDL_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_malloc.c; sourceTree = "<group>"; };
+@@ -835,26 +837,27 @@
+ 		FD689F090E26E5D900F90B21 /* uikit */ = {
+ 			isa = PBXGroup;
+ 			children = (
+-				FDC656450E560DF800311C8E /* jumphack.h */,
+ 				FDC656440E560DF800311C8E /* jumphack.c */,
++				FDC656450E560DF800311C8E /* jumphack.h */,
++				FDC261780E3A3FC8001C4554 /* keyinfotable.h */,
++				FD689FCD0E26E9D400F90B21 /* SDL_uikitappdelegate.h */,
++				FD689FCC0E26E9D400F90B21 /* SDL_uikitappdelegate.m */,
+ 				FD689F0C0E26E5D900F90B21 /* SDL_uikitevents.h */,
+ 				FD689F0D0E26E5D900F90B21 /* SDL_uikitevents.m */,
++				8B22EF581695B617000CCDC6 /* SDL_uikitmodes.h */,
++				8B22EF591695B617000CCDC6 /* SDL_uikitmodes.m */,
+ 				FD689F0E0E26E5D900F90B21 /* SDL_uikitopengles.h */,
+ 				FD689F0F0E26E5D900F90B21 /* SDL_uikitopengles.m */,
++				FD689F160E26E5D900F90B21 /* SDL_uikitopenglview.h */,
++				FD689F170E26E5D900F90B21 /* SDL_uikitopenglview.m */,
+ 				FD689F100E26E5D900F90B21 /* SDL_uikitvideo.h */,
+ 				FD689F110E26E5D900F90B21 /* SDL_uikitvideo.m */,
+-				FDC261780E3A3FC8001C4554 /* keyinfotable.h */,
+-				FD24846B0E5655AE0021E198 /* SDL_uikitkeyboard.h */,
+ 				FD0BBFEF0E3933DD00D833B1 /* SDL_uikitview.h */,
+ 				FD689F130E26E5D900F90B21 /* SDL_uikitview.m */,
+-				FD689F140E26E5D900F90B21 /* SDL_uikitwindow.h */,
+-				FD689F150E26E5D900F90B21 /* SDL_uikitwindow.m */,
+-				FD689F160E26E5D900F90B21 /* SDL_uikitopenglview.h */,
+-				FD689F170E26E5D900F90B21 /* SDL_uikitopenglview.m */,
+-				FD689FCD0E26E9D400F90B21 /* SDL_uikitappdelegate.h */,
+-				FD689FCC0E26E9D400F90B21 /* SDL_uikitappdelegate.m */,
+ 				93CB792213FC5E5200BD3E05 /* SDL_uikitviewcontroller.h */,
+ 				93CB792513FC5F5300BD3E05 /* SDL_uikitviewcontroller.m */,
++				FD689F140E26E5D900F90B21 /* SDL_uikitwindow.h */,
++				FD689F150E26E5D900F90B21 /* SDL_uikitwindow.m */,
+ 			);
+ 			path = uikit;
+ 			sourceTree = "<group>";
+@@ -1192,7 +1195,6 @@
+ 				FD689FCF0E26E9D400F90B21 /* SDL_uikitappdelegate.h in Headers */,
+ 				FD8BD7AC0E27DCA400B52CD5 /* SDL_opengles.h in Headers */,
+ 				FDC656490E560DF800311C8E /* jumphack.h in Headers */,
+-				FD24846D0E5655AE0021E198 /* SDL_uikitkeyboard.h in Headers */,
+ 				047677BD0EA76A31008ABAF1 /* SDL_syshaptic.h in Headers */,
+ 				04461DEE0EA76BA3006C462D /* SDL_haptic.h in Headers */,
+ 				046387420F0B5B7D0041FD65 /* SDL_blit_slow.h in Headers */,
+@@ -1233,6 +1235,7 @@
+ 				22C905CD13A22646003FE4E4 /* SDL_hints_c.h in Headers */,
+ 				56EA86FC13E9EC2B002E47EB /* SDL_coreaudio.h in Headers */,
+ 				93CB792313FC5E5200BD3E05 /* SDL_uikitviewcontroller.h in Headers */,
++				8B22EF5C1695B618000CCDC6 /* SDL_uikitmodes.h in Headers */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -1449,6 +1452,7 @@
+ 				04BAC09D1300C1290055DE28 /* SDL_log.c in Sources */,
+ 				56EA86FB13E9EC2B002E47EB /* SDL_coreaudio.c in Sources */,
+ 				93CB792613FC5F5300BD3E05 /* SDL_uikitviewcontroller.m in Sources */,
++				8B22EF5D1695B618000CCDC6 /* SDL_uikitmodes.m in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/src/video/uikit/SDL_uikitappdelegate.h b/src/video/uikit/SDL_uikitappdelegate.h
+old mode 100755
+new mode 100644
+diff --git a/src/video/uikit/SDL_uikitappdelegate.m b/src/video/uikit/SDL_uikitappdelegate.m
+old mode 100755
+new mode 100644
+index 7dbee14..2d263dd
+--- a/src/video/uikit/SDL_uikitappdelegate.m
++++ b/src/video/uikit/SDL_uikitappdelegate.m
+@@ -22,15 +22,16 @@
+ 
+ #if SDL_VIDEO_DRIVER_UIKIT
+ 
+-#import "../SDL_sysvideo.h"
+-#import "SDL_assert.h"
+-#import "SDL_hints.h"
+-#import "../../SDL_hints_c.h"
++#include "../SDL_sysvideo.h"
++#include "SDL_assert.h"
++#include "SDL_hints.h"
++#include "../../SDL_hints_c.h"
++#include "SDL_system.h"
+ 
+-#import "SDL_uikitappdelegate.h"
+-#import "SDL_uikitopenglview.h"
+-#import "SDL_events_c.h"
+-#import "jumphack.h"
++#include "SDL_uikitappdelegate.h"
++#include "SDL_uikitmodes.h"
++#include "../../events/SDL_events_c.h"
++#include "jumphack.h"
+ 
+ #ifdef main
+ #undef main
+@@ -40,6 +41,7 @@ extern int SDL_main(int argc, char *argv[]);
+ static int forward_argc;
+ static char **forward_argv;
+ static int exit_status;
++static UIWindow *launch_window;
+ 
+ int main(int argc, char **argv)
+ {
+@@ -76,6 +78,91 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+     [UIApplication sharedApplication].idleTimerDisabled = disable;
+ }
+ 
++@interface SDL_splashviewcontroller : UIViewController {
++    UIImageView *splash;
++    UIImage *splashPortrait;
++    UIImage *splashLandscape;
++}
++
++- (void)updateSplashImage:(UIInterfaceOrientation)interfaceOrientation;
++@end
++
++@implementation SDL_splashviewcontroller
++
++- (id)init
++{
++    self = [super init];
++    if (self == nil) {
++        return nil;
++    }
++
++    self->splash = [[UIImageView alloc] init];
++    [self setView:self->splash];
++
++    CGSize size = [UIScreen mainScreen].bounds.size;
++    float height = SDL_max(size.width, size.height);
++    self->splashPortrait = [UIImage imageNamed:[NSString stringWithFormat:@"Default-%dh.png", (int)height]];
++    if (!self->splashPortrait) {
++        self->splashPortrait = [UIImage imageNamed:@"Default.png"];
++    }
++    self->splashLandscape = [UIImage imageNamed:@"Default-Landscape.png"];
++    if (!self->splashLandscape && self->splashPortrait) {
++        self->splashLandscape = [[UIImage alloc] initWithCGImage: self->splashPortrait.CGImage
++                                                           scale: 1.0
++                                                     orientation: UIImageOrientationRight];
++    }
++    if (self->splashPortrait) {
++        [self->splashPortrait retain];
++    }
++    if (self->splashLandscape) {
++        [self->splashLandscape retain];
++    }
++ 
++    [self updateSplashImage:[[UIApplication sharedApplication] statusBarOrientation]];
++
++    return self;
++}
++
++- (NSUInteger)supportedInterfaceOrientations
++{
++    NSUInteger orientationMask = UIInterfaceOrientationMaskAll;
++    
++    // Don't allow upside-down orientation on the phone, so answering calls is in the natural orientation
++    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
++        orientationMask &= ~UIInterfaceOrientationMaskPortraitUpsideDown;
++    }
++    return orientationMask;
++}
++
++- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orient
++{
++    NSUInteger orientationMask = [self supportedInterfaceOrientations];
++    return (orientationMask & (1 << orient));
++}
++
++- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
++{
++    [self updateSplashImage:interfaceOrientation];
++}
++
++- (void)updateSplashImage:(UIInterfaceOrientation)interfaceOrientation
++{
++    UIImage *image;
++    
++    if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
++        image = self->splashLandscape;
++    } else {
++        image = self->splashPortrait;
++    }
++    if (image)
++    {
++        splash.image = image;
++    }
++}
++
++@end
++
++
+ @implementation SDLUIKitDelegate
+ 
+ /* convenience method */
+@@ -100,22 +187,40 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+ 
+ - (void)postFinishLaunch
+ {
+-    /* register a callback for the idletimer hint */
+-    SDL_SetHint(SDL_HINT_IDLE_TIMER_DISABLED, "0");
+-    SDL_RegisterHintChangedCb(SDL_HINT_IDLE_TIMER_DISABLED, &SDL_IdleTimerDisabledChanged);
+-
+     /* run the user's application, passing argc and argv */
++    SDL_iPhoneSetEventPump(SDL_TRUE);
+     exit_status = SDL_main(forward_argc, forward_argv);
++    SDL_iPhoneSetEventPump(SDL_FALSE);
++
++    /* If we showed a splash image, clean it up */
++    if (launch_window) {
++        [launch_window release];
++        launch_window = NULL;
++    }
+ 
+     /* exit, passing the return status from the user's application */
++    // We don't actually exit to support applications that do setup in
++    // their main function and then allow the Cocoa event loop to run.
+     // exit(exit_status);
+ }
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
++    /* Keep the launch image up until we set a video mode */
++    launch_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
++
++    UIViewController *splashViewController = [[SDL_splashviewcontroller alloc] init];
++    launch_window.rootViewController = splashViewController;
++    [launch_window addSubview:splashViewController.view];
++    [launch_window makeKeyAndVisible];
++
+     /* Set working directory to resource path */
+     [[NSFileManager defaultManager] changeCurrentDirectoryPath: [[NSBundle mainBundle] resourcePath]];
+ 
++    /* register a callback for the idletimer hint */
++    SDL_SetHint(SDL_HINT_IDLE_TIMER_DISABLED, "0");
++    SDL_RegisterHintChangedCb(SDL_HINT_IDLE_TIMER_DISABLED, &SDL_IdleTimerDisabledChanged);
++
+     [self performSelector:@selector(postFinishLaunch) withObject:nil afterDelay:0.0];
+ 
+     return YES;
+@@ -162,6 +267,17 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+     }
+ }
+ 
++- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
++{
++    NSURL *fileURL = [url filePathURL];
++    if (fileURL != nil) {
++        SDL_SendDropFile([[fileURL path] UTF8String]);
++    } else {
++        SDL_SendDropFile([[url absoluteString] UTF8String]);
++    }
++    return YES;
++}
++
+ @end
+ 
+ #endif /* SDL_VIDEO_DRIVER_UIKIT */
+diff --git a/src/video/uikit/SDL_uikitevents.h b/src/video/uikit/SDL_uikitevents.h
+old mode 100755
+new mode 100644
+diff --git a/src/video/uikit/SDL_uikitevents.m b/src/video/uikit/SDL_uikitevents.m
+old mode 100755
+new mode 100644
+index 4dea87f..e7f0dcc
+--- a/src/video/uikit/SDL_uikitevents.m
++++ b/src/video/uikit/SDL_uikitevents.m
+@@ -30,9 +30,20 @@
+ #import <Foundation/Foundation.h>
+ #include "jumphack.h"
+ 
++static BOOL UIKit_EventPumpEnabled = YES;
++
++void
++SDL_iPhoneSetEventPump(SDL_bool enabled)
++{
++    UIKit_EventPumpEnabled = enabled;
++}
++
+ void
+ UIKit_PumpEvents(_THIS)
+ {
++    if (!UIKit_EventPumpEnabled)
++        return;
++
+     /*
+         When the user presses the 'home' button on the iPod
+         the application exits -- immediatly.
+@@ -46,10 +57,25 @@ UIKit_PumpEvents(_THIS)
+      */
+     if (setjmp(*jump_env()) == 0) {
+         /* if we're setting the jump, rather than jumping back */
++		
++		/* Let the run loop run for a short amount of time: long enough for
++		   touch events to get processed (which is important to get certain
++		   elements of Game Center's GKLeaderboardViewController to respond
++		   to touch input), but not long enough to introduce a significant
++		   delay in the rest of the app.
++		*/
++		const CFTimeInterval seconds = 0.000002;
++		
++		/* Pump most event types. */
+         SInt32 result;
+         do {
+-            result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE);
++            result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, seconds, TRUE);
+         } while (result == kCFRunLoopRunHandledSource);
++		
++		/* Make sure UIScrollView objects scroll properly. */
++		do {
++			result = CFRunLoopRunInMode((CFStringRef)UITrackingRunLoopMode, seconds, TRUE);
++		} while(result == kCFRunLoopRunHandledSource);
+     }
+ }
+ 
+diff --git a/src/video/uikit/SDL_uikitkeyboard.h b/src/video/uikit/SDL_uikitkeyboard.h
+deleted file mode 100755
+index 910e37a..0000000
+--- a/src/video/uikit/SDL_uikitkeyboard.h
++++ /dev/null
+@@ -1,32 +0,0 @@
+-/*
+-  Simple DirectMedia Layer
+-  Copyright (C) 1997-2012 Sam Lantinga <slouken@libsdl.org>
+-
+-  This software is provided 'as-is', without any express or implied
+-  warranty.  In no event will the authors be held liable for any damages
+-  arising from the use of this software.
+-
+-  Permission is granted to anyone to use this software for any purpose,
+-  including commercial applications, and to alter it and redistribute it
+-  freely, subject to the following restrictions:
+-
+-  1. The origin of this software must not be misrepresented; you must not
+-     claim that you wrote the original software. If you use this software
+-     in a product, an acknowledgment in the product documentation would be
+-     appreciated but is not required.
+-  2. Altered source versions must be plainly marked as such, and must not be
+-     misrepresented as being the original software.
+-  3. This notice may not be removed or altered from any source distribution.
+-*/
+-
+-#ifndef sdl_uikitkeyboard_h
+-#define sdl_uikitkeyboard_h
+-
+-extern DECLSPEC int SDLCALL SDL_iPhoneKeyboardShow(SDL_Window * window);
+-extern DECLSPEC int SDLCALL SDL_iPhoneKeyboardHide(SDL_Window * window);
+-extern DECLSPEC SDL_bool SDLCALL SDL_iPhoneKeyboardIsShown(SDL_Window * window);
+-extern DECLSPEC int SDLCALL SDL_iPhoneKeyboardToggle(SDL_Window * window);
+-
+-#endif
+-
+-/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/SDL_uikitmodes.h b/src/video/uikit/SDL_uikitmodes.h
+new file mode 100644
+index 0000000..4831bac
+--- /dev/null
++++ b/src/video/uikit/SDL_uikitmodes.h
+@@ -0,0 +1,51 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2012 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++#include "SDL_config.h"
++
++#ifndef _SDL_uikitmodes_h
++#define _SDL_uikitmodes_h
++
++#include "SDL_uikitvideo.h"
++
++typedef struct
++{
++    UIScreen *uiscreen;
++    CGFloat scale;
++} SDL_DisplayData;
++
++typedef struct
++{
++    UIScreenMode *uiscreenmode;
++    CGFloat scale;
++} SDL_DisplayModeData;
++
++extern BOOL SDL_UIKit_supports_multiple_displays;
++
++extern SDL_bool UIKit_IsDisplayLandscape(UIScreen *uiscreen);
++
++extern int UIKit_InitModes(_THIS);
++extern void UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display);
++extern int UIKit_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
++extern void UIKit_QuitModes(_THIS);
++
++#endif /* _SDL_uikitmodes_h */
++
++/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/SDL_uikitmodes.m b/src/video/uikit/SDL_uikitmodes.m
+new file mode 100644
+index 0000000..7e1d2cf
+--- /dev/null
++++ b/src/video/uikit/SDL_uikitmodes.m
+@@ -0,0 +1,320 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2012 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++#include "SDL_config.h"
++
++#if SDL_VIDEO_DRIVER_UIKIT
++
++#include "SDL_assert.h"
++#include "SDL_uikitmodes.h"
++
++
++BOOL SDL_UIKit_supports_multiple_displays = NO;
++
++
++static int
++UIKit_AllocateDisplayModeData(SDL_DisplayMode * mode,
++    UIScreenMode * uiscreenmode, CGFloat scale)
++{
++    SDL_DisplayModeData *data = NULL;
++    
++    if (uiscreenmode != nil) {
++        /* Allocate the display mode data */
++        data = (SDL_DisplayModeData *) SDL_malloc(sizeof(*data));
++        if (!data) {
++            SDL_OutOfMemory();
++            return -1;
++        }
++        
++        data->uiscreenmode = uiscreenmode;
++        [data->uiscreenmode retain];
++        
++        data->scale = scale;
++    }
++    
++    mode->driverdata = data;
++    
++    return 0;
++}
++
++static void
++UIKit_FreeDisplayModeData(SDL_DisplayMode * mode)
++{
++    if (!SDL_UIKit_supports_multiple_displays) {
++        // Not on at least iPhoneOS 3.2 (versions prior to iPad).
++        SDL_assert(mode->driverdata == NULL);
++    } else if (mode->driverdata != NULL) {
++        SDL_DisplayModeData *data = (SDL_DisplayModeData *)mode->driverdata;
++        [data->uiscreenmode release];
++        SDL_free(data);
++        mode->driverdata = NULL;
++    }
++}
++
++static int
++UIKit_AddSingleDisplayMode(SDL_VideoDisplay * display, int w, int h,
++    UIScreenMode * uiscreenmode, CGFloat scale)
++{
++    SDL_DisplayMode mode;
++    SDL_zero(mode);
++    
++    mode.format = SDL_PIXELFORMAT_ABGR8888;
++    mode.refresh_rate = 0;
++    if (UIKit_AllocateDisplayModeData(&mode, uiscreenmode, scale) < 0) {
++        return -1;
++    }
++    
++    mode.w = w;
++    mode.h = h;
++    if (SDL_AddDisplayMode(display, &mode)) {
++        return 0;
++    } else {
++        UIKit_FreeDisplayModeData(&mode);
++        return -1;
++    }
++}
++
++static int
++UIKit_AddDisplayMode(SDL_VideoDisplay * display, int w, int h, CGFloat scale,
++                     UIScreenMode * uiscreenmode, SDL_bool addRotation)
++{
++    if (UIKit_AddSingleDisplayMode(display, w, h, uiscreenmode, scale) < 0) {
++        return -1;
++    }
++    
++    if (addRotation) {
++        // Add the rotated version
++        if (UIKit_AddSingleDisplayMode(display, h, w, uiscreenmode, scale) < 0) {
++            return -1;
++        }
++    }
++    
++    return 0;
++}
++
++static int
++UIKit_AddDisplay(UIScreen *uiscreen)
++{
++    CGSize size = [uiscreen bounds].size;
++
++    // Make sure the width/height are oriented correctly
++    if (UIKit_IsDisplayLandscape(uiscreen) != (size.width > size.height)) {
++        CGFloat height = size.width;
++        size.width = size.height;
++        size.height = height;
++    }
++
++    // When dealing with UIKit all coordinates are specified in terms of
++    // what Apple refers to as points. On earlier devices without the
++    // so called "Retina" display, there is a one to one mapping between
++    // points and pixels. In other cases [UIScreen scale] indicates the
++    // relationship between points and pixels. Since SDL has no notion
++    // of points, we must compensate in all cases where dealing with such
++    // units.
++    CGFloat scale;
++    if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
++        scale = [uiscreen scale]; // iOS >= 4.0
++    } else {
++        scale = 1.0f; // iOS < 4.0
++    }
++
++    SDL_VideoDisplay display;
++    SDL_DisplayMode mode;
++    SDL_zero(mode);
++    mode.format = SDL_PIXELFORMAT_ABGR8888;
++    mode.w = (int)(size.width * scale);
++    mode.h = (int)(size.height * scale);
++ 
++    UIScreenMode * uiscreenmode = nil;
++    // UIScreenMode showed up in 3.2 (the iPad and later). We're
++    //  misusing this supports_multiple_displays flag here for that.
++    if (SDL_UIKit_supports_multiple_displays) {
++        uiscreenmode = [uiscreen currentMode];
++    }
++    
++    if (UIKit_AllocateDisplayModeData(&mode, uiscreenmode, scale) < 0) {
++        return -1;
++    }
++
++    SDL_zero(display);
++    display.desktop_mode = mode;
++    display.current_mode = mode;
++
++    /* Allocate the display data */
++    SDL_DisplayData *data = (SDL_DisplayData *) SDL_malloc(sizeof(*data));
++    if (!data) {
++        SDL_OutOfMemory();
++        UIKit_FreeDisplayModeData(&display.desktop_mode);
++        return -1;
++    }
++	
++    [uiscreen retain];
++    data->uiscreen = uiscreen;
++    data->scale = scale;
++	
++    display.driverdata = data;
++    SDL_AddVideoDisplay(&display);
++    
++    return 0;
++}
++
++SDL_bool
++UIKit_IsDisplayLandscape(UIScreen *uiscreen)
++{
++    if (uiscreen == [UIScreen mainScreen]) {
++        return UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]);
++    } else {
++        CGSize size = [uiscreen bounds].size;
++        return (size.width > size.height);
++    }
++}
++
++int
++UIKit_InitModes(_THIS)
++{
++    // this tells us whether we are running on ios >= 3.2
++    SDL_UIKit_supports_multiple_displays = [UIScreen instancesRespondToSelector:@selector(currentMode)];
++
++    // Add the main screen.
++    if (UIKit_AddDisplay([UIScreen mainScreen]) < 0) {
++        return -1;
++    }
++
++    // If this is iPhoneOS < 3.2, all devices are one screen, 320x480 pixels.
++    //  The iPad added both a larger main screen and the ability to use
++    //  external displays. So, add the other displays (screens in UI speak).
++    if (SDL_UIKit_supports_multiple_displays) {
++        for (UIScreen *uiscreen in [UIScreen screens]) {
++            // Only add the other screens
++            if (uiscreen != [UIScreen mainScreen]) {
++                if (UIKit_AddDisplay(uiscreen) < 0) {
++                    return -1;
++                }
++            }
++        }
++    }
++
++    /* We're done! */
++    return 0;
++}
++
++void
++UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display)
++{
++    SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
++
++    SDL_bool isLandscape = UIKit_IsDisplayLandscape(data->uiscreen);
++    SDL_bool addRotation = (data->uiscreen == [UIScreen mainScreen]);
++
++    if (SDL_UIKit_supports_multiple_displays) {
++        // availableModes showed up in 3.2 (the iPad and later). We should only
++        //  land here for at least that version of the OS.
++        for (UIScreenMode *uimode in [data->uiscreen availableModes]) {
++            CGSize size = [uimode size];
++            int w = (int)size.width;
++            int h = (int)size.height;
++ 
++            // Make sure the width/height are oriented correctly
++            if (isLandscape != (w > h)) {
++                int tmp = w;
++                w = h;
++                h = tmp;
++            }
++
++            // Add the native screen resolution.
++            UIKit_AddDisplayMode(display, w, h, data->scale, uimode, addRotation);
++
++            if (data->scale != 1.0f) {
++                // Add the native screen resolution divided by its scale.
++                // This is so devices capable of e.g. 640x960 also advertise
++                // 320x480.
++                UIKit_AddDisplayMode(display,
++                    (int)(size.width / data->scale),
++                    (int)(size.height / data->scale),
++                    1.0f, uimode, addRotation);
++            }
++        }
++    } else {
++        const CGSize size = [data->uiscreen bounds].size;
++        int w = (int)size.width;
++        int h = (int)size.height;
++
++        // Make sure the width/height are oriented correctly
++        if (isLandscape != (w > h)) {
++            int tmp = w;
++            w = h;
++            h = tmp;
++        }
++
++        UIKit_AddDisplayMode(display, w, h, 1.0f, nil, addRotation);
++    } 
++}
++
++int
++UIKit_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
++{
++    SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
++
++    if (!SDL_UIKit_supports_multiple_displays) {
++        // Not on at least iPhoneOS 3.2 (versions prior to iPad).
++        SDL_assert(mode->driverdata == NULL);
++    } else {
++        SDL_DisplayModeData *modedata = (SDL_DisplayModeData *)mode->driverdata;
++        [data->uiscreen setCurrentMode:modedata->uiscreenmode];
++
++        if (data->uiscreen == [UIScreen mainScreen]) {
++            if (mode->w > mode->h) {
++                if (!UIKit_IsDisplayLandscape(data->uiscreen)) {
++                    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:NO];
++                }
++            } else if (mode->w < mode->h) {
++                if (UIKit_IsDisplayLandscape(data->uiscreen)) {
++                    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait animated:NO];
++                }
++            }
++        }
++    }
++    return 0;
++}
++
++void
++UIKit_QuitModes(_THIS)
++{
++    // Release Objective-C objects, so higher level doesn't free() them.
++    int i, j;
++    for (i = 0; i < _this->num_displays; i++) {
++        SDL_VideoDisplay *display = &_this->displays[i];
++
++        UIKit_FreeDisplayModeData(&display->desktop_mode);
++        for (j = 0; j < display->num_display_modes; j++) {
++            SDL_DisplayMode *mode = &display->display_modes[j];
++            UIKit_FreeDisplayModeData(mode);
++        }
++
++        SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
++        [data->uiscreen release];
++        SDL_free(data);
++        display->driverdata = NULL;
++    }
++}
++
++#endif /* SDL_VIDEO_DRIVER_UIKIT */
++
++/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/SDL_uikitopengles.h b/src/video/uikit/SDL_uikitopengles.h
+old mode 100755
+new mode 100644
+diff --git a/src/video/uikit/SDL_uikitopengles.m b/src/video/uikit/SDL_uikitopengles.m
+old mode 100755
+new mode 100644
+index 57b4142..8517cb4
+--- a/src/video/uikit/SDL_uikitopengles.m
++++ b/src/video/uikit/SDL_uikitopengles.m
+@@ -25,9 +25,10 @@
+ #include "SDL_uikitopengles.h"
+ #include "SDL_uikitopenglview.h"
+ #include "SDL_uikitappdelegate.h"
++#include "SDL_uikitmodes.h"
+ #include "SDL_uikitwindow.h"
+ #include "jumphack.h"
+-#include "SDL_sysvideo.h"
++#include "../SDL_sysvideo.h"
+ #include "../../events/SDL_keyboard_c.h"
+ #include "../../events/SDL_mouse_c.h"
+ #include "../../power/uikit/SDL_syspower.h"
+@@ -90,23 +91,29 @@ void UIKit_GL_SwapWindow(_THIS, SDL_Window * window)
+         return;
+     }
+     [data->view swapBuffers];
+-    /* since now we've got something to draw
+-       make the window visible */
+-    [data->uiwindow makeKeyAndVisible];
+ 
+     /* we need to let the event cycle run, or the OS won't update the OpenGL view! */
+     SDL_PumpEvents();
+-
+ }
+ 
+ SDL_GLContext UIKit_GL_CreateContext(_THIS, SDL_Window * window)
+ {
+     SDL_uikitopenglview *view;
+     SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
++    SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
++    SDL_DisplayData *displaydata = display->driverdata;
++    SDL_DisplayModeData *displaymodedata = display->current_mode.driverdata;
+     UIWindow *uiwindow = data->uiwindow;
+ 
+     /* construct our view, passing in SDL's OpenGL configuration data */
+-    view = [[SDL_uikitopenglview alloc] initWithFrame: [uiwindow bounds]
++    CGRect frame;
++    if (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS)) {
++        frame = [displaydata->uiscreen bounds];
++    } else {
++        frame = [displaydata->uiscreen applicationFrame];
++    }
++    view = [[SDL_uikitopenglview alloc] initWithFrame: frame
++                                    scale: displaymodedata->scale
+                                     retainBacking: _this->gl_config.retained_backing
+                                     rBits: _this->gl_config.red_size
+                                     gBits: _this->gl_config.green_size
+@@ -125,19 +132,23 @@ SDL_GLContext UIKit_GL_CreateContext(_THIS, SDL_Window * window)
+         [view->viewcontroller setView:view];
+         [view->viewcontroller retain];
+     }
++    [uiwindow addSubview: view];
++    
++    // The view controller needs to be the root in order to control rotation on iOS 6.0
++    if (uiwindow.rootViewController == nil) {
++        uiwindow.rootViewController = view->viewcontroller;
++    }
+ 
+-    /* add the view to our window */
+-    [uiwindow addSubview: view ];
+-
+-    if ( UIKit_GL_MakeCurrent(_this, window, view) < 0 ) {
++    if (UIKit_GL_MakeCurrent(_this, window, view) < 0) {
+         UIKit_GL_DeleteContext(_this, view);
+         return NULL;
+     }
+ 
+     /* Make this window the current mouse focus for touch input */
+-    /* !!! FIXME: only do this if this is the primary screen. */
+-    SDL_SetMouseFocus(window);
+-    SDL_SetKeyboardFocus(window);
++    if (displaydata->uiscreen == [UIScreen mainScreen]) {
++        SDL_SetMouseFocus(window);
++        SDL_SetKeyboardFocus(window);
++    }
+ 
+     return view;
+ }
+@@ -147,6 +158,10 @@ void UIKit_GL_DeleteContext(_THIS, SDL_GLContext context)
+     /* the delegate has retained the view, this will release him */
+     SDL_uikitopenglview *view = (SDL_uikitopenglview *)context;
+     if (view->viewcontroller) {
++        UIWindow *uiwindow = (UIWindow *)view.superview;
++        if (uiwindow.rootViewController == view->viewcontroller) {
++            uiwindow.rootViewController = nil;
++        }
+         [view->viewcontroller setView:nil];
+         [view->viewcontroller release];
+     }
+diff --git a/src/video/uikit/SDL_uikitopenglview.h b/src/video/uikit/SDL_uikitopenglview.h
+old mode 100755
+new mode 100644
+index 61f7b20..255ff6a
+--- a/src/video/uikit/SDL_uikitopenglview.h
++++ b/src/video/uikit/SDL_uikitopenglview.h
+@@ -46,6 +46,11 @@
+ 
+     /* format of depthRenderbuffer */
+     GLenum depthBufferFormat;
++
++    id displayLink;
++    int animationInterval;
++    void (*animationCallback)(void*);
++    void *animationCallbackParam;
+ }
+ 
+ @property (nonatomic, retain, readonly) EAGLContext *context;
+@@ -54,6 +59,7 @@
+ - (void)setCurrentContext;
+ 
+ - (id)initWithFrame:(CGRect)frame
++    scale:(CGFloat)scale
+     retainBacking:(BOOL)retained
+     rBits:(int)rBits
+     gBits:(int)gBits
+@@ -65,6 +71,15 @@
+ 
+ - (void)updateFrame;
+ 
++- (void)setAnimationCallback:(int)interval
++    callback:(void (*)(void*))callback
++    callbackParam:(void*)callbackParam;
++
++- (void)startAnimation;
++- (void)stopAnimation;
++
++- (void)doLoop:(id)sender;
++
+ @end
+ 
+ /* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/SDL_uikitopenglview.m b/src/video/uikit/SDL_uikitopenglview.m
+old mode 100755
+new mode 100644
+index 4f30dc9..897e4bb
+--- a/src/video/uikit/SDL_uikitopenglview.m
++++ b/src/video/uikit/SDL_uikitopenglview.m
+@@ -22,9 +22,9 @@
+ 
+ #if SDL_VIDEO_DRIVER_UIKIT
+ 
+-#import <QuartzCore/QuartzCore.h>
+-#import <OpenGLES/EAGLDrawable.h>
+-#import "SDL_uikitopenglview.h"
++#include <QuartzCore/QuartzCore.h>
++#include <OpenGLES/EAGLDrawable.h>
++#include "SDL_uikitopenglview.h"
+ 
+ 
+ @implementation SDL_uikitopenglview
+@@ -37,6 +37,7 @@
+ }
+ 
+ - (id)initWithFrame:(CGRect)frame
++      scale:(CGFloat)scale
+       retainBacking:(BOOL)retained
+       rBits:(int)rBits
+       gBits:(int)gBits
+@@ -79,10 +80,9 @@
+             return nil;
+         }
+ 
+-        // !!! FIXME: use the screen this is on!
+-        /* Use the main screen scale (for retina display support) */
++        /* Set the appropriate scale (for retina display support) */
+         if ([self respondsToSelector:@selector(contentScaleFactor)])
+-            self.contentScaleFactor = [UIScreen mainScreen].scale;
++            self.contentScaleFactor = scale;
+ 
+         /* create the buffers */
+         glGenFramebuffersOES(1, &viewFramebuffer);
+@@ -121,7 +121,8 @@
+         }
+         /* end create buffers */
+ 
+-        self.autoresizingMask = 0;  // don't allow autoresize, since we need to do some magic in -(void)updateFrame.
++        self.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
++        self.autoresizesSubviews = YES;
+     }
+     return self;
+ }
+@@ -147,6 +148,41 @@
+     }
+ }
+ 
++- (void)setAnimationCallback:(int)interval
++    callback:(void (*)(void*))callback
++    callbackParam:(void*)callbackParam
++{
++    [self stopAnimation];
++
++    animationInterval = interval;
++    animationCallback = callback;
++    animationCallbackParam = callbackParam;
++
++    if (animationCallback)
++        [self startAnimation];
++}
++
++- (void)startAnimation
++{
++    // CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
++    // if the system version runtime check for CADisplayLink exists in -initWithCoder:. 
++    
++    displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(doLoop:)];
++    [displayLink setFrameInterval:animationInterval];
++    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
++}
++
++- (void)stopAnimation
++{
++    [displayLink invalidate];
++    displayLink = nil;
++}
++
++- (void)doLoop:(id)sender
++{
++    animationCallback(animationCallbackParam);
++}
++
+ - (void)setCurrentContext
+ {
+     [EAGLContext setCurrentContext:context];
+@@ -163,6 +199,7 @@
+ - (void)layoutSubviews
+ {
+     [EAGLContext setCurrentContext:context];
++    [self updateFrame];
+ }
+ 
+ - (void)destroyFramebuffer
+diff --git a/src/video/uikit/SDL_uikitvideo.h b/src/video/uikit/SDL_uikitvideo.h
+old mode 100755
+new mode 100644
+index d678dae..1cf608b
+--- a/src/video/uikit/SDL_uikitvideo.h
++++ b/src/video/uikit/SDL_uikitvideo.h
+@@ -23,7 +23,22 @@
+ 
+ #include <UIKit/UIKit.h>
+ 
+-extern BOOL SDL_UIKit_supports_multiple_displays;
++#include "../SDL_sysvideo.h"
++
++#ifndef __IPHONE_6_0
++// This enum isn't available in older SDKs, but we use it for our own purposes on iOS 5.1 and for the system on iOS 6.0
++enum UIInterfaceOrientationMask
++{
++    UIInterfaceOrientationMaskPortrait = (1 << UIInterfaceOrientationPortrait),
++    UIInterfaceOrientationMaskLandscapeLeft = (1 << UIInterfaceOrientationLandscapeLeft),
++    UIInterfaceOrientationMaskLandscapeRight = (1 << UIInterfaceOrientationLandscapeRight),
++    UIInterfaceOrientationMaskPortraitUpsideDown = (1 << UIInterfaceOrientationPortraitUpsideDown),
++    UIInterfaceOrientationMaskLandscape = (UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight),
++    UIInterfaceOrientationMaskAll = (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskPortraitUpsideDown),
++    UIInterfaceOrientationMaskAllButUpsideDown = (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight),
++};
++#endif // !__IPHONE_6_0
++
+ 
+ #endif /* _SDL_uikitvideo_h */
+ 
+diff --git a/src/video/uikit/SDL_uikitvideo.m b/src/video/uikit/SDL_uikitvideo.m
+old mode 100755
+new mode 100644
+index cbba21d..0c3764e
+--- a/src/video/uikit/SDL_uikitvideo.m
++++ b/src/video/uikit/SDL_uikitvideo.m
+@@ -32,22 +32,16 @@
+ 
+ #include "SDL_uikitvideo.h"
+ #include "SDL_uikitevents.h"
++#include "SDL_uikitmodes.h"
+ #include "SDL_uikitwindow.h"
+ #include "SDL_uikitopengles.h"
+ 
+-#include "SDL_assert.h"
+-
+ #define UIKITVID_DRIVER_NAME "uikit"
+ 
+ /* Initialization/Query functions */
+ static int UIKit_VideoInit(_THIS);
+-static void UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * sdl_display);
+-static int UIKit_SetDisplayMode(_THIS, SDL_VideoDisplay * display,
+-                                SDL_DisplayMode * mode);
+ static void UIKit_VideoQuit(_THIS);
+ 
+-BOOL SDL_UIKit_supports_multiple_displays = NO;
+-
+ /* DUMMY driver bootstrap functions */
+ 
+ static int
+@@ -83,10 +77,19 @@ UIKit_CreateDevice(int devindex)
+     device->SetDisplayMode = UIKit_SetDisplayMode;
+     device->PumpEvents = UIKit_PumpEvents;
+     device->CreateWindow = UIKit_CreateWindow;
++    device->ShowWindow = UIKit_ShowWindow;
++    device->HideWindow = UIKit_HideWindow;
++    device->RaiseWindow = UIKit_RaiseWindow;
+     device->SetWindowFullscreen = UIKit_SetWindowFullscreen;
+     device->DestroyWindow = UIKit_DestroyWindow;
+     device->GetWindowWMInfo = UIKit_GetWindowWMInfo;
+ 
++    /* !!! FIXME: implement SetWindowBordered */
++
++    device->SDL_HasScreenKeyboardSupport = UIKit_HasScreenKeyboardSupport;
++    device->SDL_ShowScreenKeyboard = UIKit_ShowScreenKeyboard;
++    device->SDL_HideScreenKeyboard = UIKit_HideScreenKeyboard;
++    device->SDL_IsScreenKeyboardShown = UIKit_IsScreenKeyboardShown;
+ 
+     /* OpenGL (ES) functions */
+     device->GL_MakeCurrent        = UIKit_GL_MakeCurrent;
+@@ -108,176 +111,33 @@ VideoBootStrap UIKIT_bootstrap = {
+ };
+ 
+ 
+-/*
+-!!! FIXME:
+-
+-The main screen should list a AxB mode for portrait orientation, and then
+- also list BxA for landscape mode. When setting a given resolution, we should
+- rotate the view's transform appropriately (extra credit if you check the
+- accelerometer and rotate the display so it's never upside down).
+-
+-  http://iphonedevelopment.blogspot.com/2008/10/starting-in-landscape-mode-without.html
+-
+-*/
+-
+-static void
+-UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display)
+-{
+-    UIScreen *uiscreen = (UIScreen *) display->driverdata;
+-    SDL_DisplayMode mode;
+-    SDL_zero(mode);
+-
+-    // availableModes showed up in 3.2 (the iPad and later). We should only
+-    //  land here for at least that version of the OS.
+-    if (!SDL_UIKit_supports_multiple_displays) {
+-        const CGRect rect = [uiscreen bounds];
+-        mode.format = SDL_PIXELFORMAT_ABGR8888;
+-        mode.refresh_rate = 0;
+-        mode.driverdata = NULL;
+-
+-        mode.w = (int) rect.size.width;
+-        mode.h = (int) rect.size.height;
+-        SDL_AddDisplayMode(display, &mode);
+-
+-        mode.w = (int) rect.size.height;  // swap the orientation, add again.
+-        mode.h = (int) rect.size.width;
+-        SDL_AddDisplayMode(display, &mode);
+-        return;
+-    }
+-
+-    for (UIScreenMode *uimode in [uiscreen availableModes]) {
+-        CGSize size = [uimode size];
+-        mode.format = SDL_PIXELFORMAT_ABGR8888;
+-        mode.refresh_rate = 0;
+-        mode.driverdata = uimode;
+-        mode.w = (int) size.width;
+-        mode.h = (int) size.height;
+-        if (SDL_AddDisplayMode(display, &mode))
+-            [uimode retain];        // retain is needed because of mode.driverdata
+-
+-        if (uiscreen == [UIScreen mainScreen]) {
+-            // Add the mode with swapped width/height
+-            mode.w = (int) size.height;
+-            mode.h = (int) size.width;
+-            if (SDL_AddDisplayMode(display, &mode))
+-                [uimode retain];
+-        }
+-    }
+-}
+-
+-
+-static void
+-UIKit_AddDisplay(UIScreen *uiscreen, int w, int h)
+-{
+-    SDL_VideoDisplay display;
+-    SDL_DisplayMode mode;
+-    SDL_zero(mode);
+-    mode.format = SDL_PIXELFORMAT_ABGR8888;
+-    mode.w = w;
+-    mode.h = h;
+-    mode.refresh_rate = 0;
+-
+-    // UIScreenMode showed up in 3.2 (the iPad and later). We're
+-    //  misusing this supports_multiple_displays flag here for that.
+-    if (SDL_UIKit_supports_multiple_displays) {
+-        UIScreenMode *uimode = [uiscreen currentMode];
+-        [uimode retain];  // once for the desktop_mode
+-        [uimode retain];  // once for the current_mode
+-        mode.driverdata = uimode;
+-    }
+-
+-    SDL_zero(display);
+-    display.desktop_mode = mode;
+-    display.current_mode = mode;
+-
+-    [uiscreen retain];
+-    display.driverdata = uiscreen;
+-    SDL_AddVideoDisplay(&display);
+-}
+-
+-
+ int
+ UIKit_VideoInit(_THIS)
+ {
+     _this->gl_config.driver_loaded = 1;
+ 
+-    // this tells us whether we are running on ios >= 3.2
+-    SDL_UIKit_supports_multiple_displays = [UIScreen instancesRespondToSelector:@selector(currentMode)];
+-
+-    // Add the main screen.
+-    UIScreen *uiscreen = [UIScreen mainScreen];
+-    const CGSize size = [uiscreen bounds].size;
+-    UIKit_AddDisplay(uiscreen, (int)size.width, (int)size.height);
+-
+-    // If this is iPhoneOS < 3.2, all devices are one screen, 320x480 pixels.
+-    //  The iPad added both a larger main screen and the ability to use
+-    //  external displays. So, add the other displays (screens in UI speak).
+-    if (SDL_UIKit_supports_multiple_displays) {
+-        for (UIScreen *uiscreen in [UIScreen screens]) {
+-            // Only add the other screens
+-            if (uiscreen != [UIScreen mainScreen]) {
+-                const CGSize size = [uiscreen bounds].size;
+-                UIKit_AddDisplay(uiscreen, (int)size.width, (int)size.height);
+-            }
+-        }
++    if (UIKit_InitModes(_this) < 0) {
++        return -1;
+     }
+-
+-    /* We're done! */
+     return 0;
+ }
+ 
+-static int
+-UIKit_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
++void
++UIKit_VideoQuit(_THIS)
+ {
+-    UIScreen *uiscreen = (UIScreen *) display->driverdata;
+-    if (!SDL_UIKit_supports_multiple_displays) {
+-        // Not on at least iPhoneOS 3.2 (versions prior to iPad).
+-        SDL_assert(mode->driverdata == NULL);
+-    } else {
+-        UIScreenMode *uimode = (UIScreenMode *) mode->driverdata;
+-        [uiscreen setCurrentMode:uimode];
+-
+-        CGSize size = [uimode size];
+-        if (size.width >= size.height) {
+-            [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:NO];
+-        } else {
+-            [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait animated:NO];
+-        }
+-    }
+-
+-    return 0;
++    UIKit_QuitModes(_this);
+ }
+ 
+-static void
+-UIKit_ReleaseUIScreenMode(SDL_DisplayMode * mode)
+-{
+-    if (!SDL_UIKit_supports_multiple_displays) {
+-        // Not on at least iPhoneOS 3.2 (versions prior to iPad).
+-        SDL_assert(mode->driverdata == NULL);
+-    } else {
+-        UIScreenMode *uimode = (UIScreenMode *) mode->driverdata;
+-        [uimode release];
+-        mode->driverdata = NULL;
+-    }
+-}
++/*
++ * iOS log support.
++ *
++ * This doesn't really have aything to do with the interfaces of the SDL video
++ *  subsystem, but we need to stuff this into an Objective-C source code file.
++ */
+ 
+-void
+-UIKit_VideoQuit(_THIS)
++void SDL_NSLog(const char *text)
+ {
+-    // Release Objective-C objects, so higher level doesn't free() them.
+-    int i, j;
+-    for (i = 0; i < _this->num_displays; i++) {
+-        SDL_VideoDisplay *display = &_this->displays[i];
+-        UIScreen *uiscreen = (UIScreen *) display->driverdata;
+-        [uiscreen release];
+-        display->driverdata = NULL;
+-        UIKit_ReleaseUIScreenMode(&display->desktop_mode);
+-        UIKit_ReleaseUIScreenMode(&display->current_mode);
+-        for (j = 0; j < display->num_display_modes; j++) {
+-            SDL_DisplayMode *mode = &display->display_modes[j];
+-            UIKit_ReleaseUIScreenMode(mode);
+-        }
+-    }
++    NSLog(@"%s", text);
+ }
+ 
+ #endif /* SDL_VIDEO_DRIVER_UIKIT */
+diff --git a/src/video/uikit/SDL_uikitview.h b/src/video/uikit/SDL_uikitview.h
+old mode 100755
+new mode 100644
+index b9aad29..a1f833b
+--- a/src/video/uikit/SDL_uikitview.h
++++ b/src/video/uikit/SDL_uikitview.h
+@@ -22,8 +22,9 @@
+ #import <UIKit/UIKit.h>
+ #import "SDL_uikitviewcontroller.h"
+ 
++#include "SDL_touch.h"
++
+ #define IPHONE_TOUCH_EFFICIENT_DANGEROUS
+-#define FIXED_MULTITOUCH
+ 
+ #ifndef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+ #define MAX_SIMULTANEOUS_TOUCHES 5
+@@ -35,12 +36,11 @@
+ @interface SDL_uikitview : UIView {
+ #endif
+ 
+-#ifdef FIXED_MULTITOUCH
+-    long touchId;
++    SDL_TouchID touchId;
++    SDL_FingerID leftFingerDown;
+ #ifndef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+     UITouch *finger[MAX_SIMULTANEOUS_TOUCHES];
+ #endif
+-#endif
+ 
+ #if SDL_IPHONE_KEYBOARD
+     UITextField *textField;
+@@ -50,7 +50,7 @@
+ @public
+     SDL_uikitviewcontroller *viewcontroller;
+ }
+-- (CGPoint)touchLocation:(UITouch *)touch;
++- (CGPoint)touchLocation:(UITouch *)touch shouldNormalize:(BOOL)normalize;
+ - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+ - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+ - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+@@ -60,6 +60,12 @@
+ - (void)hideKeyboard;
+ - (void)initializeKeyboard;
+ @property (readonly) BOOL keyboardVisible;
++
++SDL_bool UIKit_HasScreenKeyboardSupport(_THIS);
++void UIKit_ShowScreenKeyboard(_THIS, SDL_Window *window);
++void UIKit_HideScreenKeyboard(_THIS, SDL_Window *window);
++SDL_bool UIKit_IsScreenKeyboardShown(_THIS, SDL_Window *window);
++
+ #endif
+ 
+ @end
+diff --git a/src/video/uikit/SDL_uikitview.m b/src/video/uikit/SDL_uikitview.m
+old mode 100755
+new mode 100644
+index d15aaaa..254a961
+--- a/src/video/uikit/SDL_uikitview.m
++++ b/src/video/uikit/SDL_uikitview.m
+@@ -22,17 +22,17 @@
+ 
+ #if SDL_VIDEO_DRIVER_UIKIT
+ 
+-#import "SDL_uikitview.h"
++#include "SDL_uikitview.h"
+ 
+ #include "../../events/SDL_keyboard_c.h"
+ #include "../../events/SDL_mouse_c.h"
+ #include "../../events/SDL_touch_c.h"
+ 
+ #if SDL_IPHONE_KEYBOARD
+-#import "keyinfotable.h"
+-#import "SDL_uikitappdelegate.h"
+-#import "SDL_uikitkeyboard.h"
+-#import "SDL_uikitwindow.h"
++#include "keyinfotable.h"
++#include "SDL_uikitappdelegate.h"
++#include "SDL_uikitmodes.h"
++#include "SDL_uikitwindow.h"
+ #endif
+ 
+ @implementation SDL_uikitview
+@@ -50,7 +50,6 @@
+     [self initializeKeyboard];
+ #endif
+ 
+-#ifdef FIXED_MULTITOUCH
+     self.multipleTouchEnabled = YES;
+ 
+     SDL_Touch touch;
+@@ -69,22 +68,29 @@
+     touch.pressure_max = 1;
+     touch.native_pressureres = touch.pressure_max - touch.pressure_min;
+ 
+-
+     touchId = SDL_AddTouch(&touch, "IPHONE SCREEN");
+-#endif
+ 
+     return self;
+ 
+ }
+ 
+-- (CGPoint)touchLocation:(UITouch *)touch
++- (CGPoint)touchLocation:(UITouch *)touch shouldNormalize:(BOOL)normalize
+ {
+     CGPoint point = [touch locationInView: self];
+-    CGRect frame = [self frame];
+ 
+-    frame = CGRectApplyAffineTransform(frame, [self transform]);
+-    point.x /= frame.size.width;
+-    point.y /= frame.size.height;
++    // Get the display scale and apply that to the input coordinates
++    SDL_Window *window = self->viewcontroller.window;
++    SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
++    SDL_DisplayModeData *displaymodedata = (SDL_DisplayModeData *) display->current_mode.driverdata;
++    
++    if (normalize) {
++        CGRect bounds = [self bounds];
++        point.x /= bounds.size.width;
++        point.y /= bounds.size.height;
++    } else {
++        point.x *= displaymodedata->scale;
++        point.y *= displaymodedata->scale;
++    }
+     return point;
+ }
+ 
+@@ -93,25 +99,25 @@
+     NSEnumerator *enumerator = [touches objectEnumerator];
+     UITouch *touch = (UITouch*)[enumerator nextObject];
+ 
+-    if (touch) {
+-        CGPoint locationInView = [touch locationInView: self];
++    while (touch) {
++        if (!leftFingerDown) {
++            CGPoint locationInView = [self touchLocation:touch shouldNormalize:NO];
+ 
+-        /* send moved event */
+-        SDL_SendMouseMotion(NULL, 0, locationInView.x, locationInView.y);
++            /* send moved event */
++            SDL_SendMouseMotion(NULL, 0, locationInView.x, locationInView.y);
+ 
+-        /* send mouse down event */
+-        SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_LEFT);
+-    }
++            /* send mouse down event */
++            SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_LEFT);
+ 
+-#ifdef FIXED_MULTITOUCH
+-    while(touch) {
+-        CGPoint locationInView = [self touchLocation:touch];
++            leftFingerDown = (SDL_FingerID)touch;
++        }
+ 
++        CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
+ #ifdef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+-        //FIXME: TODO: Using touch as the fingerId is potentially dangerous
+-        //It is also much more efficient than storing the UITouch pointer
+-        //and comparing it to the incoming event.
+-        SDL_SendFingerDown(touchId, (long)touch,
++        // FIXME: TODO: Using touch as the fingerId is potentially dangerous
++        // It is also much more efficient than storing the UITouch pointer
++        // and comparing it to the incoming event.
++        SDL_SendFingerDown(touchId, (SDL_FingerID)touch,
+                            SDL_TRUE, locationInView.x, locationInView.y,
+                            1);
+ #else
+@@ -126,10 +132,8 @@
+             }
+         }
+ #endif
+-
+         touch = (UITouch*)[enumerator nextObject];
+     }
+-#endif
+ }
+ 
+ - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+@@ -137,15 +141,14 @@
+     NSEnumerator *enumerator = [touches objectEnumerator];
+     UITouch *touch = (UITouch*)[enumerator nextObject];
+ 
+-    if (touch) {
+-        /* send mouse up */
+-        SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
+-    }
+-
+-#ifdef FIXED_MULTITOUCH
+     while(touch) {
+-        CGPoint locationInView = [self touchLocation:touch];
++        if ((SDL_FingerID)touch == leftFingerDown) {
++            /* send mouse up */
++            SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++            leftFingerDown = 0;
++        }
+ 
++        CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
+ #ifdef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+         SDL_SendFingerDown(touchId, (long)touch,
+                            SDL_FALSE, locationInView.x, locationInView.y,
+@@ -162,10 +165,8 @@
+             }
+         }
+ #endif
+-
+         touch = (UITouch*)[enumerator nextObject];
+     }
+-#endif
+ }
+ 
+ - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+@@ -183,17 +184,15 @@
+     NSEnumerator *enumerator = [touches objectEnumerator];
+     UITouch *touch = (UITouch*)[enumerator nextObject];
+ 
+-    if (touch) {
+-        CGPoint locationInView = [touch locationInView: self];
+-
+-        /* send moved event */
+-        SDL_SendMouseMotion(NULL, 0, locationInView.x, locationInView.y);
+-    }
++    while (touch) {
++        if ((SDL_FingerID)touch == leftFingerDown) {
++            CGPoint locationInView = [self touchLocation:touch shouldNormalize:NO];
+ 
+-#ifdef FIXED_MULTITOUCH
+-    while(touch) {
+-        CGPoint locationInView = [self touchLocation:touch];
++            /* send moved event */
++            SDL_SendMouseMotion(NULL, 0, locationInView.x, locationInView.y);
++        }
+ 
++        CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
+ #ifdef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+         SDL_SendTouchMotion(touchId, (long)touch,
+                             SDL_FALSE, locationInView.x, locationInView.y,
+@@ -209,10 +208,8 @@
+             }
+         }
+ #endif
+-
+         touch = (UITouch*)[enumerator nextObject];
+     }
+-#endif
+ }
+ 
+ /*
+@@ -316,7 +313,7 @@
+ {
+     SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_RETURN);
+     SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RETURN);
+-    [self hideKeyboard];
++    SDL_StopTextInput();
+     return YES;
+ }
+ 
+@@ -344,79 +341,35 @@ static SDL_uikitview * getWindowView(SDL_Window * window)
+     return view;
+ }
+ 
+-int SDL_iPhoneKeyboardShow(SDL_Window * window)
++SDL_bool UIKit_HasScreenKeyboardSupport(_THIS)
+ {
+-    SDL_uikitview *view = getWindowView(window);
+-    if (view == nil) {
+-        return -1;
+-    }
+-
+-    [view showKeyboard];
+-    return 0;
++    return SDL_TRUE;
+ }
+ 
+-int SDL_iPhoneKeyboardHide(SDL_Window * window)
++void UIKit_ShowScreenKeyboard(_THIS, SDL_Window *window)
+ {
+     SDL_uikitview *view = getWindowView(window);
+-    if (view == nil) {
+-        return -1;
++    if (view != nil) {
++        [view showKeyboard];
+     }
+-
+-    [view hideKeyboard];
+-    return 0;
+ }
+ 
+-SDL_bool SDL_iPhoneKeyboardIsShown(SDL_Window * window)
++void UIKit_HideScreenKeyboard(_THIS, SDL_Window *window)
+ {
+     SDL_uikitview *view = getWindowView(window);
+-    if (view == nil) {
+-        return 0;
++    if (view != nil) {
++        [view hideKeyboard];
+     }
+-
+-    return view.keyboardVisible;
+ }
+ 
+-int SDL_iPhoneKeyboardToggle(SDL_Window * window)
++SDL_bool UIKit_IsScreenKeyboardShown(_THIS, SDL_Window *window)
+ {
+     SDL_uikitview *view = getWindowView(window);
+     if (view == nil) {
+-        return -1;
+-    }
+-
+-    if (SDL_iPhoneKeyboardIsShown(window)) {
+-        SDL_iPhoneKeyboardHide(window);
+-    }
+-    else {
+-        SDL_iPhoneKeyboardShow(window);
++        return 0;
+     }
+-    return 0;
+-}
+-
+-#else
+ 
+-/* stubs, used if compiled without keyboard support */
+-
+-int SDL_iPhoneKeyboardShow(SDL_Window * window)
+-{
+-    SDL_SetError("Not compiled with keyboard support");
+-    return -1;
+-}
+-
+-int SDL_iPhoneKeyboardHide(SDL_Window * window)
+-{
+-    SDL_SetError("Not compiled with keyboard support");
+-    return -1;
+-}
+-
+-SDL_bool SDL_iPhoneKeyboardIsShown(SDL_Window * window)
+-{
+-    return 0;
+-}
+-
+-int SDL_iPhoneKeyboardToggle(SDL_Window * window)
+-{
+-    SDL_SetError("Not compiled with keyboard support");
+-    return -1;
++    return view.keyboardVisible;
+ }
+ 
+ #endif /* SDL_IPHONE_KEYBOARD */
+diff --git a/src/video/uikit/SDL_uikitviewcontroller.h b/src/video/uikit/SDL_uikitviewcontroller.h
+old mode 100755
+new mode 100644
+index d5551ed..2c4ea7e
+--- a/src/video/uikit/SDL_uikitviewcontroller.h
++++ b/src/video/uikit/SDL_uikitviewcontroller.h
+@@ -31,8 +31,9 @@
+ @property (readwrite) SDL_Window *window;
+ 
+ - (id)initWithSDLWindow:(SDL_Window *)_window;
+-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orient;
+ - (void)loadView;
+-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation;
++- (void)viewDidLayoutSubviews;
++- (NSUInteger)supportedInterfaceOrientations;
++- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orient;
+ 
+ @end
+diff --git a/src/video/uikit/SDL_uikitviewcontroller.m b/src/video/uikit/SDL_uikitviewcontroller.m
+old mode 100755
+new mode 100644
+index 6e43537..3b8cb65
+--- a/src/video/uikit/SDL_uikitviewcontroller.m
++++ b/src/video/uikit/SDL_uikitviewcontroller.m
+@@ -28,9 +28,11 @@
+ #include "../SDL_sysvideo.h"
+ #include "../../events/SDL_events_c.h"
+ 
+-#include "SDL_uikitwindow.h"
+ #include "SDL_uikitviewcontroller.h"
+ #include "SDL_uikitvideo.h"
++#include "SDL_uikitmodes.h"
++#include "SDL_uikitwindow.h"
++
+ 
+ @implementation SDL_uikitviewcontroller
+ 
+@@ -43,11 +45,35 @@
+         return nil;
+     }
+     self.window = _window;
++
+     return self;
+ }
+ 
+-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orient
++- (void)loadView
+ {
++    // do nothing.
++}
++
++- (void)viewDidLayoutSubviews
++{
++    if (self->window->flags & SDL_WINDOW_RESIZABLE) {
++        SDL_WindowData *data = self->window->driverdata;
++        SDL_VideoDisplay *display = SDL_GetDisplayForWindow(self->window);
++        SDL_DisplayModeData *displaymodedata = (SDL_DisplayModeData *) display->current_mode.driverdata;
++        const CGSize size = data->view.bounds.size;
++        int w, h;
++        
++        w = (int)(size.width * displaymodedata->scale);
++        h = (int)(size.height * displaymodedata->scale);
++        
++        SDL_SendWindowEvent(self->window, SDL_WINDOWEVENT_RESIZED, w, h);
++    }
++}
++
++- (NSUInteger)supportedInterfaceOrientations
++{
++    NSUInteger orientationMask = 0;
++    
+     const char *orientationsCString;
+     if ((orientationsCString = SDL_GetHint(SDL_HINT_ORIENTATIONS)) != NULL) {
+         BOOL rotate = NO;
+@@ -55,98 +81,46 @@
+                                                             encoding:NSUTF8StringEncoding];
+         NSArray *orientations = [orientationsNSString componentsSeparatedByCharactersInSet:
+                                  [NSCharacterSet characterSetWithCharactersInString:@" "]];
+-
+-        switch (orient) {
+-            case UIInterfaceOrientationLandscapeLeft:
+-                rotate = [orientations containsObject:@"LandscapeLeft"];
+-                break;
+-
+-            case UIInterfaceOrientationLandscapeRight:
+-                rotate = [orientations containsObject:@"LandscapeRight"];
+-                break;
+-
+-            case UIInterfaceOrientationPortrait:
+-                rotate = [orientations containsObject:@"Portrait"];
+-                break;
+-
+-            case UIInterfaceOrientationPortraitUpsideDown:
+-                rotate = [orientations containsObject:@"PortraitUpsideDown"];
+-                break;
+-
+-            default: break;
++        
++        if ([orientations containsObject:@"LandscapeLeft"]) {
++            orientationMask |= UIInterfaceOrientationMaskLandscapeLeft;
++        }
++        if ([orientations containsObject:@"LandscapeRight"]) {
++            orientationMask |= UIInterfaceOrientationMaskLandscapeRight;
++        }
++        if ([orientations containsObject:@"Portrait"]) {
++            orientationMask |= UIInterfaceOrientationMaskPortrait;
++        }
++        if ([orientations containsObject:@"PortraitUpsideDown"]) {
++            orientationMask |= UIInterfaceOrientationMaskPortraitUpsideDown;
++        }
++        
++    } else if (self->window->flags & SDL_WINDOW_RESIZABLE) {
++        orientationMask = UIInterfaceOrientationMaskAll;  // any orientation is okay.
++    } else {
++        if (self->window->w >= self->window->h) {
++            orientationMask |= UIInterfaceOrientationMaskLandscape;
++        }
++        if (self->window->h >= self->window->w) {
++            orientationMask |= (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
+         }
+-
+-        return rotate;
+-    }
+-
+-    if (self->window->flags & SDL_WINDOW_RESIZABLE) {
+-        return YES;  // any orientation is okay.
+     }
+-
+-    // If not resizable, allow device to orient to other matching sizes
+-    //  (that is, let the user turn the device upside down...same screen
+-    //   dimensions, but it lets the user place the device where it's most
+-    //   comfortable in relation to its physical buttons, headphone jack, etc).
+-    switch (orient) {
+-        case UIInterfaceOrientationLandscapeLeft:
+-        case UIInterfaceOrientationLandscapeRight:
+-            return (self->window->w >= self->window->h);
+-
+-        case UIInterfaceOrientationPortrait:
+-        case UIInterfaceOrientationPortraitUpsideDown:
+-            return (self->window->h >= self->window->w);
+-
+-        default: break;
++    
++    // Don't allow upside-down orientation on the phone, so answering calls is in the natural orientation
++    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
++        orientationMask &= ~UIInterfaceOrientationMaskPortraitUpsideDown;
+     }
+-
+-    return NO;  // Nothing else is acceptable.
++    return orientationMask;
+ }
+ 
+-- (void)loadView
++- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orient
+ {
+-    // do nothing.
++    NSUInteger orientationMask = [self supportedInterfaceOrientations];
++    return (orientationMask & (1 << orient));
+ }
+ 
+-// Send a resized event when the orientation changes.
+-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+-{
+-    const UIInterfaceOrientation toInterfaceOrientation = [self interfaceOrientation];
+-    SDL_WindowData *data = self->window->driverdata;
+-    UIWindow *uiwindow = data->uiwindow;
+-    UIScreen *uiscreen;
+-    if (SDL_UIKit_supports_multiple_displays)
+-        uiscreen = [uiwindow screen];
+-    else
+-        uiscreen = [UIScreen mainScreen];
+-    const int noborder = (self->window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS));
+-    CGRect frame = noborder ? [uiscreen bounds] : [uiscreen applicationFrame];
+-    const CGSize size = frame.size;
+-    int w, h;
+-
+-    switch (toInterfaceOrientation) {
+-        case UIInterfaceOrientationPortrait:
+-        case UIInterfaceOrientationPortraitUpsideDown:
+-            w = (size.width < size.height) ? size.width : size.height;
+-            h = (size.width > size.height) ? size.width : size.height;
+-            break;
+-
+-        case UIInterfaceOrientationLandscapeLeft:
+-        case UIInterfaceOrientationLandscapeRight:
+-            w = (size.width > size.height) ? size.width : size.height;
+-            h = (size.width < size.height) ? size.width : size.height;
+-            break;
+-
+-        default:
+-            SDL_assert(0 && "Unexpected interface orientation!");
+-            return;
+-    }
+-
+-    [uiwindow setFrame:frame];
+-    [data->view setFrame:frame];
+-    [data->view updateFrame];
+-    SDL_SendWindowEvent(self->window, SDL_WINDOWEVENT_RESIZED, w, h);
+-}
++@end
+ 
+ #endif /* SDL_VIDEO_DRIVER_UIKIT */
+ 
+-@end
++/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/SDL_uikitwindow.h b/src/video/uikit/SDL_uikitwindow.h
+old mode 100755
+new mode 100644
+index c8c7a17..9254434
+--- a/src/video/uikit/SDL_uikitwindow.h
++++ b/src/video/uikit/SDL_uikitwindow.h
+@@ -22,12 +22,16 @@
+ #define _SDL_uikitwindow_h
+ 
+ #include "../SDL_sysvideo.h"
++#import "SDL_uikitvideo.h"
+ #import "SDL_uikitopenglview.h"
+ #import "SDL_uikitviewcontroller.h"
+ 
+ typedef struct SDL_WindowData SDL_WindowData;
+ 
+ extern int UIKit_CreateWindow(_THIS, SDL_Window * window);
++extern void UIKit_ShowWindow(_THIS, SDL_Window * window);
++extern void UIKit_HideWindow(_THIS, SDL_Window * window);
++extern void UIKit_RaiseWindow(_THIS, SDL_Window * window);
+ extern void UIKit_SetWindowFullscreen(_THIS, SDL_Window * window, SDL_VideoDisplay * display, SDL_bool fullscreen);
+ extern void UIKit_DestroyWindow(_THIS, SDL_Window * window);
+ extern SDL_bool UIKit_GetWindowWMInfo(_THIS, SDL_Window * window,
+diff --git a/src/video/uikit/SDL_uikitwindow.m b/src/video/uikit/SDL_uikitwindow.m
+old mode 100755
+new mode 100644
+index 04d7742..ec0beda
+--- a/src/video/uikit/SDL_uikitwindow.m
++++ b/src/video/uikit/SDL_uikitwindow.m
+@@ -33,6 +33,7 @@
+ 
+ #include "SDL_uikitvideo.h"
+ #include "SDL_uikitevents.h"
++#include "SDL_uikitmodes.h"
+ #include "SDL_uikitwindow.h"
+ #import "SDL_uikitappdelegate.h"
+ 
+@@ -46,7 +47,8 @@
+ static int SetupWindowData(_THIS, SDL_Window *window, UIWindow *uiwindow, SDL_bool created)
+ {
+     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
+-    UIScreen *uiscreen = (UIScreen *) display->driverdata;
++    SDL_DisplayModeData *displaymodedata = (SDL_DisplayModeData *) display->current_mode.driverdata;
++    SDL_DisplayData *displaydata = (SDL_DisplayData *) display->driverdata;
+     SDL_WindowData *data;
+ 
+     /* Allocate the window data */
+@@ -64,64 +66,58 @@ static int SetupWindowData(_THIS, SDL_Window *window, UIWindow *uiwindow, SDL_bo
+         window->x = 0;
+         window->y = 0;
+ 
+-        /* We can pick either width or height here and we'll rotate the
+-           screen to match, so we pick the closest to what we wanted.
+-         */
+-        if (window->w >= window->h) {
+-            if (uiwindow.frame.size.width > uiwindow.frame.size.height) {
+-                window->w = (int)uiwindow.frame.size.width;
+-                window->h = (int)uiwindow.frame.size.height;
+-            } else {
+-                window->w = (int)uiwindow.frame.size.height;
+-                window->h = (int)uiwindow.frame.size.width;
+-            }
++        CGRect bounds;
++        if (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS)) {
++            bounds = [displaydata->uiscreen bounds];
+         } else {
+-            if (uiwindow.frame.size.width > uiwindow.frame.size.height) {
+-                window->w = (int)uiwindow.frame.size.height;
+-                window->h = (int)uiwindow.frame.size.width;
+-            } else {
+-                window->w = (int)uiwindow.frame.size.width;
+-                window->h = (int)uiwindow.frame.size.height;
+-            }
++            bounds = [displaydata->uiscreen applicationFrame];
++        }
++
++        /* Get frame dimensions in pixels */
++        int width = (int)(bounds.size.width * displaymodedata->scale);
++        int height = (int)(bounds.size.height * displaymodedata->scale);
++
++        // Make sure the width/height are oriented correctly
++        if (UIKit_IsDisplayLandscape(displaydata->uiscreen) != (width > height)) {
++            int temp = width;
++            width = height;
++            height = temp;
+         }
++
++        window->w = width;
++        window->h = height;
+     }
+ 
+     window->driverdata = data;
+ 
+-    window->flags |= SDL_WINDOW_SHOWN;            /* only one window on iOS, always shown */
++    /* only one window on iOS, always shown */
++    window->flags &= ~SDL_WINDOW_HIDDEN;
+ 
+     // SDL_WINDOW_BORDERLESS controls whether status bar is hidden.
+     // This is only set if the window is on the main screen. Other screens
+     //  just force the window to have the borderless flag.
+-    if ([UIScreen mainScreen] != uiscreen) {
+-        window->flags &= ~SDL_WINDOW_RESIZABLE;  // window is NEVER resizeable
+-        window->flags &= ~SDL_WINDOW_INPUT_FOCUS;  // never has input focus
+-        window->flags |= SDL_WINDOW_BORDERLESS;  // never has a status bar.
+-    } else {
++    if (displaydata->uiscreen == [UIScreen mainScreen]) {
+         window->flags |= SDL_WINDOW_INPUT_FOCUS;  // always has input focus
+-
+-        if (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS)) {
+-            [UIApplication sharedApplication].statusBarHidden = YES;
++        
++        if ([UIApplication sharedApplication].statusBarHidden) {
++            window->flags |= SDL_WINDOW_BORDERLESS;
+         } else {
+-            [UIApplication sharedApplication].statusBarHidden = NO;
++            window->flags &= ~SDL_WINDOW_BORDERLESS;
+         }
+-
+-        //const UIDeviceOrientation o = [[UIDevice currentDevice] orientation];
+-        //const BOOL landscape = (o == UIDeviceOrientationLandscapeLeft) ||
+-        //                           (o == UIDeviceOrientationLandscapeRight);
+-        //const BOOL rotate = ( ((window->w > window->h) && (!landscape)) ||
+-        //                      ((window->w < window->h) && (landscape)) );
+-
+-        // The View Controller will handle rotating the view when the
+-        //  device orientation changes. This will trigger resize events, if
+-        //  appropriate.
+-        SDL_uikitviewcontroller *controller;
+-        controller = [SDL_uikitviewcontroller alloc];
+-        data->viewcontroller = [controller initWithSDLWindow:window];
+-        [data->viewcontroller setTitle:@"SDL App"];  // !!! FIXME: hook up SDL_SetWindowTitle()
+-        // !!! FIXME: if (rotate), force a "resize" right at the start
++    } else {
++        window->flags &= ~SDL_WINDOW_RESIZABLE;  // window is NEVER resizeable
++        window->flags &= ~SDL_WINDOW_INPUT_FOCUS;  // never has input focus
++        window->flags |= SDL_WINDOW_BORDERLESS;  // never has a status bar.
+     }
+ 
++    // The View Controller will handle rotating the view when the
++    //  device orientation changes. This will trigger resize events, if
++    //  appropriate.
++    SDL_uikitviewcontroller *controller;
++    controller = [SDL_uikitviewcontroller alloc];
++    data->viewcontroller = [controller initWithSDLWindow:window];
++    [data->viewcontroller setTitle:@"SDL App"];  // !!! FIXME: hook up SDL_SetWindowTitle()
++
+     return 0;
+ }
+ 
+@@ -129,8 +125,8 @@ int
+ UIKit_CreateWindow(_THIS, SDL_Window *window)
+ {
+     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
+-    UIScreen *uiscreen = (UIScreen *) display->driverdata;
+-    const BOOL external = ([UIScreen mainScreen] != uiscreen);
++    SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
++    const BOOL external = ([UIScreen mainScreen] != data->uiscreen);
+ 
+     // SDL currently puts this window at the start of display's linked list. We rely on this.
+     SDL_assert(_this->windows == window);
+@@ -141,18 +137,11 @@ UIKit_CreateWindow(_THIS, SDL_Window *window)
+         return -1;
+     }
+ 
+-    // Non-mainscreen windows must be force to borderless, as there's no
+-    //  status bar there, and we want to get the right dimensions later in
+-    //  this function.
+-    if (external) {
+-        window->flags |= SDL_WINDOW_BORDERLESS;
+-    }
+-
+     // If monitor has a resolution of 0x0 (hasn't been explicitly set by the
+     //  user, so it's in standby), try to force the display to a resolution
+     //  that most closely matches the desired window size.
+     if (SDL_UIKit_supports_multiple_displays) {
+-        const CGSize origsize = [[uiscreen currentMode] size];
++        const CGSize origsize = [[data->uiscreen currentMode] size];
+         if ((origsize.width == 0.0f) && (origsize.height == 0.0f)) {
+             if (display->num_display_modes == 0) {
+                 _this->GetDisplayModes(_this, display);
+@@ -167,15 +156,33 @@ UIKit_CreateWindow(_THIS, SDL_Window *window)
+             }
+ 
+             if (bestmode) {
+-                UIScreenMode *uimode = (UIScreenMode *) bestmode->driverdata;
+-                [uiscreen setCurrentMode:uimode];
++                SDL_DisplayModeData *modedata = (SDL_DisplayModeData *)bestmode->driverdata;
++                [data->uiscreen setCurrentMode:modedata->uiscreenmode];
+ 
+                 // desktop_mode doesn't change here (the higher level will
+                 //  use it to set all the screens back to their defaults
+                 //  upon window destruction, SDL_Quit(), etc.
+-                [((UIScreenMode *) display->current_mode.driverdata) release];
+                 display->current_mode = *bestmode;
+-                [((UIScreenMode *) display->current_mode.driverdata) retain];
++            }
++        }
++    }
++    
++    if (data->uiscreen == [UIScreen mainScreen]) {
++        if (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS)) {
++            [UIApplication sharedApplication].statusBarHidden = YES;
++        } else {
++            [UIApplication sharedApplication].statusBarHidden = NO;
++        }
++    }
++    
++    if (!(window->flags & SDL_WINDOW_RESIZABLE)) {
++        if (window->w > window->h) {
++            if (!UIKit_IsDisplayLandscape(data->uiscreen)) {
++                [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:NO];
++            }
++        } else if (window->w < window->h) {
++            if (UIKit_IsDisplayLandscape(data->uiscreen)) {
++                [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait animated:NO];
+             }
+         }
+     }
+@@ -183,17 +190,14 @@ UIKit_CreateWindow(_THIS, SDL_Window *window)
+     /* ignore the size user requested, and make a fullscreen window */
+     // !!! FIXME: can we have a smaller view?
+     UIWindow *uiwindow = [UIWindow alloc];
+-    if (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_BORDERLESS))
+-        uiwindow = [uiwindow initWithFrame:[uiscreen bounds]];
+-    else
+-        uiwindow = [uiwindow initWithFrame:[uiscreen applicationFrame]];
++    uiwindow = [uiwindow initWithFrame:[data->uiscreen bounds]];
+ 
+     // put the window on an external display if appropriate. This implicitly
+     //  does [uiwindow setframe:[uiscreen bounds]], so don't do it on the
+     //  main display, where we land by default, as that would eat the
+     //  status bar real estate.
+     if (external) {
+-        [uiwindow setScreen:uiscreen];
++        [uiwindow setScreen:data->uiscreen];
+     }
+ 
+     if (SetupWindowData(_this, window, uiwindow, SDL_TRUE) < 0) {
+@@ -206,37 +210,73 @@ UIKit_CreateWindow(_THIS, SDL_Window *window)
+ }
+ 
+ void
++UIKit_ShowWindow(_THIS, SDL_Window * window)
++{
++    UIWindow *uiwindow = ((SDL_WindowData *) window->driverdata)->uiwindow;
++
++    [uiwindow makeKeyAndVisible];
++}
++
++void
++UIKit_HideWindow(_THIS, SDL_Window * window)
++{
++    UIWindow *uiwindow = ((SDL_WindowData *) window->driverdata)->uiwindow;
++
++    uiwindow.hidden = YES;
++}
++
++void
++UIKit_RaiseWindow(_THIS, SDL_Window * window)
++{
++    // We don't currently offer a concept of "raising" the SDL window, since
++    //  we only allow one per display, in the iOS fashion.
++    // However, we use this entry point to rebind the context to the view
++    //  during OnWindowRestored processing.
++    _this->GL_MakeCurrent(_this, _this->current_glwin, _this->current_glctx);
++}
++
++void
+ UIKit_SetWindowFullscreen(_THIS, SDL_Window * window, SDL_VideoDisplay * display, SDL_bool fullscreen)
+ {
+-    UIScreen *uiscreen = (UIScreen *) display->driverdata;
++    SDL_DisplayData *displaydata = (SDL_DisplayData *) display->driverdata;
++    SDL_DisplayModeData *displaymodedata = (SDL_DisplayModeData *) display->current_mode.driverdata;
+     UIWindow *uiwindow = ((SDL_WindowData *) window->driverdata)->uiwindow;
+ 
+     if (fullscreen) {
+         [UIApplication sharedApplication].statusBarHidden = YES;
+-        uiwindow.frame = [uiscreen bounds];
+     } else {
+         [UIApplication sharedApplication].statusBarHidden = NO;
+-        uiwindow.frame = [uiscreen applicationFrame];
+     }
+ 
++    CGRect bounds;
++    if (fullscreen) {
++        bounds = [displaydata->uiscreen bounds];
++    } else {
++        bounds = [displaydata->uiscreen applicationFrame];
++    }
++
++    /* Get frame dimensions in pixels */
++    int width = (int)(bounds.size.width * displaymodedata->scale);
++    int height = (int)(bounds.size.height * displaymodedata->scale);
++
+     /* We can pick either width or height here and we'll rotate the
+        screen to match, so we pick the closest to what we wanted.
+      */
+     if (window->w >= window->h) {
+-        if (uiwindow.frame.size.width > uiwindow.frame.size.height) {
+-            window->w = (int)uiwindow.frame.size.width;
+-            window->h = (int)uiwindow.frame.size.height;
++        if (width > height) {
++            window->w = width;
++            window->h = height;
+         } else {
+-            window->w = (int)uiwindow.frame.size.height;
+-            window->h = (int)uiwindow.frame.size.width;
++            window->w = height;
++            window->h = width;
+         }
+     } else {
+-        if (uiwindow.frame.size.width > uiwindow.frame.size.height) {
+-            window->w = (int)uiwindow.frame.size.height;
+-            window->h = (int)uiwindow.frame.size.width;
++        if (width > height) {
++            window->w = height;
++            window->h = width;
+         } else {
+-            window->w = (int)uiwindow.frame.size.width;
+-            window->h = (int)uiwindow.frame.size.height;
++            window->w = width;
++            window->h = height;
+         }
+     }
+ }
+@@ -269,6 +309,20 @@ UIKit_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info)
+     }
+ }
+ 
++int
++SDL_iPhoneSetAnimationCallback(SDL_Window * window, int interval, void (*callback)(void*), void *callbackParam)
++{
++    SDL_WindowData *data = window ? (SDL_WindowData *)window->driverdata : NULL;
++
++    if (!data || !data->view) {
++        SDL_SetError("Invalid window or view not set");
++        return -1;
++    }
++
++    [data->view setAnimationCallback:interval callback:callback callbackParam:callbackParam];
++    return 0;
++}
++
+ #endif /* SDL_VIDEO_DRIVER_UIKIT */
+ 
+ /* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/video/uikit/keyinfotable.h b/src/video/uikit/keyinfotable.h
+old mode 100755
+new mode 100644
