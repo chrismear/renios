@@ -373,3 +373,38 @@ index 380da14..575404b 100644
  
          frametime = 1000.0 / framerate
  
+diff --git a/renpy/gl/gldraw.pyx b/renpy/gl/gldraw.pyx
+index 277e78f..880a269 100644
+--- a/renpy/gl/gldraw.pyx
++++ b/renpy/gl/gldraw.pyx
+@@ -146,6 +146,8 @@ cdef class GLDraw:
+         can. It returns True if it was succesful, or False if OpenGL isn't
+         working for some reason.
+         """
++
++        print "In GLDraw.set_mode()"
+         
+         cdef char *egl_error
+         
+@@ -186,7 +188,7 @@ cdef class GLDraw:
+         pwidth = max(vwidth / 2, pwidth)
+         pheight = max(vheight / 2, pheight)
+ 
+-        if renpy.android:
++        if renpy.android or renpy.ios:
+             pheight = self.display_info.current_h
+             pwidth = self.display_info.current_w
+         else:
+diff --git a/renpy/log.py b/renpy/log.py
+index 611abfe..bb5edca 100644
+--- a/renpy/log.py
++++ b/renpy/log.py
+@@ -79,7 +79,7 @@ class LogFile(object):
+             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
+             
+         
+-            if renpy.android:
++            if renpy.android or renpy.ios:
+                 print "Logging to", fn
+ 
+             if self.append:
