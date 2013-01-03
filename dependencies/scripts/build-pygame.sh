@@ -34,13 +34,14 @@ HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
 
 echo 'Configuring pygame source'
 export RENIOS_IOS=1
-$HOSTPYTHON config.py
+try $HOSTPYTHON config.py
 
 echo 'Building pygame'
 try $HOSTPYTHON setup.py build_ext -g
 rm -rdf iosbuild
 try $HOSTPYTHON setup.py install --root iosbuild
 
+rm -rf $BUILDROOT/lib/libpygame.a
 bd=$TMPROOT/pygame-${PYGAME_VERSION}release/build/lib.macosx-*/pygame
 try $RENIOSDEPROOT/scripts/biglink $BUILDROOT/lib/libpygame.a $bd
 deduplicate $BUILDROOT/lib/libpygame.a
