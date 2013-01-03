@@ -19,7 +19,7 @@ try pushd $TMPROOT/renpy-$RENPY_VERSION-sdk
 
 # Patch
 echo 'Patching RenPy SDK'
-try patch -p1 < $RENIOSDEPROOT/patches/renpy/renpy-$RENPY_VERSION-ios.patch
+try patch -p1 < $RENIOSDEPROOT/patches/renpy/renpy-$RENPY_VERSION-sdl2-ios.patch
 
 # Set environment variables for Python module cross-compile
 OLD_CC="$CC"
@@ -35,14 +35,23 @@ HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
 
 pushd module
 export RENIOS_IOS=1
-$HOSTPYTHON setup.py build_ext -g
+try $HOSTPYTHON setup.py build_ext -g
 
 rm -rdf iosbuild
-$HOSTPYTHON setup.py install --root iosbuild
+try $HOSTPYTHON setup.py install --root iosbuild
 
 bd=$TMPROOT/renpy-${RENPY_VERSION}-sdk/module/build/lib.macosx-*
 try $RENIOSDEPROOT/scripts/biglink $BUILDROOT/lib/librenpy.a $bd $bd/pysdlsound $bd/renpy/display $bd/renpy/gl $bd/renpy/text
 deduplicate $BUILDROOT/lib/librenpy.a
+
+# Copy stub *.so files into site-packages, so Python interpreter knows these modules exist.
+rm -rdf "$BUILDROOT/python/lib/python2.7/site-packages/pysdlsound"
+rm -rdf "$BUILDROOT/python/lib/python2.7/site-packages/renpy"
+# Copy to python for iOS installation
+try cp $TMPROOT/renpy-${RENPY_VERSION}-sdk/module/iosbuild/usr/local/lib/python2.7/site-packages/*.so "$BUILDROOT/python/lib/python2.7/site-packages"
+try cp -R "$TMPROOT/renpy-${RENPY_VERSION}-sdk/module/iosbuild/usr/local/lib/python2.7/site-packages/pysdlsound" "$BUILDROOT/python/lib/python2.7/site-packages"
+try cp -R "$TMPROOT/renpy-${RENPY_VERSION}-sdk/module/iosbuild/usr/local/lib/python2.7/site-packages/renpy" "$BUILDROOT/python/lib/python2.7/site-packages"
+
 
 # # Strip away the large stuff
 # # find iosbuild/ | grep -E '*\.(py|pyc|so\.o|so\.a|so\.libs)$$' | xargs rm
