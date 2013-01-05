@@ -2339,7 +2339,7 @@ index 0000000..0b86762
 +
 +/* vi: set ts=4 sw=4 expandtab: */
 diff --git a/src/audio/coreaudio/SDL_coreaudio.c b/src/audio/coreaudio/SDL_coreaudio.c
-index 1747bb2..beb2b3c 100644
+index 1747bb2..0ffcf3e 100644
 --- a/src/audio/coreaudio/SDL_coreaudio.c
 +++ b/src/audio/coreaudio/SDL_coreaudio.c
 @@ -25,7 +25,7 @@
@@ -2351,6 +2351,29 @@ index 1747bb2..beb2b3c 100644
  
  static void COREAUDIO_CloseDevice(_THIS);
  
+@@ -273,12 +273,14 @@ outputCallback(void *inRefCon,
+        SDL_assert(this->spec.channels == ioData->mNumberChannels);
+      */
+ 
++
+     for (i = 0; i < ioData->mNumberBuffers; i++) {
+         abuf = &ioData->mBuffers[i];
+         remaining = abuf->mDataByteSize;
+         ptr = abuf->mData;
+         while (remaining > 0) {
+             if (this->hidden->bufferOffset >= this->hidden->bufferSize) {
++                SDL_memset(this->hidden->buffer, this->spec.silence, this->hidden->bufferSize);
+                 /* Generate the data */
+                 SDL_mutexP(this->mixer_lock);
+                 (*this->spec.callback)(this->spec.userdata,
+@@ -445,6 +447,7 @@ prepare_audiounit(_THIS, const char *devname, int iscapture,
+     /* Allocate a sample buffer */
+     this->hidden->bufferOffset = this->hidden->bufferSize = this->spec.size;
+     this->hidden->buffer = SDL_malloc(this->hidden->bufferSize);
++    SDL_memset(this->hidden->buffer, 0, this->hidden->bufferSize);
+ 
+     result = AudioUnitInitialize(this->hidden->audioUnit);
+     CHECK_RESULT("AudioUnitInitialize");
 diff --git a/src/video/SDL_surface.c b/src/video/SDL_surface.c
 index 7788d67..75f8708 100644
 --- a/src/video/SDL_surface.c
@@ -2391,3 +2414,78 @@ index 7788d67..75f8708 100644
      return status;
  }
  
+diff --git a/src/video/uikit/SDL_uikitappdelegate.m b/src/video/uikit/SDL_uikitappdelegate.m
+index 2d263dd..b31323c 100644
+--- a/src/video/uikit/SDL_uikitappdelegate.m
++++ b/src/video/uikit/SDL_uikitappdelegate.m
+@@ -96,10 +96,13 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+         return nil;
+     }
+ 
++    NSLog(@"Setting up SDL_splashviewcontroller");
++
+     self->splash = [[UIImageView alloc] init];
+     [self setView:self->splash];
+ 
+     CGSize size = [UIScreen mainScreen].bounds.size;
++    NSLog(@"[UIScreen mainScreen].bounds.size: %f x %f", size.width, size.height);
+     float height = SDL_max(size.width, size.height);
+     self->splashPortrait = [UIImage imageNamed:[NSString stringWithFormat:@"Default-%dh.png", (int)height]];
+     if (!self->splashPortrait) {
+@@ -112,9 +115,11 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+                                                      orientation: UIImageOrientationRight];
+     }
+     if (self->splashPortrait) {
++        NSLog(@"retaining splashPortrait");
+         [self->splashPortrait retain];
+     }
+     if (self->splashLandscape) {
++        NSLog(@"retaining splashLandscape");
+         [self->splashLandscape retain];
+     }
+  
+@@ -147,13 +152,23 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+ 
+ - (void)updateSplashImage:(UIInterfaceOrientation)interfaceOrientation
+ {
++    NSLog(@"Updating SDL splash image");
++
+     UIImage *image;
+     
+-    if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+-        image = self->splashLandscape;
+-    } else {
+-        image = self->splashPortrait;
+-    }
++    // if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
++    //     NSLog(@"Setting landscape splash");
++    //     image = self->splashLandscape;
++    // } else {
++    //     NSLog(@"Setting portrait splash");
++    //     image = self->splashPortrait;
++    // }
++
++    /*
++     * During launch, iOS's internal orientation is always portrait.
++     */
++
++    image = self->splashPortrait;
+     if (image)
+     {
+         splash.image = image;
+@@ -209,10 +224,15 @@ static void SDL_IdleTimerDisabledChanged(const char *name, const char *oldValue,
+     /* Keep the launch image up until we set a video mode */
+     launch_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+ 
++    NSLog(@"In SDLUIKitDelegate.didFinishLaunchingWithOptions");
++
+     UIViewController *splashViewController = [[SDL_splashviewcontroller alloc] init];
+     launch_window.rootViewController = splashViewController;
++    NSLog(@"launch_window: %@", launch_window);
++    NSLog(@"rootViewController: %@", launch_window.rootViewController);
+     [launch_window addSubview:splashViewController.view];
+     [launch_window makeKeyAndVisible];
++    NSLog(@"launch_window after making visible: %@", launch_window);
+ 
+     /* Set working directory to resource path */
+     [[NSFileManager defaultManager] changeCurrentDirectoryPath: [[NSBundle mainBundle] resourcePath]];

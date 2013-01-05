@@ -111,19 +111,6 @@ index 0921592..f9b3633 100644
  #if defined RENPY_GLES_2
  
  #include <EGL/egl.h>
-diff --git a/module/pss.c b/module/pss.c
-index ea7d881..7d42c3e 100644
---- a/module/pss.c
-+++ b/module/pss.c
-@@ -1076,7 +1076,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
-     }
- 
-     audio_spec.freq = freq;
--    audio_spec.format = AUDIO_S16SYS;
-+    audio_spec.format = AUDIO_S32SYS;
-     audio_spec.channels = stereo;
-     audio_spec.samples = samples;
-     audio_spec.callback = callback;
 diff --git a/module/rwobject.c b/module/rwobject.c
 index f53d110..f9f85f8 100644
 --- a/module/rwobject.c
@@ -401,8 +388,21 @@ index 91239c9..b94adc4 100644
 +ios = True
      
  # The android init code in renpy.py will set linux=False and android=True.
+diff --git a/renpy/audio/audio.py b/renpy/audio/audio.py
+index 369cfa1..bdc3dba 100644
+--- a/renpy/audio/audio.py
++++ b/renpy/audio/audio.py
+@@ -593,7 +593,7 @@ def init():
+             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
+ 
+         try:
+-            pss.init(renpy.config.sound_sample_rate, 2, bufsize, False)
++            pss.init(renpy.config.sound_sample_rate, 2, bufsize, True)
+             pcm_ok = True
+         except:
+             if renpy.config.debug_sound:
 diff --git a/renpy/display/core.py b/renpy/display/core.py
-index 48102dc..cce6252 100644
+index 48102dc..ed6faf8 100644
 --- a/renpy/display/core.py
 +++ b/renpy/display/core.py
 @@ -58,6 +58,7 @@ REDRAW = pygame.USEREVENT + 7
@@ -435,6 +435,15 @@ index 48102dc..cce6252 100644
  
          # Don't grab the screen.
          pygame.event.set_grab(False)
+@@ -1344,7 +1345,7 @@ class Interface(object):
+                 physical_size = renpy.game.preferences.physical_size
+                 
+         # Setup screen.
+-        fullscreen = renpy.game.preferences.fullscreen
++        fullscreen = True # renpy.game.preferences.fullscreen
+         
+         # If we're in fullscreen mode, and changing to another mode, go to
+         # windowed mode first.
 @@ -1564,7 +1565,7 @@ class Interface(object):
  
          ev = pygame.event.poll()
@@ -466,7 +475,17 @@ index 48102dc..cce6252 100644
  
              android.sound.unpause_all()
              
-@@ -2098,7 +2099,14 @@ class Interface(object):
+@@ -2088,7 +2089,8 @@ class Interface(object):
+             while rv is None:
+ 
+                 # Check for a change in fullscreen preference.                
+-                if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
++                # if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
++                if self.display_reset:
+                     self.set_mode()
+                     needs_redraw = True
+ 
+@@ -2098,7 +2100,14 @@ class Interface(object):
                      
                  # Redraw the screen.
                  if (self.force_redraw or
@@ -482,7 +501,7 @@ index 48102dc..cce6252 100644
                       renpy.display.draw.should_redraw(needs_redraw, first_pass))):
  
                      self.force_redraw = False
-@@ -2141,7 +2149,7 @@ class Interface(object):
+@@ -2141,7 +2150,7 @@ class Interface(object):
                      needs_redraw = False
                      first_pass = False
  
@@ -491,7 +510,7 @@ index 48102dc..cce6252 100644
                      pygame.event.clear([REDRAW])
                      old_redraw_time = None
                      
-@@ -2192,14 +2200,14 @@ class Interface(object):
+@@ -2192,14 +2201,14 @@ class Interface(object):
                              time_left = redraw_time - get_time()
                              time_left = min(time_left, 3600)
                              redraw_in = time_left
@@ -509,7 +528,7 @@ index 48102dc..cce6252 100644
                          ev = None
                      else:
                          time_left = self.timeout_time - get_time() 
-@@ -2209,13 +2217,13 @@ class Interface(object):
+@@ -2209,13 +2218,13 @@ class Interface(object):
                          if time_left < 0:
                              self.timeout_time = None
                              ev = self.time_event
@@ -525,7 +544,7 @@ index 48102dc..cce6252 100644
                                  old_timeout_time = self.timeout_time
  
                      # Handle autosaving, as necessary.
-@@ -2230,7 +2238,7 @@ class Interface(object):
+@@ -2230,7 +2239,7 @@ class Interface(object):
                          else:
                              ev = self.event_wait()
                          
@@ -534,7 +553,7 @@ index 48102dc..cce6252 100644
                          continue
  
                      if renpy.config.profile:
-@@ -2387,8 +2395,8 @@ class Interface(object):
+@@ -2387,8 +2396,8 @@ class Interface(object):
              # We no longer disable periodic between interactions.
              # pygame.time.set_timer(PERIODIC, 0)
  
@@ -580,6 +599,28 @@ index 277e78f..880a269 100644
              pheight = self.display_info.current_h
              pwidth = self.display_info.current_w
          else:
+diff --git a/renpy/loadsave.py b/renpy/loadsave.py
+index 1fbad00..71f2148 100644
+--- a/renpy/loadsave.py
++++ b/renpy/loadsave.py
+@@ -233,6 +233,8 @@ def save(filename, extra_info='',
+     if renpy.config.save_dump:
+         save_dump(roots, renpy.game.log)
+ 
++    print "Ren'Py Trying to save to {}".format(renpy.config.savedir + "/" + filename)
++
+     rf = file(renpy.config.savedir + "/" + filename, "wb")
+     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
+ 
+@@ -354,6 +356,8 @@ def load(filename):
+     Loads the game state from `filename`. This function never returns.
+     """
+     
++    print "Ren'Py trying to load from: {}".format(renpy.config.savedir + "/" + filename + savegame_suffix)
++    
+     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
+     roots, log = loads(zf.read("log"))
+     zf.close()
 diff --git a/renpy/log.py b/renpy/log.py
 index 611abfe..bb5edca 100644
 --- a/renpy/log.py
