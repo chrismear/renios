@@ -2338,6 +2338,19 @@ index 0000000..0b86762
 +}
 +
 +/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/src/audio/coreaudio/SDL_coreaudio.c b/src/audio/coreaudio/SDL_coreaudio.c
+index 1747bb2..beb2b3c 100644
+--- a/src/audio/coreaudio/SDL_coreaudio.c
++++ b/src/audio/coreaudio/SDL_coreaudio.c
+@@ -25,7 +25,7 @@
+ #include "SDL_coreaudio.h"
+ #include "SDL_assert.h"
+ 
+-#define DEBUG_COREAUDIO 0
++#define DEBUG_COREAUDIO 1
+ 
+ static void COREAUDIO_CloseDevice(_THIS);
+ 
 diff --git a/src/video/SDL_surface.c b/src/video/SDL_surface.c
 index 7788d67..75f8708 100644
 --- a/src/video/SDL_surface.c

@@ -102,6 +102,8 @@ try make clean
 try make
 try make install
 
+# TODO: Deduplicate _inverse symbol from libavcodec and libavutil.
+
 # copy to buildroot
 
 try cp $DESTROOT/lib/libavcodec.a $BUILDROOT/lib

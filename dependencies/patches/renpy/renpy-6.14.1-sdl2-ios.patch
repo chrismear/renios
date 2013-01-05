@@ -46,6 +46,28 @@ index 54a4032..90465b8 100644
  				used_alpha=1;
  				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
  			}else{
+diff --git a/module/ffdecode.c b/module/ffdecode.c
+index d29d829..7e89170 100644
+--- a/module/ffdecode.c
++++ b/module/ffdecode.c
+@@ -1081,7 +1081,7 @@ static int stream_component_open(VideoState *is, int stream_index)
+         is->video_current_pts_time = av_gettime();
+ 
+         packet_queue_init(&is->videoq);
+-        is->video_tid = SDL_CreateThread(video_thread, is);
++        is->video_tid = SDL_CreateThread(video_thread, "renpyvideothread", is);
+         break;
+     default:
+         break;
+@@ -1392,7 +1392,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
+     is->quit_mutex = SDL_CreateMutex();
+     is->quit_cond = SDL_CreateCond();
+     
+-    is->parse_tid = SDL_CreateThread(decode_thread, is);
++    is->parse_tid = SDL_CreateThread(decode_thread, "renpydecodethread", is);
+ 
+     is->first_frame = 1;
+ 
 diff --git a/module/glcompat.h b/module/glcompat.h
 index 0921592..f9b3633 100644
 --- a/module/glcompat.h
@@ -89,6 +111,135 @@ index 0921592..f9b3633 100644
  #if defined RENPY_GLES_2
  
  #include <EGL/egl.h>
+diff --git a/module/pss.c b/module/pss.c
+index ea7d881..7d42c3e 100644
+--- a/module/pss.c
++++ b/module/pss.c
+@@ -1076,7 +1076,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
+     }
+ 
+     audio_spec.freq = freq;
+-    audio_spec.format = AUDIO_S16SYS;
++    audio_spec.format = AUDIO_S32SYS;
+     audio_spec.channels = stereo;
+     audio_spec.samples = samples;
+     audio_spec.callback = callback;
+diff --git a/module/rwobject.c b/module/rwobject.c
+index f53d110..f9f85f8 100644
+--- a/module/rwobject.c
++++ b/module/rwobject.c
+@@ -45,15 +45,15 @@ typedef struct
+ }RWHelper;
+ 
+ 
+-static int rw_seek(SDL_RWops* context, int offset, int whence);
+-static int rw_read(SDL_RWops* context, void* ptr, int size, int maxnum);
+-static int rw_write(SDL_RWops* context, const void* ptr, int size, int maxnum);
++static long rw_seek(SDL_RWops* context, long offset, int whence);
++static size_t rw_read(SDL_RWops* context, void* ptr, size_t size, size_t maxnum);
++static size_t rw_write(SDL_RWops* context, const void* ptr, size_t size, size_t maxnum);
+ static int rw_close(SDL_RWops* context);
+ 
+ #ifdef WITH_THREAD
+-static int rw_seek_th(SDL_RWops* context, int offset, int whence);
+-static int rw_read_th(SDL_RWops* context, void* ptr, int size, int maxnum);
+-static int rw_write_th(SDL_RWops* context, const void* ptr, int size, int maxnum);
++static long rw_seek_th(SDL_RWops* context, long offset, int whence);
++static size_t rw_read_th(SDL_RWops* context, void* ptr, size_t size, size_t maxnum);
++static size_t rw_write_th(SDL_RWops* context, const void* ptr, size_t size, size_t maxnum);
+ static int rw_close_th(SDL_RWops* context);
+ #endif
+ 
+@@ -147,7 +147,7 @@ static int RWopsCheckPython(SDL_RWops* rw)
+ }
+ 
+ 
+-static int rw_seek(SDL_RWops* context, int offset, int whence)
++static long rw_seek(SDL_RWops* context, long offset, int whence)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
+@@ -158,7 +158,7 @@ static int rw_seek(SDL_RWops* context, int offset, int whence)
+ 
+ 	if(!(offset == 0 && whence == SEEK_CUR)) /*being called only for 'tell'*/
+ 	{
+-		result = PyObject_CallFunction(helper->seek, "ii", offset, whence);
++		result = PyObject_CallFunction(helper->seek, "li", offset, whence);
+ 		if(!result)
+ 			return -1;
+ 		Py_DECREF(result);
+@@ -175,7 +175,7 @@ static int rw_seek(SDL_RWops* context, int offset, int whence)
+ }
+ 
+ 
+-static int rw_read(SDL_RWops* context, void* ptr, int size, int maxnum)
++static size_t rw_read(SDL_RWops* context, void* ptr, size_t size, size_t maxnum)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
+@@ -184,7 +184,7 @@ static int rw_read(SDL_RWops* context, void* ptr, int size, int maxnum)
+ 	if(!helper->read)
+ 		return -1;
+ 
+-	result = PyObject_CallFunction(helper->read, "i", size * maxnum);
++	result = PyObject_CallFunction(helper->read, "l", size * maxnum);
+ 	if(!result)
+ 		return -1;
+ 
+@@ -203,7 +203,7 @@ static int rw_read(SDL_RWops* context, void* ptr, int size, int maxnum)
+ }
+ 
+ 
+-static int rw_write(SDL_RWops* context, const void* ptr, int size, int num)
++static size_t rw_write(SDL_RWops* context, const void* ptr, size_t size, size_t num)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
+@@ -293,7 +293,7 @@ static int RWopsCheckPythonThreaded(SDL_RWops* rw)
+ }
+ 
+ #ifdef WITH_THREAD
+-static int rw_seek_th(SDL_RWops* context, int offset, int whence)
++static long rw_seek_th(SDL_RWops* context, long offset, int whence)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
+@@ -308,7 +308,7 @@ static int rw_seek_th(SDL_RWops* context, int offset, int whence)
+ 
+ 	if(!(offset == 0 && whence == SEEK_CUR)) /*being called only for 'tell'*/
+ 	{
+-		result = PyObject_CallFunction(helper->seek, "ii", offset, whence);
++		result = PyObject_CallFunction(helper->seek, "li", offset, whence);
+ 		if(!result) {
+                     PyErr_Clear();
+                     PyThreadState_Swap(oldstate);
+@@ -338,7 +338,7 @@ static int rw_seek_th(SDL_RWops* context, int offset, int whence)
+ }
+ 
+ 
+-static int rw_read_th(SDL_RWops* context, void* ptr, int size, int maxnum)
++static size_t rw_read_th(SDL_RWops* context, void* ptr, size_t size, size_t maxnum)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
+@@ -351,7 +351,7 @@ static int rw_read_th(SDL_RWops* context, void* ptr, int size, int maxnum)
+         PyEval_AcquireLock();
+         oldstate = PyThreadState_Swap(helper->thread);
+ 
+-	result = PyObject_CallFunction(helper->read, "i", size * maxnum);
++	result = PyObject_CallFunction(helper->read, "l", size * maxnum);
+ 	if(!result) {
+                 PyThreadState_Swap(oldstate);
+                 PyEval_ReleaseLock();
+@@ -380,7 +380,7 @@ static int rw_read_th(SDL_RWops* context, void* ptr, int size, int maxnum)
+ }
+ 
+ 
+-static int rw_write_th(SDL_RWops* context, const void* ptr, int size, int num)
++static size_t rw_write_th(SDL_RWops* context, const void* ptr, size_t size, size_t num)
+ {
+ 	RWHelper* helper = (RWHelper*)context->hidden.unknown.data1;
+ 	PyObject* result;
 diff --git a/module/sdl_blitmap.h b/module/sdl_blitmap.h
 new file mode 100644
 index 0000000..15232c6
@@ -127,7 +278,7 @@ index 0000000..15232c6
 +    Uint32 src_palette_version;
 +} SDL_BlitMap;
 diff --git a/module/setup.py b/module/setup.py
-index 828f3fd..cd9cd7a 100644
+index 828f3fd..e181449 100644
 --- a/module/setup.py
 +++ b/module/setup.py
 @@ -8,7 +8,7 @@ import os
@@ -144,11 +295,21 @@ index 828f3fd..cd9cd7a 100644
  pymodule("pysdlsound.__init__")
  
 -if not android:
-+if not (android or ios):
++if not (android):
  
      sound = [ "avformat", "avcodec", "avutil", "z" ]
      if has_swscale:
-@@ -91,6 +91,8 @@ cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+@@ -80,7 +80,8 @@ if not android:
+ 
+     cython(
+         "pysdlsound.sound",
+-        [ "pss.c", "rwobject.c", "ffdecode.c" ],
++        # [ "pss.c", "rwobject.c", "ffdecode.c" ],
++        [ "pss.c", "ffdecode.c" ],
+         libs = sdl + sound)
+ 
+ 
+@@ -91,6 +92,8 @@ cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
  # Gl.
  if android:
      glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
@@ -157,7 +318,7 @@ index 828f3fd..cd9cd7a 100644
  elif has_libglew:
      glew_libs = [ 'GLEW' ]
  else:
-@@ -98,8 +100,8 @@ else:
+@@ -98,8 +101,8 @@ else:
  
  cython("renpy.gl.gldraw", libs=glew_libs )
  cython("renpy.gl.gltexture", libs=glew_libs)
@@ -241,10 +402,18 @@ index 91239c9..b94adc4 100644
      
  # The android init code in renpy.py will set linux=False and android=True.
 diff --git a/renpy/display/core.py b/renpy/display/core.py
-index 48102dc..f422084 100644
+index 48102dc..cce6252 100644
 --- a/renpy/display/core.py
 +++ b/renpy/display/core.py
-@@ -66,10 +66,10 @@ time_base = None
+@@ -58,6 +58,7 @@ REDRAW = pygame.USEREVENT + 7
+ # All events except for TIMEEVENT and REDRAW
+ ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
+ 
++
+ # The number of msec between periodic events.
+ PERIODIC_INTERVAL = 50
+ 
+@@ -66,10 +67,10 @@ time_base = None
  
  def init_time():
      global time_base
@@ -257,7 +426,7 @@ index 48102dc..f422084 100644
  
  
  def displayable_by_tag(layer, tag):
-@@ -1166,7 +1166,7 @@ class Interface(object):
+@@ -1166,7 +1167,7 @@ class Interface(object):
              self.safe_mode = True
              
          # Setup periodic event.
@@ -266,7 +435,7 @@ index 48102dc..f422084 100644
  
          # Don't grab the screen.
          pygame.event.set_grab(False)
-@@ -1564,7 +1564,7 @@ class Interface(object):
+@@ -1564,7 +1565,7 @@ class Interface(object):
  
          ev = pygame.event.poll()
  
@@ -275,7 +444,7 @@ index 48102dc..f422084 100644
              # Seems to prevent the CPU from speeding up.
              renpy.display.draw.event_peek_sleep()
              return None
-@@ -1727,9 +1727,9 @@ class Interface(object):
+@@ -1727,9 +1728,9 @@ class Interface(object):
  
              android.sound.pause_all()
  
@@ -288,7 +457,7 @@ index 48102dc..f422084 100644
  
              # The game has to be saved.
              renpy.loadsave.save("_reload-1")
-@@ -1740,7 +1740,7 @@ class Interface(object):
+@@ -1740,7 +1741,7 @@ class Interface(object):
              # auto-reload.
              renpy.loadsave.unlink_save("_reload-1")
  
@@ -297,7 +466,23 @@ index 48102dc..f422084 100644
  
              android.sound.unpause_all()
              
-@@ -2141,7 +2141,7 @@ class Interface(object):
+@@ -2098,7 +2099,14 @@ class Interface(object):
+                     
+                 # Redraw the screen.
+                 if (self.force_redraw or
+-                    ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
++                    ((first_pass or not (
++                        # pygame.event.peek(ALL_EVENTS)
++                        # 0 to TIMEVENT-1
++                        # TIMEVENT + 1 to REDRAW - 1
++                        pygame.event.peek_range(0, TIMEEVENT - 1) or
++                        pygame.event.peek_range(TIMEEVENT + 1, REDRAW - 1)
++                      )
++                     ) and 
+                      renpy.display.draw.should_redraw(needs_redraw, first_pass))):
+ 
+                     self.force_redraw = False
+@@ -2141,7 +2149,7 @@ class Interface(object):
                      needs_redraw = False
                      first_pass = False
  
@@ -306,7 +491,7 @@ index 48102dc..f422084 100644
                      pygame.event.clear([REDRAW])
                      old_redraw_time = None
                      
-@@ -2192,14 +2192,14 @@ class Interface(object):
+@@ -2192,14 +2200,14 @@ class Interface(object):
                              time_left = redraw_time - get_time()
                              time_left = min(time_left, 3600)
                              redraw_in = time_left
@@ -324,7 +509,7 @@ index 48102dc..f422084 100644
                          ev = None
                      else:
                          time_left = self.timeout_time - get_time() 
-@@ -2209,13 +2209,13 @@ class Interface(object):
+@@ -2209,13 +2217,13 @@ class Interface(object):
                          if time_left < 0:
                              self.timeout_time = None
                              ev = self.time_event
@@ -340,7 +525,7 @@ index 48102dc..f422084 100644
                                  old_timeout_time = self.timeout_time
  
                      # Handle autosaving, as necessary.
-@@ -2230,7 +2230,7 @@ class Interface(object):
+@@ -2230,7 +2238,7 @@ class Interface(object):
                          else:
                              ev = self.event_wait()
                          
@@ -349,7 +534,7 @@ index 48102dc..f422084 100644
                          continue
  
                      if renpy.config.profile:
-@@ -2387,8 +2387,8 @@ class Interface(object):
+@@ -2387,8 +2395,8 @@ class Interface(object):
              # We no longer disable periodic between interactions.
              # pygame.time.set_timer(PERIODIC, 0)
  

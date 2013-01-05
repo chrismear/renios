@@ -775,7 +775,7 @@ index 6bc6fe3..ebec8e3 100644
      DEC_CONSTN(KMOD_NONE);
      DEC_CONSTN(KMOD_LSHIFT);
 diff --git a/src/event.c b/src/event.c
-index 7f5d739..012a4a3 100644
+index 7f5d739..0cfb39a 100644
 --- a/src/event.c
 +++ b/src/event.c
 @@ -164,10 +164,10 @@ name_from_eventtype (int type)
@@ -986,7 +986,50 @@ index 7f5d739..012a4a3 100644
  
      if (noargs)
          return PyEvent_New (&event);
-@@ -867,7 +913,7 @@ event_post (PyObject* self, PyObject* args)
+@@ -835,6 +881,42 @@ event_peek (PyObject* self, PyObject* args)
+ }
+ 
+ static PyObject*
++event_peek_range (PyObject* self, PyObject* args)
++{
++    SDL_Event event;
++    int result;
++    PyObject *lowType, *highType;
++    int lowEvent, highEvent;
++
++    if (PyTuple_Size (args) != 2)
++        return RAISE (PyExc_ValueError, "peek_range requires 2 arguments");
++
++    VIDEO_INIT_CHECK ();
++
++    lowType = PyTuple_GET_ITEM (args, 0);
++    highType = PyTuple_GET_ITEM (args, 1);
++
++    if (!IntFromObj (lowType, &lowEvent))
++    {
++        return RAISE
++            (PyExc_TypeError,
++             "lowType must be valid");
++    }
++
++    if (!IntFromObj (highType, &highEvent))
++    {
++        return RAISE
++            (PyExc_TypeError,
++             "highType must be valid");
++    }
++
++    SDL_PumpEvents ();
++    result = SDL_PeepEvents (&event, 1, SDL_PEEKEVENT, lowEvent, highEvent);
++
++    return PyInt_FromLong (result == 1);
++}
++
++static PyObject*
+ event_post (PyObject* self, PyObject* args)
+ {
+     PyEventObject* e;
+@@ -867,7 +949,7 @@ event_post (PyObject* self, PyObject* args)
  static int
  CheckEventInRange(int evt)
  {
@@ -995,6 +1038,14 @@ index 7f5d739..012a4a3 100644
  }
  
  static PyObject*
+@@ -1003,6 +1085,7 @@ static PyMethodDef _event_methods[] =
+     { "clear", event_clear, METH_VARARGS, DOC_PYGAMEEVENTCLEAR },
+     { "get", event_get, METH_VARARGS, DOC_PYGAMEEVENTGET },
+     { "peek", event_peek, METH_VARARGS, DOC_PYGAMEEVENTPEEK },
++    { "peek_range", event_peek_range, METH_VARARGS, DOC_PYGAMEEVENTPEEK},
+     { "post", event_post, METH_VARARGS, DOC_PYGAMEEVENTPOST },
+ 
+     { "set_allowed", set_allowed, METH_VARARGS, DOC_PYGAMEEVENTSETALLOWED },
 diff --git a/src/image.c b/src/image.c
 index 57a675d..fdeb178 100644
 --- a/src/image.c
