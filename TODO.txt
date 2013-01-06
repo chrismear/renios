@@ -2,10 +2,11 @@ BUILD
 * Better OpenGL environ for iOS to support dissolves
 
 RUNTIME
-* Improve startup speed (pyc?)
 * Crash on suspend
 * Handle suspend and terminate cleanly (save state)
 * Get rid of screen blank during Ren'Py startup
+* Change audio session type so iOS Music doesn't keep playing when the game launches
+* Make CopyGameDirectory function check if the bundled resources have been updated, so it can update the Library copy.
 
 PACKAGING
 * Make an Xcode project template.
