@@ -437,7 +437,7 @@ index 369cfa1..bdc3dba 100644
          except:
              if renpy.config.debug_sound:
 diff --git a/renpy/display/core.py b/renpy/display/core.py
-index 48102dc..ed6faf8 100644
+index 48102dc..8a3d452 100644
 --- a/renpy/display/core.py
 +++ b/renpy/display/core.py
 @@ -58,6 +58,7 @@ REDRAW = pygame.USEREVENT + 7
@@ -479,7 +479,17 @@ index 48102dc..ed6faf8 100644
          
          # If we're in fullscreen mode, and changing to another mode, go to
          # windowed mode first.
-@@ -1564,7 +1565,7 @@ class Interface(object):
+@@ -1402,7 +1403,8 @@ class Interface(object):
+             renpy.config.screen_height,
+             )
+ 
+-        renpy.display.draw.draw_screen(surftree, fullscreen_video)
++        if not self.minimized:
++            renpy.display.draw.draw_screen(surftree, fullscreen_video)
+         
+         renpy.display.render.mark_sweep()
+         renpy.display.focus.take_focuses()
+@@ -1564,7 +1566,7 @@ class Interface(object):
  
          ev = pygame.event.poll()
  
@@ -488,7 +498,7 @@ index 48102dc..ed6faf8 100644
              # Seems to prevent the CPU from speeding up.
              renpy.display.draw.event_peek_sleep()
              return None
-@@ -1727,9 +1728,9 @@ class Interface(object):
+@@ -1727,9 +1729,9 @@ class Interface(object):
  
              android.sound.pause_all()
  
@@ -501,7 +511,7 @@ index 48102dc..ed6faf8 100644
  
              # The game has to be saved.
              renpy.loadsave.save("_reload-1")
-@@ -1740,7 +1741,7 @@ class Interface(object):
+@@ -1740,7 +1742,7 @@ class Interface(object):
              # auto-reload.
              renpy.loadsave.unlink_save("_reload-1")
  
@@ -510,7 +520,40 @@ index 48102dc..ed6faf8 100644
  
              android.sound.unpause_all()
              
-@@ -2088,7 +2089,8 @@ class Interface(object):
+@@ -1754,6 +1756,16 @@ class Interface(object):
+ 
+         self.minimized = True
+ 
++        if renpy.ios:
++            # android.sound.pause_all()
++
++            pygame.pygametime.set_timer(PERIODIC, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
++
++            # The game has to be saved.
++            renpy.loadsave.save("_reload-1")
++
+         renpy.display.log.write("The window was minimized.")
+         
+     
+@@ -1770,6 +1782,15 @@ class Interface(object):
+         
+         self.minimized = False
+ 
++        if renpy.ios:
++            # Since we came back to life, we can get rid of the
++            # auto-reload.
++            renpy.loadsave.unlink_save("_reload-1")
++
++            pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
++
++            # android.sound.unpause_all()
++
+         renpy.display.log.write("The window was restored.")
+ 
+         if renpy.windows:
+@@ -2088,7 +2109,8 @@ class Interface(object):
              while rv is None:
  
                  # Check for a change in fullscreen preference.                
@@ -520,7 +563,7 @@ index 48102dc..ed6faf8 100644
                      self.set_mode()
                      needs_redraw = True
  
-@@ -2098,7 +2100,14 @@ class Interface(object):
+@@ -2098,7 +2120,14 @@ class Interface(object):
                      
                  # Redraw the screen.
                  if (self.force_redraw or
@@ -536,7 +579,7 @@ index 48102dc..ed6faf8 100644
                       renpy.display.draw.should_redraw(needs_redraw, first_pass))):
  
                      self.force_redraw = False
-@@ -2141,7 +2150,7 @@ class Interface(object):
+@@ -2141,7 +2170,7 @@ class Interface(object):
                      needs_redraw = False
                      first_pass = False
  
@@ -545,7 +588,7 @@ index 48102dc..ed6faf8 100644
                      pygame.event.clear([REDRAW])
                      old_redraw_time = None
                      
-@@ -2192,14 +2201,14 @@ class Interface(object):
+@@ -2192,14 +2221,14 @@ class Interface(object):
                              time_left = redraw_time - get_time()
                              time_left = min(time_left, 3600)
                              redraw_in = time_left
@@ -563,7 +606,7 @@ index 48102dc..ed6faf8 100644
                          ev = None
                      else:
                          time_left = self.timeout_time - get_time() 
-@@ -2209,13 +2218,13 @@ class Interface(object):
+@@ -2209,13 +2238,13 @@ class Interface(object):
                          if time_left < 0:
                              self.timeout_time = None
                              ev = self.time_event
@@ -579,7 +622,7 @@ index 48102dc..ed6faf8 100644
                                  old_timeout_time = self.timeout_time
  
                      # Handle autosaving, as necessary.
-@@ -2230,7 +2239,7 @@ class Interface(object):
+@@ -2230,7 +2259,7 @@ class Interface(object):
                          else:
                              ev = self.event_wait()
                          
@@ -588,7 +631,7 @@ index 48102dc..ed6faf8 100644
                          continue
  
                      if renpy.config.profile:
-@@ -2387,8 +2396,8 @@ class Interface(object):
+@@ -2387,8 +2416,8 @@ class Interface(object):
              # We no longer disable periodic between interactions.
              # pygame.time.set_timer(PERIODIC, 0)
  
