@@ -1,14 +1,16 @@
 BUILD
+* Produce builds for all appropriate ARM architectures, and for iPhone Simulator
 
 RUNTIME
-* Crash on suspend
-* Handle suspend and terminate cleanly (save state)
 * Get rid of screen blank during Ren'Py startup
 * Change audio session type so iOS Music doesn't keep playing when the game launches
 * Make CopyGameDirectory function check if the bundled resources have been updated, so it can update the Library copy.
+* Make text inputs work with iOS keyboard
+* Merge mouse up and down events (core.py:2257)?
+* Some sort of UI for rollbacks
 
 PACKAGING
 * Make an Xcode project template.
 
 OTHER
-* Make a 'Ren'Py Player' app? (Allowing the user to import in zip files of any Ren'Py game, and play it.)
+* Make a 'Ren'Py Player' app? (Allowing the user to import in zip files of any Ren'Py game, and play it.) (Actually, this probably won't fly due to the App Store restriction on executing downloaded code.)
