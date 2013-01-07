@@ -1,5 +1,4 @@
 BUILD
-* Better OpenGL environ for iOS to support dissolves
 
 RUNTIME
 * Crash on suspend
@@ -10,3 +9,6 @@ RUNTIME
 
 PACKAGING
 * Make an Xcode project template.
+
+OTHER
+* Make a 'Ren'Py Player' app? (Allowing the user to import in zip files of any Ren'Py game, and play it.)
