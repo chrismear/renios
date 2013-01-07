@@ -447,6 +447,22 @@ index 0000000..25c484b
 +#endif /* _SDL_compat_h */
 +
 +/* vi: set ts=4 sw=4 expandtab: */
+diff --git a/include/SDL_config_iphoneos.h b/include/SDL_config_iphoneos.h
+index a0fe5fc..4b2f706 100644
+--- a/include/SDL_config_iphoneos.h
++++ b/include/SDL_config_iphoneos.h
+@@ -129,8 +129,9 @@
+ #define SDL_VIDEO_DRIVER_UIKIT	1
+ #define SDL_VIDEO_DRIVER_DUMMY	1
+ 
+-/* enable OpenGL ES */
+-#define SDL_VIDEO_OPENGL_ES	1
++/* enable OpenGL ES 2 */
++#undef SDL_VIDEO_OPENGL_ES
++#define SDL_VIDEO_OPENGL_ES2 1
+ #define SDL_VIDEO_RENDER_OGL_ES	1
+ #define SDL_VIDEO_RENDER_OGL_ES2	1
+ 
 diff --git a/include/SDL_events.h b/include/SDL_events.h
 index 4eaf095..802808e 100644
 --- a/include/SDL_events.h

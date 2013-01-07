@@ -69,10 +69,10 @@ index d29d829..7e89170 100644
      is->first_frame = 1;
  
 diff --git a/module/glcompat.h b/module/glcompat.h
-index 0921592..f9b3633 100644
+index 0921592..f612551 100644
 --- a/module/glcompat.h
 +++ b/module/glcompat.h
-@@ -13,6 +13,20 @@
+@@ -13,10 +13,26 @@
  #if defined ANDROID
  
  #define RENPY_GLES_1
@@ -85,15 +85,21 @@ index 0921592..f9b3633 100644
 +
 +#if TARGET_OS_IPHONE    
 +
-+#define RENPY_GLES_1
-+#include <ES1/gl.h>
-+#include <ES1/glext.h>
++#define RENPY_GLES_2
++#include <ES2/gl.h>
++#include <ES2/glext.h>
 +
 +#endif
  
  #elif defined ANGLE
  
-@@ -27,9 +41,6 @@
+ #define RENPY_GLES_2
++#include <EGL/egl.h>
++#include <GLES2/gl2.h>
+ 
+ #else
+ 
+@@ -27,9 +43,6 @@
  
  #if defined RENPY_GLES_1
  
@@ -103,14 +109,40 @@ index 0921592..f9b3633 100644
  #define glOrtho glOrthof
  
  #define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
-@@ -51,7 +62,6 @@
+@@ -51,12 +64,8 @@
  
  #endif
  
 -
  #if defined RENPY_GLES_2
  
- #include <EGL/egl.h>
+-#include <EGL/egl.h>
+-#include <GLES2/gl2.h>
+-
+ typedef GLuint GLhandleARB;
+ typedef GLchar GLcharARB;
+ 
+diff --git a/module/maketegl.py b/module/maketegl.py
+index 6191650..10b654a 100644
+--- a/module/maketegl.py
++++ b/module/maketegl.py
+@@ -44,7 +44,7 @@ OPENGL_1_2 = True
+ OPENGL_1_3 = True
+ OPENGL_1_4 = False
+ OPENGL_1_5 = False
+-OPENGL_2_0 = False
++OPENGL_2_0 = True
+ OPENGL_2_1 = False
+ GL_ARB_IMAGING = False
+ GL_ARB_MULTITEXTURE = True
+@@ -700,6 +700,7 @@ def generate_tegl():
+         declare("LinkProgram",GLuint)
+         #declare("ShaderSource",GLuint,GLsizei,GLvoid**,GLint[])
+         #handcoded("ShaderSource",4)
++        declare("ShaderSource",GLuint,GLsizei,GLvoid[1][1],GLint[1])
+         declare("UseProgram",GLuint)
+         declare("Uniform1f",GLint,GLfloat)
+         declare("Uniform2f",GLint,GLfloat,GLfloat)
 diff --git a/module/rwobject.c b/module/rwobject.c
 index f53d110..f9f85f8 100644
 --- a/module/rwobject.c
@@ -265,7 +297,7 @@ index 0000000..15232c6
 +    Uint32 src_palette_version;
 +} SDL_BlitMap;
 diff --git a/module/setup.py b/module/setup.py
-index 828f3fd..e181449 100644
+index 828f3fd..353efd0 100644
 --- a/module/setup.py
 +++ b/module/setup.py
 @@ -8,7 +8,7 @@ import os
@@ -305,17 +337,20 @@ index 828f3fd..e181449 100644
  elif has_libglew:
      glew_libs = [ 'GLEW' ]
  else:
-@@ -98,8 +101,8 @@ else:
+@@ -98,9 +101,10 @@ else:
  
  cython("renpy.gl.gldraw", libs=glew_libs )
  cython("renpy.gl.gltexture", libs=glew_libs)
 -cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
 -cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
+-cython("renpy.gl.glenviron_limited", libs=glew_libs)
 +cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not (android or ios))
 +cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not (android or ios))
- cython("renpy.gl.glenviron_limited", libs=glew_libs)
++cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not (ios))
++cython("renpy.gl.glenviron_shader_es", libs=glew_libs)
  cython("renpy.gl.glrtt_copy", libs=glew_libs)
  cython("renpy.gl.glrtt_fbo", libs=glew_libs)
+ 
 diff --git a/module/setuplib.py b/module/setuplib.py
 index 48cd065..dc7f980 100644
 --- a/module/setuplib.py
@@ -577,10 +612,415 @@ index 380da14..575404b 100644
  
          frametime = 1000.0 / framerate
  
+diff --git a/renpy/gl/gl.pxd b/renpy/gl/gl.pxd
+index fd7950d..0afa4f8 100644
+--- a/renpy/gl/gl.pxd
++++ b/renpy/gl/gl.pxd
+@@ -439,6 +439,98 @@ cdef extern from "glcompat.h":
+     void glMultiTexCoord4ivARB(GLenum, GLint *)
+     void glMultiTexCoord4sARB(GLenum, GLshort, GLshort, GLshort, GLshort)
+     void glMultiTexCoord4svARB(GLenum, GLshort *)
++    void glBlendEquationSeparate(GLenum, GLenum)
++    void glDrawBuffers(GLsizei, GLenum *)
++    void glStencilOpSeparate(GLenum, GLenum, GLenum, GLenum)
++    void glStencilFuncSeparate(GLenum, GLenum, GLint, GLuint)
++    void glStencilMaskSeparate(GLenum, GLuint)
++    void glAttachShader(GLuint, GLuint)
++    void glBindAttribLocation(GLuint, GLuint, GLchar *)
++    void glCompileShader(GLuint)
++    GLuint glCreateProgram()
++    GLuint glCreateShader(GLenum)
++    void glDeleteProgram(GLuint)
++    void glDeleteShader(GLuint)
++    void glDetachShader(GLuint, GLuint)
++    void glDisableVertexAttribArray(GLuint)
++    void glEnableVertexAttribArray(GLuint)
++    void glGetActiveAttrib(GLuint, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
++    void glGetActiveUniform(GLuint, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
++    void glGetAttachedShaders(GLuint, GLsizei, GLsizei *, GLubyte *)
++    GLint glGetAttribLocation(GLuint, GLchar *)
++    void glGetProgramiv(GLuint, GLenum, GLint *)
++    void glGetProgramInfoLog(GLuint, GLsizei, GLsizei *, GLchar *)
++    void glGetShaderiv(GLuint, GLenum, GLint *)
++    void glGetShaderInfoLog(GLuint, GLsizei, GLsizei *, GLchar *)
++    void glGetShaderSource(GLuint, GLsizei, GLsizei *, GLchar *)
++    GLint glGetUniformLocation(GLuint, GLchar *)
++    void glGetUniformfv(GLuint, GLint, GLfloat *)
++    void glGetUniformiv(GLuint, GLint, GLint *)
++    void glGetVertexAttribdv(GLuint, GLenum, GLdouble *)
++    void glGetVertexAttribfv(GLuint, GLenum, GLfloat *)
++    void glGetVertexAttribiv(GLuint, GLenum, GLint *)
++    GLboolean glIsProgram(GLuint)
++    GLboolean glIsShader(GLuint)
++    void glLinkProgram(GLuint)
++    void glShaderSource(GLuint, GLsizei, GLvoid * *, GLint *)
++    void glUseProgram(GLuint)
++    void glUniform1f(GLint, GLfloat)
++    void glUniform2f(GLint, GLfloat, GLfloat)
++    void glUniform3f(GLint, GLfloat, GLfloat, GLfloat)
++    void glUniform4f(GLint, GLfloat, GLfloat, GLfloat, GLfloat)
++    void glUniform1i(GLint, GLint)
++    void glUniform2i(GLint, GLint, GLint)
++    void glUniform3i(GLint, GLint, GLint, GLint)
++    void glUniform4i(GLint, GLint, GLint, GLint, GLint)
++    void glUniform1fv(GLint, GLsizei, GLfloat *)
++    void glUniform2fv(GLint, GLsizei, GLfloat *)
++    void glUniform3fv(GLint, GLsizei, GLfloat *)
++    void glUniform4fv(GLint, GLsizei, GLfloat *)
++    void glUniform1iv(GLint, GLsizei, GLint *)
++    void glUniform2iv(GLint, GLsizei, GLint *)
++    void glUniform3iv(GLint, GLsizei, GLint *)
++    void glUniform4iv(GLint, GLsizei, GLint *)
++    void glUniformMatrix2fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glUniformMatrix3fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glUniformMatrix4fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glValidateProgram(GLuint)
++    void glVertexAttrib1d(GLuint, GLdouble)
++    void glVertexAttrib1dv(GLuint, GLdouble *)
++    void glVertexAttrib1f(GLuint, GLfloat)
++    void glVertexAttrib1fv(GLuint, GLfloat *)
++    void glVertexAttrib1s(GLuint, GLshort)
++    void glVertexAttrib1sv(GLuint, GLshort *)
++    void glVertexAttrib2d(GLuint, GLdouble, GLdouble)
++    void glVertexAttrib2dv(GLuint, GLdouble *)
++    void glVertexAttrib2f(GLuint, GLfloat, GLfloat)
++    void glVertexAttrib2fv(GLuint, GLfloat *)
++    void glVertexAttrib2s(GLuint, GLshort, GLshort)
++    void glVertexAttrib2sv(GLuint, GLshort *)
++    void glVertexAttrib3d(GLuint, GLdouble, GLdouble, GLdouble)
++    void glVertexAttrib3dv(GLuint, GLdouble *)
++    void glVertexAttrib3f(GLuint, GLfloat, GLfloat, GLfloat)
++    void glVertexAttrib3fv(GLuint, GLfloat *)
++    void glVertexAttrib3s(GLuint, GLshort, GLshort, GLshort)
++    void glVertexAttrib3sv(GLuint, GLshort *)
++    void glVertexAttrib4Nbv(GLuint, GLbyte *)
++    void glVertexAttrib4Niv(GLuint, GLint *)
++    void glVertexAttrib4Nsv(GLuint, GLshort *)
++    void glVertexAttrib4Nub(GLuint, GLubyte, GLubyte, GLubyte, GLubyte)
++    void glVertexAttrib4Nubv(GLuint, GLubyte *)
++    void glVertexAttrib4Nuiv(GLuint, GLuint *)
++    void glVertexAttrib4Nusv(GLuint, GLushort *)
++    void glVertexAttrib4bv(GLuint, GLbyte *)
++    void glVertexAttrib4d(GLuint, GLdouble, GLdouble, GLdouble, GLdouble)
++    void glVertexAttrib4dv(GLuint, GLdouble *)
++    void glVertexAttrib4f(GLuint, GLfloat, GLfloat, GLfloat, GLfloat)
++    void glVertexAttrib4fv(GLuint, GLfloat *)
++    void glVertexAttrib4iv(GLuint, GLint *)
++    void glVertexAttrib4s(GLuint, GLshort, GLshort, GLshort, GLshort)
++    void glVertexAttrib4sv(GLuint, GLshort *)
++    void glVertexAttrib4ubv(GLuint, GLubyte *)
++    void glVertexAttrib4uiv(GLuint, GLuint *)
++    void glVertexAttrib4usv(GLuint, GLushort *)
++    void glVertexAttribPointer(GLuint, GLint, GLenum, GLboolean, GLsizei, GLubyte *)
+     void glVertexAttrib1dARB(GLuint, GLdouble)
+     void glVertexAttrib1dvARB(GLuint, GLdouble *)
+     void glVertexAttrib1fARB(GLuint, GLfloat)
+@@ -590,8 +682,12 @@ cdef extern from "glcompat.h":
+         GL_ACCUM_CLEAR_VALUE
+         GL_ACCUM_GREEN_BITS
+         GL_ACCUM_RED_BITS
++        GL_ACTIVE_ATTRIBUTES
++        GL_ACTIVE_ATTRIBUTE_MAX_LENGTH
+         GL_ACTIVE_TEXTURE
+         GL_ACTIVE_TEXTURE_ARB
++        GL_ACTIVE_UNIFORMS
++        GL_ACTIVE_UNIFORM_MAX_LENGTH
+         GL_ADD
+         GL_ADD_SIGNED
+         GL_ADD_SIGNED_ARB
+@@ -617,6 +713,7 @@ cdef extern from "glcompat.h":
+         GL_AND_REVERSE
+         GL_ARRAY_BUFFER_ARB
+         GL_ARRAY_BUFFER_BINDING_ARB
++        GL_ATTACHED_SHADERS
+         GL_ATTRIB_STACK_DEPTH
+         GL_AUTO_NORMAL
+         GL_AUX0
+@@ -634,14 +731,20 @@ cdef extern from "glcompat.h":
+         GL_BITMAP_TOKEN
+         GL_BLEND
+         GL_BLEND_DST
++        GL_BLEND_EQUATION_ALPHA
++        GL_BLEND_EQUATION_RGB
+         GL_BLEND_SRC
+         GL_BLUE
+         GL_BLUE_BIAS
+         GL_BLUE_BITS
+         GL_BLUE_SCALE
++        GL_BOOL
+         GL_BOOL_ARB
++        GL_BOOL_VEC2
+         GL_BOOL_VEC2_ARB
++        GL_BOOL_VEC3
+         GL_BOOL_VEC3_ARB
++        GL_BOOL_VEC4
+         GL_BOOL_VEC4_ARB
+         GL_BUFFER_ACCESS_ARB
+         GL_BUFFER_MAPPED_ARB
+@@ -712,6 +815,7 @@ cdef extern from "glcompat.h":
+         GL_COMBINE_RGB_ARB
+         GL_COMPILE
+         GL_COMPILE_AND_EXECUTE
++        GL_COMPILE_STATUS
+         GL_COMPRESSED_ALPHA
+         GL_COMPRESSED_INTENSITY
+         GL_COMPRESSED_LUMINANCE
+@@ -722,6 +826,7 @@ cdef extern from "glcompat.h":
+         GL_CONSTANT
+         GL_CONSTANT_ARB
+         GL_CONSTANT_ATTENUATION
++        GL_COORD_REPLACE
+         GL_COPY
+         GL_COPY_INVERTED
+         GL_COPY_PIXEL_TOKEN
+@@ -733,6 +838,7 @@ cdef extern from "glcompat.h":
+         GL_CURRENT_MATRIX_ARB
+         GL_CURRENT_MATRIX_STACK_DEPTH_ARB
+         GL_CURRENT_NORMAL
++        GL_CURRENT_PROGRAM
+         GL_CURRENT_RASTER_COLOR
+         GL_CURRENT_RASTER_DISTANCE
+         GL_CURRENT_RASTER_INDEX
+@@ -740,10 +846,12 @@ cdef extern from "glcompat.h":
+         GL_CURRENT_RASTER_POSITION_VALID
+         GL_CURRENT_RASTER_TEXTURE_COORDS
+         GL_CURRENT_TEXTURE_COORDS
++        GL_CURRENT_VERTEX_ATTRIB
+         GL_CURRENT_VERTEX_ATTRIB_ARB
+         GL_CW
+         GL_DECAL
+         GL_DECR
++        GL_DELETE_STATUS
+         GL_DEPTH
+         GL_DEPTH_ATTACHMENT_EXT
+         GL_DEPTH_BIAS
+@@ -765,6 +873,22 @@ cdef extern from "glcompat.h":
+         GL_DOUBLE
+         GL_DOUBLEBUFFER
+         GL_DRAW_BUFFER
++        GL_DRAW_BUFFER0
++        GL_DRAW_BUFFER1
++        GL_DRAW_BUFFER10
++        GL_DRAW_BUFFER11
++        GL_DRAW_BUFFER12
++        GL_DRAW_BUFFER13
++        GL_DRAW_BUFFER14
++        GL_DRAW_BUFFER15
++        GL_DRAW_BUFFER2
++        GL_DRAW_BUFFER3
++        GL_DRAW_BUFFER4
++        GL_DRAW_BUFFER5
++        GL_DRAW_BUFFER6
++        GL_DRAW_BUFFER7
++        GL_DRAW_BUFFER8
++        GL_DRAW_BUFFER9
+         GL_DRAW_PIXEL_TOKEN
+         GL_DST_ALPHA
+         GL_DST_COLOR
+@@ -797,11 +921,17 @@ cdef extern from "glcompat.h":
+         GL_FILL
+         GL_FLAT
+         GL_FLOAT
++        GL_FLOAT_MAT2
+         GL_FLOAT_MAT2_ARB
++        GL_FLOAT_MAT3
+         GL_FLOAT_MAT3_ARB
++        GL_FLOAT_MAT4
+         GL_FLOAT_MAT4_ARB
++        GL_FLOAT_VEC2
+         GL_FLOAT_VEC2_ARB
++        GL_FLOAT_VEC3
+         GL_FLOAT_VEC3_ARB
++        GL_FLOAT_VEC4
+         GL_FLOAT_VEC4_ARB
+         GL_FOG
+         GL_FOG_BIT
+@@ -814,7 +944,9 @@ cdef extern from "glcompat.h":
+         GL_FOG_MODE
+         GL_FOG_START
+         GL_FRAGMENT_PROGRAM_ARB
++        GL_FRAGMENT_SHADER
+         GL_FRAGMENT_SHADER_ARB
++        GL_FRAGMENT_SHADER_DERIVATIVE_HINT
+         GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB
+         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT
+         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT
+@@ -857,6 +989,7 @@ cdef extern from "glcompat.h":
+         GL_INDEX_SHIFT
+         GL_INDEX_WRITEMASK
+         GL_INFO_LOG_LENGTH
++        GL_INFO_LOG_LENGTH
+         GL_INT
+         GL_INTENSITY
+         GL_INTENSITY12
+@@ -865,8 +998,11 @@ cdef extern from "glcompat.h":
+         GL_INTENSITY8
+         GL_INTERPOLATE
+         GL_INTERPOLATE_ARB
++        GL_INT_VEC2
+         GL_INT_VEC2_ARB
++        GL_INT_VEC3
+         GL_INT_VEC3_ARB
++        GL_INT_VEC4
+         GL_INT_VEC4_ARB
+         GL_INVALID_ENUM
+         GL_INVALID_OPERATION
+@@ -909,6 +1045,7 @@ cdef extern from "glcompat.h":
+         GL_LINE_WIDTH
+         GL_LINE_WIDTH_GRANULARITY
+         GL_LINE_WIDTH_RANGE
++        GL_LINK_STATUS
+         GL_LIST_BASE
+         GL_LIST_BIT
+         GL_LIST_INDEX
+@@ -916,6 +1053,7 @@ cdef extern from "glcompat.h":
+         GL_LOAD
+         GL_LOGIC_OP
+         GL_LOGIC_OP_MODE
++        GL_LOWER_LEFT
+         GL_LUMINANCE
+         GL_LUMINANCE12
+         GL_LUMINANCE12_ALPHA12
+@@ -990,11 +1128,14 @@ cdef extern from "glcompat.h":
+         GL_MAX_CLIENT_ATTRIB_STACK_DEPTH
+         GL_MAX_CLIP_PLANES
+         GL_MAX_COLOR_ATTACHMENTS_EXT
++        GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+         GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB
+         GL_MAX_CUBE_MAP_TEXTURE_SIZE
++        GL_MAX_DRAW_BUFFERS
+         GL_MAX_ELEMENTS_INDICES
+         GL_MAX_ELEMENTS_VERTICES
+         GL_MAX_EVAL_ORDER
++        GL_MAX_FRAGMENT_UNIFORM_COMPONENTS
+         GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB
+         GL_MAX_LIGHTS
+         GL_MAX_LIST_NESTING
+@@ -1023,15 +1164,21 @@ cdef extern from "glcompat.h":
+         GL_MAX_PROGRAM_TEX_INSTRUCTIONS_ARB
+         GL_MAX_PROJECTION_STACK_DEPTH
+         GL_MAX_RENDERBUFFER_SIZE_EXT
++        GL_MAX_TEXTURE_COORDS
+         GL_MAX_TEXTURE_COORDS_ARB
++        GL_MAX_TEXTURE_IMAGE_UNITS
+         GL_MAX_TEXTURE_IMAGE_UNITS_ARB
+         GL_MAX_TEXTURE_SIZE
+         GL_MAX_TEXTURE_STACK_DEPTH
+         GL_MAX_TEXTURE_UNITS
+         GL_MAX_TEXTURE_UNITS_ARB
++        GL_MAX_VARYING_FLOATS
+         GL_MAX_VARYING_FLOATS_ARB
++        GL_MAX_VERTEX_ATTRIBS
+         GL_MAX_VERTEX_ATTRIBS_ARB
++        GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS
+         GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB
++        GL_MAX_VERTEX_UNIFORM_COMPONENTS
+         GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB
+         GL_MAX_VIEWPORT_DIMS
+         GL_MODELVIEW
+@@ -1138,6 +1285,8 @@ cdef extern from "glcompat.h":
+         GL_POINT_SIZE_RANGE
+         GL_POINT_SMOOTH
+         GL_POINT_SMOOTH_HINT
++        GL_POINT_SPRITE
++        GL_POINT_SPRITE_COORD_ORIGIN
+         GL_POINT_TOKEN
+         GL_POLYGON
+         GL_POLYGON_BIT
+@@ -1241,13 +1390,19 @@ cdef extern from "glcompat.h":
+         GL_RGB_SCALE_ARB
+         GL_RIGHT
+         GL_S
++        GL_SAMPLER_1D
+         GL_SAMPLER_1D_ARB
++        GL_SAMPLER_1D_SHADOW
+         GL_SAMPLER_1D_SHADOW_ARB
++        GL_SAMPLER_2D
+         GL_SAMPLER_2D_ARB
+         GL_SAMPLER_2D_RECT_ARB
+         GL_SAMPLER_2D_RECT_SHADOW_ARB
++        GL_SAMPLER_2D_SHADOW
+         GL_SAMPLER_2D_SHADOW_ARB
++        GL_SAMPLER_3D
+         GL_SAMPLER_3D_ARB
++        GL_SAMPLER_CUBE
+         GL_SAMPLER_CUBE_ARB
+         GL_SAMPLES
+         GL_SAMPLE_ALPHA_TO_COVERAGE
+@@ -1266,7 +1421,10 @@ cdef extern from "glcompat.h":
+         GL_SEPARATE_SPECULAR_COLOR
+         GL_SET
+         GL_SHADER_OBJECT_ARB
++        GL_SHADER_SOURCE_LENGTH
++        GL_SHADER_TYPE
+         GL_SHADE_MODEL
++        GL_SHADING_LANGUAGE_VERSION
+         GL_SHADING_LANGUAGE_VERSION_ARB
+         GL_SHININESS
+         GL_SHORT
+@@ -1303,6 +1461,13 @@ cdef extern from "glcompat.h":
+         GL_STATIC_READ_ARB
+         GL_STENCIL
+         GL_STENCIL_ATTACHMENT_EXT
++        GL_STENCIL_BACK_FAIL
++        GL_STENCIL_BACK_FUNC
++        GL_STENCIL_BACK_PASS_DEPTH_FAIL
++        GL_STENCIL_BACK_PASS_DEPTH_PASS
++        GL_STENCIL_BACK_REF
++        GL_STENCIL_BACK_VALUE_MASK
++        GL_STENCIL_BACK_WRITEMASK
+         GL_STENCIL_BITS
+         GL_STENCIL_BUFFER_BIT
+         GL_STENCIL_CLEAR_VALUE
+@@ -1490,8 +1655,10 @@ cdef extern from "glcompat.h":
+         GL_UNSIGNED_SHORT_5_5_5_1
+         GL_UNSIGNED_SHORT_5_6_5
+         GL_UNSIGNED_SHORT_5_6_5_REV
++        GL_UPPER_LEFT
+         GL_V2F
+         GL_V3F
++        GL_VALIDATE_STATUS
+         GL_VENDOR
+         GL_VERSION
+         GL_VERTEX_ARRAY
+@@ -1501,15 +1668,24 @@ cdef extern from "glcompat.h":
+         GL_VERTEX_ARRAY_STRIDE
+         GL_VERTEX_ARRAY_TYPE
+         GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB
++        GL_VERTEX_ATTRIB_ARRAY_ENABLED
+         GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB
++        GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
+         GL_VERTEX_ATTRIB_ARRAY_NORMALIZED_ARB
++        GL_VERTEX_ATTRIB_ARRAY_POINTER
+         GL_VERTEX_ATTRIB_ARRAY_POINTER_ARB
++        GL_VERTEX_ATTRIB_ARRAY_SIZE
+         GL_VERTEX_ATTRIB_ARRAY_SIZE_ARB
++        GL_VERTEX_ATTRIB_ARRAY_STRIDE
+         GL_VERTEX_ATTRIB_ARRAY_STRIDE_ARB
++        GL_VERTEX_ATTRIB_ARRAY_TYPE
+         GL_VERTEX_ATTRIB_ARRAY_TYPE_ARB
+         GL_VERTEX_PROGRAM_ARB
++        GL_VERTEX_PROGRAM_POINT_SIZE
+         GL_VERTEX_PROGRAM_POINT_SIZE_ARB
++        GL_VERTEX_PROGRAM_TWO_SIDE
+         GL_VERTEX_PROGRAM_TWO_SIDE_ARB
++        GL_VERTEX_SHADER
+         GL_VERTEX_SHADER_ARB
+         GL_VIEWPORT
+         GL_VIEWPORT_BIT
 diff --git a/renpy/gl/gldraw.pyx b/renpy/gl/gldraw.pyx
-index 277e78f..880a269 100644
+index 277e78f..ebcb964 100644
 --- a/renpy/gl/gldraw.pyx
 +++ b/renpy/gl/gldraw.pyx
+@@ -132,7 +132,7 @@ cdef class GLDraw:
+         self.upscale_factor = 1.0
+ 
+         # Should we use the fast (but incorrect) dissolve mode?
+-        self.fast_dissolve = False # renpy.android
++        self.fast_dissolve = True # renpy.android
+ 
+         # Should we always report pixels as being always opaque?
+         self.always_opaque = renpy.android
 @@ -146,6 +146,8 @@ cdef class GLDraw:
          can. It returns True if it was succesful, or False if OpenGL isn't
          working for some reason.
@@ -599,6 +1039,629 @@ index 277e78f..880a269 100644
              pheight = self.display_info.current_h
              pwidth = self.display_info.current_w
          else:
+@@ -450,6 +452,21 @@ cdef class GLDraw:
+                 renpy.display.log.write("Initializing shader environment failed:")
+                 renpy.display.log.exception()
+                 self.environ = None
++        elif allow_shader and use_subsystem(
++            glenviron_shader_es,
++            'RENPY_GL_ENVIRON',
++            "shader_es",
++            "GL_APPLE_framebuffer_multisample"
++            ):
++            try:
++                renpy.display.log.write("Using shader environment (OpenGL ES).")
++                self.environ = glenviron_shader_es.ShaderESEnviron()
++                self.info["environ"] = "shader_es"
++                self.environ.init()
++            except Exception, e:
++                renpy.display.log.write("Initializing shader (OpenGL ES) environment failed.")
++                renpy.display.log.exception()
++                self.environ = None
+                 
+         if self.environ is None:
+             
+@@ -1245,3 +1262,8 @@ try:
+ except ImportError:
+     glenviron_limited = None
+ 
++try:
++    import glenviron_shader_es
++except ImportError:
++    glenviron_shader_es = None
++
+diff --git a/renpy/gl/glenviron_shader_es.pyx b/renpy/gl/glenviron_shader_es.pyx
+new file mode 100644
+index 0000000..5baeaf6
+--- /dev/null
++++ b/renpy/gl/glenviron_shader_es.pyx
+@@ -0,0 +1,585 @@
++#cython: profile=False
++# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
++#
++# Permission is hereby granted, free of charge, to any person
++# obtaining a copy of this software and associated documentation files
++# (the "Software"), to deal in the Software without restriction,
++# including without limitation the rights to use, copy, modify, merge,
++# publish, distribute, sublicense, and/or sell copies of the Software,
++# and to permit persons to whom the Software is furnished to do so,
++# subject to the following conditions:
++#
++# The above copyright notice and this permission notice shall be
++# included in all copies or substantial portions of the Software.
++#
++# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++DEF ANGLE = False
++
++from gl cimport *
++from gldraw cimport *
++
++cdef int round(double d):
++    return <int> (d + .5)
++
++
++VERTEX_SHADER1 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++
++varying vec2 TexCoord0;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++VERTEX_SHADER2 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++attribute vec2 VertexTexCoord1;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++    TexCoord1 = VertexTexCoord1;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++VERTEX_SHADER3 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++attribute vec2 VertexTexCoord1;
++attribute vec2 VertexTexCoord2;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++varying vec2 TexCoord2;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++    TexCoord1 = VertexTexCoord1;
++    TexCoord2 = VertexTexCoord2;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++
++
++
++BLIT_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++
++varying vec2 TexCoord0;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++        
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    gl_FragColor = color0 * Color;
++}
++"""
++
++BLEND_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++uniform sampler2D tex1;
++uniform float done;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    vec4 color1 = texture2D(tex1, TexCoord1.st);
++
++    gl_FragColor = mix(color0, color1, done) * Color;
++}
++"""
++
++IMAGEBLEND_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++uniform sampler2D tex1;
++uniform sampler2D tex2;
++uniform float offset;
++uniform float multiplier;
++        
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++varying vec2 TexCoord2;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    vec4 color1 = texture2D(tex1, TexCoord1.st);
++    vec4 color2 = texture2D(tex2, TexCoord2.st);
++
++    float a = clamp((color0.a + offset) * multiplier, 0.0, 1.0);
++
++    gl_FragColor = mix(color1, color2, a) * Color;
++}
++"""
++
++
++
++def check_status(shader, handle, type):
++    """
++    Checks the status of a shader or program. If it fails, then an
++    exception is raised.
++    """
++
++    cdef GLint status = 0
++    cdef GLint log_length = 0
++    
++    if shader:
++        glGetShaderiv(handle, type, &status)
++    else:    
++        glGetProgramiv(handle, type, &status)
++
++    if status == 1: # 0 for problems.
++        return
++        
++    if shader:
++        glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &log_length)
++    else:
++        glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &log_length)
++
++    log = ' ' * log_length
++    
++    if shader:
++        glGetShaderInfoLog(handle, log_length, &log_length, <char *> log)
++    else:
++        glGetProgramInfoLog(handle, log_length, &log_length, <char *> log)
++
++    raise Exception("Shader error: %s" % log)
++
++
++def compile_shader(kind, source):
++    """
++    Allocates and compiles a shader.
++    """
++
++    cdef char *sourceptr = <char *> source
++    cdef int lensource = len(source)
++    
++    handle = glCreateShader(kind)
++    glShaderSource(handle, 1, <GLvoid **> &sourceptr, &lensource)
++    glCompileShader(handle)
++
++    check_status(True, handle, GL_COMPILE_STATUS)
++
++    return handle
++
++
++def compile_program(vertex, fragment):
++    """
++    Compiles a pair of shaders into a program.
++    """
++    
++    vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex)
++    fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment)
++    
++    program = glCreateProgram()
++
++    glAttachShader(program, vertex_shader)
++    glAttachShader(program, fragment_shader)
++
++    glLinkProgram(program)
++
++    check_status(False, program, GL_LINK_STATUS)
++
++    glUseProgram(program)
++    
++    glDeleteShader(vertex_shader)
++    glDeleteShader(fragment_shader)
++    
++    return program
++
++cdef class Program(object):
++    """
++    Encapsulates a program.
++    """
++
++    cdef GLuint program
++
++    # Attributes.
++    cdef GLint Vertex
++    cdef GLint VertexTexCoord0
++    cdef GLint VertexTexCoord1
++    cdef GLint VertexTexCoord2
++    
++    # Uniforms.
++    cdef GLint Projection
++    cdef GLint Color    
++
++    cdef GLint tex0
++    cdef GLint tex1
++    cdef GLint tex2
++    
++    cdef GLint clip0
++    cdef GLint clip1
++    
++    cdef GLint offset
++    cdef GLint multiplier
++    cdef GLint done
++    
++    def __init__(self, vertex, fragment):
++        self.program = compile_program(vertex, fragment)
++        
++        self.Vertex = glGetAttribLocation(self.program, "Vertex")
++        self.VertexTexCoord0 = glGetAttribLocation(self.program, "VertexTexCoord0")
++        self.VertexTexCoord1 = glGetAttribLocation(self.program, "VertexTexCoord1")
++        self.VertexTexCoord2 = glGetAttribLocation(self.program, "VertexTexCoord2")
++        
++        self.Projection = glGetUniformLocation(self.program, "Projection")
++        self.tex0 = glGetUniformLocation(self.program, "tex0")
++        self.tex1 = glGetUniformLocation(self.program, "tex1")
++        self.tex2 = glGetUniformLocation(self.program, "tex2")
++        self.offset = glGetUniformLocation(self.program, "offset")
++        self.multiplier = glGetUniformLocation(self.program, "multiplier")
++        self.done = glGetUniformLocation(self.program, "done")
++        self.Color = glGetUniformLocation(self.program, "Color")
++        self.clip0 = glGetUniformLocation(self.program, "clip0")
++        self.clip1 = glGetUniformLocation(self.program, "clip1")
++
++    def disable_attribs(self):
++        # Disable the vertex attributes used by this program.
++        
++        if self.Vertex != -1:
++            glEnableVertexAttribArray(self.Vertex)
++
++        if self.VertexTexCoord0 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord0)
++        
++        if self.VertexTexCoord1 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord1)
++
++        if self.VertexTexCoord2 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord2)
++
++    def delete(self):
++        glDeleteProgram(self.program)
++
++        
++cdef class ShaderESEnviron(Environ):
++    """
++    This is an environment that uses shaders under OpenGL ES 2.
++    """
++    
++    cdef Program program
++    cdef float projection[16]
++
++    cdef Program blit_program
++    cdef Program blend_program
++    cdef Program imageblend_program
++
++    cdef double clip_x0
++    cdef double clip_y0
++    cdef double clip_x1
++    cdef double clip_y1
++
++    cdef int viewport_x
++    cdef int viewport_y
++    cdef int viewport_w
++    cdef int viewport_h
++
++    def init(self):
++
++        self.blit_program = Program(VERTEX_SHADER1, BLIT_SHADER)
++        self.blend_program = Program(VERTEX_SHADER2, BLEND_SHADER)
++        self.imageblend_program = Program(VERTEX_SHADER3, IMAGEBLEND_SHADER)
++
++        # The current program.
++        self.program = None        
++
++    def deinit(self):
++        """
++        Called before changing the GL context.
++        """
++
++        if self.program is not None:
++            self.program.disable_attribs()
++            self.program = None
++        
++        self.blit_program.delete()
++        self.blend_program.delete()
++        self.imageblend_program.delete()
++        
++    def activate(self, Program program):
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = program
++
++        glUseProgram(program.program)
++        glUniformMatrix4fv(program.Projection, 1, GL_FALSE, self.projection)
++        glUniform2f(program.clip0, self.clip_x0, self.clip_y0)
++        glUniform2f(program.clip1, self.clip_x1, self.clip_y1)
++
++    cdef void blit(self):
++
++        program = self.blit_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++        
++    cdef void blend(self, double fraction):
++        program = self.blend_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++            glUniform1i(program.tex1, 1)
++
++        glUniform1f(program.done, fraction)
++        
++    cdef void imageblend(self, double fraction, int ramp):
++
++        program = self.imageblend_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++            glUniform1i(program.tex1, 1)
++            glUniform1i(program.tex2, 2)
++
++        # Prevent a DBZ if the user gives us a 0 ramp.
++        if ramp < 1:
++            ramp = 1
++            
++        # Compute the offset to apply to the alpha.            
++        start = -1.0
++        end = ramp / 256.0        
++        offset = start + ( end - start) * fraction
++
++        # Setup the multiplier and the offset.
++        glUniform1f(program.multiplier, 256.0 / ramp)
++        glUniform1f(program.offset, offset)
++
++    cdef void set_vertex(self, float *vertices):
++        glEnableVertexAttribArray(self.program.Vertex)
++        glVertexAttribPointer(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
++
++    cdef void set_texture(self, int unit, float *coords):
++        cdef tex
++        
++        if unit == 0:
++            tex = self.program.VertexTexCoord0
++        elif unit == 1:
++            tex = self.program.VertexTexCoord1
++        elif unit == 2 and RENPY_THIRD_TEXTURE:
++            tex = self.program.VertexTexCoord2
++        else:
++            return
++
++        if tex < 0:
++            return
++
++        if coords != NULL:           
++            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> coords)
++            glEnableVertexAttribArray(tex)
++        else:
++            glDisableVertexAttribArray(tex)
++            
++    cdef void set_color(self, float r, float g, float b, float a):
++        glUniform4f(self.program.Color, r, g, b, a)
++            
++    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
++        
++        self.projection[ 0] = 2 / (right - left)
++        self.projection[ 4] = 0
++        self.projection[ 8] = 0
++        self.projection[12] = -(right + left) / (right - left)
++        
++        self.projection[ 1] = 0
++        self.projection[ 5] = 2 / (top - bottom)
++        self.projection[ 9] = 0
++        self.projection[13] = -(top + bottom) / (top - bottom)
++
++        self.projection[ 2] = 0
++        self.projection[ 6] = 0
++        self.projection[10] = -2 / (far - near)
++        self.projection[14] = -(far + near) / (far - near)
++
++        self.projection[ 3] = 0
++        self.projection[ 7] = 0
++        self.projection[11] = 0
++        self.projection[15] = 1
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = None
++        
++    cdef void project(self, x, y, z, double *rv_x, double *rv_y, double *rv_z):
++        """
++        Given a point, projects it using the projection.
++        """
++        
++        rv_x[0] = x * self.projection[0] + y * self.projection[4] + z * self.projection[8] + self.projection[12]
++        rv_y[0] = x * self.projection[1] + y * self.projection[5] + z * self.projection[9] + self.projection[13]
++        rv_z[0] = x * self.projection[2] + y * self.projection[6] + z * self.projection[10] + self.projection[14]
++
++    cdef void set_clip(self, tuple clip_box, GLDraw draw):
++        
++        cdef double minx, miny, maxx, maxy, z
++        cdef double vwidth, vheight
++        cdef double px, py, pw, ph
++        cdef int cx, cy, cw, ch
++        cdef int psw, psh
++        
++        minx, miny, maxx, maxy = clip_box
++        psw, psh = draw.physical_size
++      
++        # The clipping box.  
++        self.clip_x0 = minx
++        self.clip_y0 = miny
++        self.clip_x1 = maxx
++        self.clip_y1 = maxy 
++        
++        # Set the scissor rectangle to be slightly larger than the 
++        # clipping box. This ensures everything that needs to be drawn
++        # is drawn, and we don't spend a lot of time shading clipped 
++        # fragments.
++        
++        if draw.clip_rtt_box is None:
++            
++            z = 0
++            
++            # Project to normalized coordinates.            
++            self.project(minx, miny, z, &minx, &miny, &z)
++            self.project(maxx, maxy, z, &maxx, &maxy, &z)
++            
++            # Convert to window coordinates.
++            minx = (minx + 1) * self.viewport_w / 2 + self.viewport_x
++            maxx = (maxx + 1) * self.viewport_w / 2 + self.viewport_x
++            miny = (miny + 1) * self.viewport_h / 2 + self.viewport_y
++            maxy = (maxy + 1) * self.viewport_h / 2 + self.viewport_y
++
++            # Increase the bounding box, to ensure every relevant pixel is 
++            # in it. The shader will take care of enforcing the actual box.
++            minx -= 1
++            maxx += 1          
++            miny += 1
++            maxy -= 1
++
++            if minx < 0:
++                minx = 0
++            if miny < 0:
++                miny = 0
++
++            glEnable(GL_SCISSOR_TEST)
++            glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
++
++        else:
++
++            cx, cy, cw, ch = draw.clip_rtt_box
++
++            glEnable(GL_SCISSOR_TEST)                            
++            glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = None
++  
++    cdef void unset_clip(self, GLDraw draw):
++
++        glDisable(GL_SCISSOR_TEST)
++        
++        self.clip_x0 = 0
++        self.clip_y0 = 0
++        self.clip_x1 = 65535
++        self.clip_y1 = 65535
++
++        if self.program is not None:
++            self.program.disable_attribs()
++        
++        self.program = None
++
++    cdef void viewport(self, int x, int y, int width, int height):
++        glViewport(x, y, width, height)
++        self.viewport_x = x
++        self.viewport_y = y
++        self.viewport_w = width
++        self.viewport_h = height
+\ No newline at end of file
 diff --git a/renpy/loadsave.py b/renpy/loadsave.py
 index 1fbad00..71f2148 100644
 --- a/renpy/loadsave.py

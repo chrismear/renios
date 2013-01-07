@@ -35,6 +35,7 @@ HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
 
 pushd module
 export RENIOS_IOS=1
+export RENPY_CYTHON='/usr/local/bin/cython'
 try $HOSTPYTHON setup.py build_ext -g
 
 rm -rdf iosbuild
