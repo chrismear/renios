@@ -13,6 +13,11 @@
 		8B1EA082169ED3A0004E4254 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA080169ED3A0004E4254 /* InfoPlist.strings */; };
 		8B1EA095169ED444004E4254 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA094169ED444004E4254 /* main.c */; };
 		8B1EA09C169ED498004E4254 /* Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA09B169ED497004E4254 /* Helpers.m */; };
+		8B1EA0A7169ED7B1004E4254 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */; };
+		8B1EA0A8169ED7B1004E4254 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0A3169ED780004E4254 /* OpenGLES.framework */; };
+		8B1EA0A9169ED7B1004E4254 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */; };
+		8B1EA0AA169ED7B1004E4254 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09F169ED775004E4254 /* ImageIO.framework */; };
+		8B1EA0AB169ED7B1004E4254 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09D169ED76D004E4254 /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +30,11 @@
 		8B1EA094169ED444004E4254 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		8B1EA09A169ED497004E4254 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
 		8B1EA09B169ED497004E4254 /* Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helpers.m; sourceTree = "<group>"; };
+		8B1EA09D169ED76D004E4254 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		8B1EA09F169ED775004E4254 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8B1EA0A3169ED780004E4254 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +42,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B1EA0A7169ED7B1004E4254 /* AudioToolbox.framework in Frameworks */,
+				8B1EA0A8169ED7B1004E4254 /* OpenGLES.framework in Frameworks */,
+				8B1EA0A9169ED7B1004E4254 /* QuartzCore.framework in Frameworks */,
+				8B1EA0AA169ED7B1004E4254 /* ImageIO.framework in Frameworks */,
+				8B1EA0AB169ED7B1004E4254 /* MobileCoreServices.framework in Frameworks */,
 				8B1EA078169ED3A0004E4254 /* UIKit.framework in Frameworks */,
 				8B1EA07A169ED3A0004E4254 /* Foundation.framework in Frameworks */,
 				8B1EA07C169ED3A0004E4254 /* CoreGraphics.framework in Frameworks */,
@@ -61,6 +76,11 @@
 		8B1EA076169ED3A0004E4254 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */,
+				8B1EA0A3169ED780004E4254 /* OpenGLES.framework */,
+				8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */,
+				8B1EA09F169ED775004E4254 /* ImageIO.framework */,
+				8B1EA09D169ED76D004E4254 /* MobileCoreServices.framework */,
 				8B1EA077169ED3A0004E4254 /* UIKit.framework */,
 				8B1EA079169ED3A0004E4254 /* Foundation.framework */,
 				8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */,
