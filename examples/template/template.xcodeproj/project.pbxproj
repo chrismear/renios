@@ -34,6 +34,8 @@
 		8B1EA0C7169ED815004E4254 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B9169ED815004E4254 /* libswscale.a */; };
 		8B1EA0CA169ED854004E4254 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0C8169ED84D004E4254 /* libz.dylib */; };
 		8B1EA0CD169ED89F004E4254 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CC169ED89F004E4254 /* scripts */; };
+		8B1EA0CF169ED92A004E4254 /* include in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CE169ED92A004E4254 /* include */; };
+		8B1EA0D1169ED943004E4254 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0D0169ED943004E4254 /* lib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +69,8 @@
 		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
 		8B1EA0C8169ED84D004E4254 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = template/scripts; sourceTree = "<group>"; };
+		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../../dependencies/build/python/embed/include; sourceTree = "<group>"; };
+		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../dependencies/build/python/lib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +178,8 @@
 		8B1EA0CB169ED87D004E4254 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8B1EA0D0169ED943004E4254 /* lib */,
+				8B1EA0CE169ED92A004E4254 /* include */,
 				8B1EA0CC169ED89F004E4254 /* scripts */,
 			);
 			name = Resources;
@@ -231,6 +237,8 @@
 			files = (
 				8B1EA082169ED3A0004E4254 /* InfoPlist.strings in Resources */,
 				8B1EA0CD169ED89F004E4254 /* scripts in Resources */,
+				8B1EA0CF169ED92A004E4254 /* include in Resources */,
+				8B1EA0D1169ED943004E4254 /* lib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
