@@ -1706,7 +1706,7 @@ index 0000000..5baeaf6
 +        self.viewport_h = height
 \ No newline at end of file
 diff --git a/renpy/loadsave.py b/renpy/loadsave.py
-index 1fbad00..71f2148 100644
+index 1fbad00..3b77a7f 100644
 --- a/renpy/loadsave.py
 +++ b/renpy/loadsave.py
 @@ -233,6 +233,8 @@ def save(filename, extra_info='',
@@ -1727,6 +1727,17 @@ index 1fbad00..71f2148 100644
      zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
      roots, log = loads(zf.read("log"))
      zf.close()
+@@ -514,7 +518,9 @@ def MultiPersistent(name):
+     if not renpy.game.context().init_phase:
+         raise Exception("MultiPersistent objects must be created during the init phase.")
+     
+-    if sys.platform == 'win32':
++    if renpy.ios:
++        files = [ os.path.expanduser("~/Documents/Renpy/persistent") ]
++    elif sys.platform == 'win32':
+         files = [ os.path.expanduser("~/RenPy/Persistent") ]
+ 
+         if 'APPDATA' in os.environ:
 diff --git a/renpy/log.py b/renpy/log.py
 index 611abfe..bb5edca 100644
 --- a/renpy/log.py
