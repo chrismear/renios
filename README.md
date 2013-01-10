@@ -3,7 +3,7 @@ Ren'iOS
 
 Ren'iOS helps you package a [Ren'Py](http://www.renpy.org) game into an app that will run on iOS. It builds versions of Ren'Py and its dependencies that will run on iOS, and provides scripts to help you assemble these with your game into an Xcode project that will build for iOS.
 
-You can download a pre-build binary distribution from here:
+You can download a pre-built binary distribution from here:
 
 https://github.com/chrismear/renios/wiki/Downloads
 
@@ -39,8 +39,27 @@ Build the software by changing into the `dependencies` directory, and running `.
 License
 -------
 
-Some portions of Ren'iOS are based on works licensed under the LGPL (various versions). These portions are also licensed under the corresponding LGPL license, and are noted as such in the relevant files or in a 'LICENSE' file.
+Some portions of Ren'iOS are based on works licensed under the LGPL (various versions). Therefore these portions are also licensed under the LGPL.
 
-The rest of Ren'iOS is licensed under the [Modified BSD License](http://directory.fsf.org/wiki/License:BSD_3Clause).
+Because of these portions which must be licensed under an LGPL, the single license that applies to Ren'iOS taken as a whole is the LGPL Version 3.
+
+In addition to that license, those portions of Ren'iOS that are not required to be licensed under the LGPL are also individually licensed under the [MIT (Expat) license](http://directory.fsf.org/wiki/License:Expat).
+
+Each file/directory in Ren'iOS contains a permissions notice that indicates which license(s) apply to that file/directory.
+
+An application binary that you build using Ren'iOS should not itself need to be licensed under the LGPL.
 
 Copyright 2012, 2013 Chris Mear <chris@feedmechocolate.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
