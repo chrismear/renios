@@ -53,24 +53,24 @@
 		8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8B1EA0A3169ED780004E4254 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodecnoinverse.a; path = ../../dependencies/build/lib/libavcodecnoinverse.a; sourceTree = "<group>"; };
-		8B1EA0AD169ED815004E4254 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../../dependencies/build/lib/libavformat.a; sourceTree = "<group>"; };
-		8B1EA0AE169ED815004E4254 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../../dependencies/build/lib/libavutil.a; sourceTree = "<group>"; };
-		8B1EA0AF169ED815004E4254 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../../dependencies/build/lib/libfreetype.a; sourceTree = "<group>"; };
-		8B1EA0B0169ED815004E4254 /* libfribidi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfribidi.a; path = ../../dependencies/build/lib/libfribidi.a; sourceTree = "<group>"; };
-		8B1EA0B1169ED815004E4254 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../dependencies/build/lib/libjpeg.a; sourceTree = "<group>"; };
-		8B1EA0B2169ED815004E4254 /* libpng12.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng12.a; path = ../../dependencies/build/lib/libpng12.a; sourceTree = "<group>"; };
-		8B1EA0B3169ED815004E4254 /* libpygame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpygame.a; path = ../../dependencies/build/lib/libpygame.a; sourceTree = "<group>"; };
-		8B1EA0B4169ED815004E4254 /* libpython2.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.7.a; path = ../../dependencies/build/lib/libpython2.7.a; sourceTree = "<group>"; };
-		8B1EA0B5169ED815004E4254 /* librenpy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librenpy.a; path = ../../dependencies/build/lib/librenpy.a; sourceTree = "<group>"; };
-		8B1EA0B6169ED815004E4254 /* libSDL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL.a; path = ../../dependencies/build/lib/libSDL.a; sourceTree = "<group>"; };
-		8B1EA0B7169ED815004E4254 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../../dependencies/build/lib/libSDL2_image.a; sourceTree = "<group>"; };
-		8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../dependencies/build/lib/libSDL2_ttf.a; sourceTree = "<group>"; };
-		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
+		8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodecnoinverse.a; path = ../dependencies/build/lib/libavcodecnoinverse.a; sourceTree = "<group>"; };
+		8B1EA0AD169ED815004E4254 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../dependencies/build/lib/libavformat.a; sourceTree = "<group>"; };
+		8B1EA0AE169ED815004E4254 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../dependencies/build/lib/libavutil.a; sourceTree = "<group>"; };
+		8B1EA0AF169ED815004E4254 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../dependencies/build/lib/libfreetype.a; sourceTree = "<group>"; };
+		8B1EA0B0169ED815004E4254 /* libfribidi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfribidi.a; path = ../dependencies/build/lib/libfribidi.a; sourceTree = "<group>"; };
+		8B1EA0B1169ED815004E4254 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../dependencies/build/lib/libjpeg.a; sourceTree = "<group>"; };
+		8B1EA0B2169ED815004E4254 /* libpng12.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng12.a; path = ../dependencies/build/lib/libpng12.a; sourceTree = "<group>"; };
+		8B1EA0B3169ED815004E4254 /* libpygame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpygame.a; path = ../dependencies/build/lib/libpygame.a; sourceTree = "<group>"; };
+		8B1EA0B4169ED815004E4254 /* libpython2.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.7.a; path = ../dependencies/build/lib/libpython2.7.a; sourceTree = "<group>"; };
+		8B1EA0B5169ED815004E4254 /* librenpy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librenpy.a; path = ../dependencies/build/lib/librenpy.a; sourceTree = "<group>"; };
+		8B1EA0B6169ED815004E4254 /* libSDL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL.a; path = ../dependencies/build/lib/libSDL.a; sourceTree = "<group>"; };
+		8B1EA0B7169ED815004E4254 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../dependencies/build/lib/libSDL2_image.a; sourceTree = "<group>"; };
+		8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../dependencies/build/lib/libSDL2_ttf.a; sourceTree = "<group>"; };
+		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
 		8B1EA0C8169ED84D004E4254 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = template/scripts; sourceTree = "<group>"; };
-		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../../dependencies/build/python/embed/include; sourceTree = "<group>"; };
-		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../dependencies/build/python/lib; sourceTree = "<group>"; };
+		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../dependencies/build/python/embed/include; sourceTree = "<group>"; };
+		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../dependencies/build/python/lib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -384,6 +384,7 @@
 				8B1EA093169ED3A0004E4254 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
