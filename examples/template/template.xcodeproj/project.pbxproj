@@ -221,10 +221,19 @@
 		8B1EA092169ED3A0004E4254 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "template/template-Prefix.pch";
+				DEAD_CODE_STRIPPING = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					../../dependencies/build/include/SDL,
+					../../dependencies/build/python/include,
+					../../dependencies/build/include,
+				);
 				INFOPLIST_FILE = "template/template-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -232,10 +241,18 @@
 		8B1EA093169ED3A0004E4254 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "template/template-Prefix.pch";
+				DEAD_CODE_STRIPPING = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					../../dependencies/build/include/SDL,
+					../../dependencies/build/python/include,
+					../../dependencies/build/include,
+				);
 				INFOPLIST_FILE = "template/template-Info.plist";
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
