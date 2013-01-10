@@ -32,6 +32,7 @@
 		8B1EA0C5169ED815004E4254 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B7169ED815004E4254 /* libSDL2_image.a */; };
 		8B1EA0C6169ED815004E4254 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */; };
 		8B1EA0C7169ED815004E4254 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B9169ED815004E4254 /* libswscale.a */; };
+		8B1EA0CA169ED854004E4254 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0C8169ED84D004E4254 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,7 @@
 		8B1EA0B7169ED815004E4254 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../../dependencies/build/lib/libSDL2_image.a; sourceTree = "<group>"; };
 		8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../dependencies/build/lib/libSDL2_ttf.a; sourceTree = "<group>"; };
 		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
+		8B1EA0C8169ED84D004E4254 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B1EA0CA169ED854004E4254 /* libz.dylib in Frameworks */,
 				8B1EA0A7169ED7B1004E4254 /* AudioToolbox.framework in Frameworks */,
 				8B1EA0A8169ED7B1004E4254 /* OpenGLES.framework in Frameworks */,
 				8B1EA0A9169ED7B1004E4254 /* QuartzCore.framework in Frameworks */,
@@ -118,6 +121,7 @@
 		8B1EA076169ED3A0004E4254 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8B1EA0C8169ED84D004E4254 /* libz.dylib */,
 				8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */,
 				8B1EA0AD169ED815004E4254 /* libavformat.a */,
 				8B1EA0AE169ED815004E4254 /* libavutil.a */,
