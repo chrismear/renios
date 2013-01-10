@@ -325,14 +325,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					../../dependencies/build/include/SDL,
-					../../dependencies/build/python/include,
-					../../dependencies/build/include,
+					../dependencies/build/include/SDL,
+					../dependencies/build/python/include,
+					../dependencies/build/include,
 				);
 				INFOPLIST_FILE = "template/template-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../dependencies/build/lib\"",
+					"\"$(SRCROOT)/../dependencies/build/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-all_load";
@@ -349,14 +349,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					../../dependencies/build/include/SDL,
-					../../dependencies/build/python/include,
-					../../dependencies/build/include,
+					../dependencies/build/include/SDL,
+					../dependencies/build/python/include,
+					../dependencies/build/include,
 				);
 				INFOPLIST_FILE = "template/template-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../dependencies/build/lib\"",
+					"\"$(SRCROOT)/../dependencies/build/lib\"",
 				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
