@@ -1,0 +1,30 @@
+Copyright 2012, 2013 Chris Mear <chris@feedmechocolate.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 2.1 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+These files incorporate work from pygame covered by the following copyright and permission notice:
+
+  This library is distributed under GNU LGPL version 2.1, which can
+  be found in the file "doc/LGPL". I reserve the right to place
+  future versions of this library under a different license.
+  http://www.gnu.org/copyleft/lesser.html
+
+  This basically means you can use pygame in any project you want,
+  but if you make any changes or additions to pygame itself, those
+  must be released with a compatible license. (preferably submitted
+  back to the pygame project). Closed source and commercial games are
+  fine.
+
+  The programs in the "examples" subdirectory are in the public
+  domain.
