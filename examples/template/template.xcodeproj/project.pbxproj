@@ -11,6 +11,8 @@
 		8B1EA07A169ED3A0004E4254 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA079169ED3A0004E4254 /* Foundation.framework */; };
 		8B1EA07C169ED3A0004E4254 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */; };
 		8B1EA082169ED3A0004E4254 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA080169ED3A0004E4254 /* InfoPlist.strings */; };
+		8B1EA095169ED444004E4254 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA094169ED444004E4254 /* main.c */; };
+		8B1EA09C169ED498004E4254 /* Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA09B169ED497004E4254 /* Helpers.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,9 @@
 		8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8B1EA07F169ED3A0004E4254 /* template-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "template-Info.plist"; sourceTree = "<group>"; };
 		8B1EA081169ED3A0004E4254 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8B1EA094169ED444004E4254 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		8B1EA09A169ED497004E4254 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
+		8B1EA09B169ED497004E4254 /* Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helpers.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +72,9 @@
 			isa = PBXGroup;
 			children = (
 				8B1EA07E169ED3A0004E4254 /* Supporting Files */,
+				8B1EA094169ED444004E4254 /* main.c */,
+				8B1EA09A169ED497004E4254 /* Helpers.h */,
+				8B1EA09B169ED497004E4254 /* Helpers.m */,
 			);
 			path = template;
 			sourceTree = "<group>";
@@ -141,6 +149,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B1EA095169ED444004E4254 /* main.c in Sources */,
+				8B1EA09C169ED498004E4254 /* Helpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
