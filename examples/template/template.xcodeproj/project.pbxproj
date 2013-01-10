@@ -11,11 +11,6 @@
 		8B1EA07A169ED3A0004E4254 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA079169ED3A0004E4254 /* Foundation.framework */; };
 		8B1EA07C169ED3A0004E4254 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */; };
 		8B1EA082169ED3A0004E4254 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA080169ED3A0004E4254 /* InfoPlist.strings */; };
-		8B1EA084169ED3A0004E4254 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA083169ED3A0004E4254 /* main.m */; };
-		8B1EA088169ED3A0004E4254 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1EA087169ED3A0004E4254 /* AppDelegate.m */; };
-		8B1EA08A169ED3A0004E4254 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA089169ED3A0004E4254 /* Default.png */; };
-		8B1EA08C169ED3A0004E4254 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA08B169ED3A0004E4254 /* Default@2x.png */; };
-		8B1EA08E169ED3A0004E4254 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA08D169ED3A0004E4254 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,13 +20,6 @@
 		8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8B1EA07F169ED3A0004E4254 /* template-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "template-Info.plist"; sourceTree = "<group>"; };
 		8B1EA081169ED3A0004E4254 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8B1EA083169ED3A0004E4254 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		8B1EA085169ED3A0004E4254 /* template-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "template-Prefix.pch"; sourceTree = "<group>"; };
-		8B1EA086169ED3A0004E4254 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		8B1EA087169ED3A0004E4254 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		8B1EA089169ED3A0004E4254 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		8B1EA08B169ED3A0004E4254 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		8B1EA08D169ED3A0004E4254 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,8 +66,6 @@
 		8B1EA07D169ED3A0004E4254 /* template */ = {
 			isa = PBXGroup;
 			children = (
-				8B1EA086169ED3A0004E4254 /* AppDelegate.h */,
-				8B1EA087169ED3A0004E4254 /* AppDelegate.m */,
 				8B1EA07E169ED3A0004E4254 /* Supporting Files */,
 			);
 			path = template;
@@ -90,11 +76,6 @@
 			children = (
 				8B1EA07F169ED3A0004E4254 /* template-Info.plist */,
 				8B1EA080169ED3A0004E4254 /* InfoPlist.strings */,
-				8B1EA083169ED3A0004E4254 /* main.m */,
-				8B1EA085169ED3A0004E4254 /* template-Prefix.pch */,
-				8B1EA089169ED3A0004E4254 /* Default.png */,
-				8B1EA08B169ED3A0004E4254 /* Default@2x.png */,
-				8B1EA08D169ED3A0004E4254 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -150,9 +131,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B1EA082169ED3A0004E4254 /* InfoPlist.strings in Resources */,
-				8B1EA08A169ED3A0004E4254 /* Default.png in Resources */,
-				8B1EA08C169ED3A0004E4254 /* Default@2x.png in Resources */,
-				8B1EA08E169ED3A0004E4254 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,8 +141,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B1EA084169ED3A0004E4254 /* main.m in Sources */,
-				8B1EA088169ED3A0004E4254 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
