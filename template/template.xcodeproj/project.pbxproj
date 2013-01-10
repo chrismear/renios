@@ -39,11 +39,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8B1EA073169ED3A0004E4254 /* template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = template.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ##APPNAME##.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B1EA077169ED3A0004E4254 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8B1EA079169ED3A0004E4254 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		8B1EA07F169ED3A0004E4254 /* template-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "template-Info.plist"; sourceTree = "<group>"; };
+		8B1EA07F169ED3A0004E4254 /* ##APPID##-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "##APPID##-Info.plist"; sourceTree = "<group>"; };
 		8B1EA081169ED3A0004E4254 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8B1EA094169ED444004E4254 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		8B1EA09A169ED497004E4254 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 		8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../dependencies/build/lib/libSDL2_ttf.a; sourceTree = "<group>"; };
 		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
 		8B1EA0C8169ED84D004E4254 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = template/scripts; sourceTree = "<group>"; };
+		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ##APPID##/scripts; sourceTree = "<group>"; };
 		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../dependencies/build/python/embed/include; sourceTree = "<group>"; };
 		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../dependencies/build/python/lib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +110,7 @@
 		8B1EA068169ED3A0004E4254 = {
 			isa = PBXGroup;
 			children = (
-				8B1EA07D169ED3A0004E4254 /* template */,
+				8B1EA07D169ED3A0004E4254 /* ##APPID## */,
 				8B1EA0CB169ED87D004E4254 /* Resources */,
 				8B1EA076169ED3A0004E4254 /* Frameworks */,
 				8B1EA074169ED3A0004E4254 /* Products */,
@@ -120,7 +120,7 @@
 		8B1EA074169ED3A0004E4254 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8B1EA073169ED3A0004E4254 /* template.app */,
+				8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,7 +155,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8B1EA07D169ED3A0004E4254 /* template */ = {
+		8B1EA07D169ED3A0004E4254 /* ##APPID## */ = {
 			isa = PBXGroup;
 			children = (
 				8B1EA07E169ED3A0004E4254 /* Supporting Files */,
@@ -163,13 +163,13 @@
 				8B1EA09A169ED497004E4254 /* Helpers.h */,
 				8B1EA09B169ED497004E4254 /* Helpers.m */,
 			);
-			path = template;
+			path = ##APPID##;
 			sourceTree = "<group>";
 		};
 		8B1EA07E169ED3A0004E4254 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8B1EA07F169ED3A0004E4254 /* template-Info.plist */,
+				8B1EA07F169ED3A0004E4254 /* ##APPID##-Info.plist */,
 				8B1EA080169ED3A0004E4254 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -188,9 +188,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8B1EA072169ED3A0004E4254 /* template */ = {
+		8B1EA072169ED3A0004E4254 /* ##APPNAME## */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8B1EA091169ED3A0004E4254 /* Build configuration list for PBXNativeTarget "template" */;
+			buildConfigurationList = 8B1EA091169ED3A0004E4254 /* Build configuration list for PBXNativeTarget "##APPID##" */;
 			buildPhases = (
 				8B1EA06F169ED3A0004E4254 /* Sources */,
 				8B1EA070169ED3A0004E4254 /* Frameworks */,
@@ -200,9 +200,9 @@
 			);
 			dependencies = (
 			);
-			name = template;
-			productName = template;
-			productReference = 8B1EA073169ED3A0004E4254 /* template.app */;
+			name = ##APPNAME##;
+			productName = ##APPID##;
+			productReference = 8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -213,7 +213,7 @@
 			attributes = {
 				LastUpgradeCheck = 0450;
 			};
-			buildConfigurationList = 8B1EA06D169ED3A0004E4254 /* Build configuration list for PBXProject "template" */;
+			buildConfigurationList = 8B1EA06D169ED3A0004E4254 /* Build configuration list for PBXProject "##APPID##" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -225,7 +225,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8B1EA072169ED3A0004E4254 /* template */,
+				8B1EA072169ED3A0004E4254 /* ##APPID## */,
 			);
 		};
 /* End PBXProject section */
@@ -329,7 +329,7 @@
 					../dependencies/build/python/include,
 					../dependencies/build/include,
 				);
-				INFOPLIST_FILE = "template/template-Info.plist";
+				INFOPLIST_FILE = "##APPID##/##APPID##-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../dependencies/build/lib\"",
@@ -353,7 +353,7 @@
 					../dependencies/build/python/include,
 					../dependencies/build/include,
 				);
-				INFOPLIST_FILE = "template/template-Info.plist";
+				INFOPLIST_FILE = "##APPID##/##APPID##-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../dependencies/build/lib\"",
@@ -368,7 +368,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8B1EA06D169ED3A0004E4254 /* Build configuration list for PBXProject "template" */ = {
+		8B1EA06D169ED3A0004E4254 /* Build configuration list for PBXProject "##APPID##" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8B1EA08F169ED3A0004E4254 /* Debug */,
@@ -377,7 +377,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8B1EA091169ED3A0004E4254 /* Build configuration list for PBXNativeTarget "template" */ = {
+		8B1EA091169ED3A0004E4254 /* Build configuration list for PBXNativeTarget "##APPID##" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8B1EA092169ED3A0004E4254 /* Debug */,
