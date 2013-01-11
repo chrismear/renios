@@ -122,6 +122,38 @@ index 0921592..f612551 100644
  typedef GLuint GLhandleARB;
  typedef GLchar GLcharARB;
  
+diff --git a/module/ios.c b/module/ios.c
+new file mode 100644
+index 0000000..f3f8ea7
+--- /dev/null
++++ b/module/ios.c
+@@ -0,0 +1,26 @@
++#include <Python.h>
++#include <SDL/SDL.h>
++#include <SDL/SDL_keyboard.h>
++
++static PyObject *ios_show_keyboard(PyObject *self, PyObject *args)
++{
++  int result = SDL_ShowScreenKeyboard(SDL_VideoWindow);
++  return Py_BuildValue("i", result);
++}
++
++static PyObject *ios_hide_keyboard(PyObject *self, PyObject *args)
++{
++  int result = SDL_HideScreenKeyboard(SDL_VideoWindow);
++  return Py_BuildValue("i", result);
++}
++
++static PyMethodDef IosMethods[] = {
++  {"show_keyboard", ios_show_keyboard, METH_VARARGS, "Show the screen keyboard"},
++  {"hide_keyboard", ios_hide_keyboard, METH_VARARGS, "Hide the screen keyboard"},
++  {NULL, NULL, 0, NULL}
++};
++
++PyMODINIT_FUNC initios(void)
++{
++  (void) Py_InitModule("ios", IosMethods);
++}
 diff --git a/module/maketegl.py b/module/maketegl.py
 index 6191650..10b654a 100644
 --- a/module/maketegl.py
@@ -297,7 +329,7 @@ index 0000000..15232c6
 +    Uint32 src_palette_version;
 +} SDL_BlitMap;
 diff --git a/module/setup.py b/module/setup.py
-index 828f3fd..353efd0 100644
+index 828f3fd..2c30a6e 100644
 --- a/module/setup.py
 +++ b/module/setup.py
 @@ -8,7 +8,7 @@ import os
@@ -337,7 +369,7 @@ index 828f3fd..353efd0 100644
  elif has_libglew:
      glew_libs = [ 'GLEW' ]
  else:
-@@ -98,9 +101,10 @@ else:
+@@ -98,12 +101,21 @@ else:
  
  cython("renpy.gl.gldraw", libs=glew_libs )
  cython("renpy.gl.gltexture", libs=glew_libs)
@@ -351,6 +383,17 @@ index 828f3fd..353efd0 100644
  cython("renpy.gl.glrtt_copy", libs=glew_libs)
  cython("renpy.gl.glrtt_fbo", libs=glew_libs)
  
++# UI
++if ios:
++    cmodule(
++        "ios",
++        ["ios.c"],
++        sdl
++        )
++
+ # Angle
+ def anglecopy(fn):
+     if android:
 diff --git a/module/setuplib.py b/module/setuplib.py
 index 48cd065..dc7f980 100644
 --- a/module/setuplib.py
@@ -436,6 +479,21 @@ index 369cfa1..bdc3dba 100644
              pcm_ok = True
          except:
              if renpy.config.debug_sound:
+diff --git a/renpy/display/behavior.py b/renpy/display/behavior.py
+index ee878cb..9b78ed8 100644
+--- a/renpy/display/behavior.py
++++ b/renpy/display/behavior.py
+@@ -775,6 +775,10 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
+             self.editable = replaces.editable
+             self.caret_pos = replaces.caret_pos
+ 
++        if renpy.ios:
++            import ios;
++            ios.show_keyboard()
++
+         self.update_text(self.content, self.editable)
+ 
+ 
 diff --git a/renpy/display/core.py b/renpy/display/core.py
 index 48102dc..8a3d452 100644
 --- a/renpy/display/core.py
