@@ -13,7 +13,7 @@ fi
 
 pushd $TMPROOT/SDL
 try hg revert --all
-try hg purge
+try hg purge --all
 try hg up -r $SDL2_REVISION
 
 echo 'Patching SDL source'
@@ -28,9 +28,9 @@ popd
 popd
 
 # Yes, copy it over to a different name.
-cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL2.a $BUILDROOT/lib/libSDL.a
-rm -rdf $BUILDROOT/include/SDL
-cp -a $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/usr/local/include $BUILDROOT/include/SDL
+try cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL2.a $BUILDROOT/lib/libSDL.a
+try rm -rdf $BUILDROOT/include/SDL
+try cp -a $TMPROOT/SDL/include $BUILDROOT/include/SDL
 
 try mkdir -p $BUILDROOT/bin
 try sed s:BUILDROOT:$BUILDROOT: <$RENIOSDEPROOT/src/sdl2/sdl-config >$BUILDROOT/bin/sdl-config
