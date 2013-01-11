@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ren’iOS by chrismear</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Ren’iOS</h1>
+        <p></p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/chrismear/renios" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/chrismear/renios/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/chrismear/renios/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>Ren'iOS</h1>
+
+<p>Ren'iOS helps you package a <a href="http://www.renpy.org">Ren'Py</a> game into an app that will run on iOS. It builds versions of Ren'Py and its dependencies that will run on iOS, and provides scripts to help you assemble these with your game into an Xcode project that will build for iOS.</p>
+
+<p>You can download a pre-built binary distribution from here:</p>
+
+<p><a href="https://github.com/chrismear/renios/wiki/Downloads">https://github.com/chrismear/renios/wiki/Downloads</a></p>
+
+<p><strong>NOTE:</strong> This is still very early, proof-of-concept code. There are known bugs and missing UI. It is not ready to use for a public release of a game.</p>
+
+<h2>Packaging Requirements</h2>
+
+<p>To package your Ren'Py game and build it for iOS, you will need the binary distribution of Ren'iOS, and Xcode 4.5 or higher.</p>
+
+<h2>Packaging Instructions</h2>
+
+<p>In the renios directory, run:</p>
+
+<pre><code>./tools/create-xcode-project MyGame /path/to/your/game/directory
+</code></pre>
+
+<p>where <code>MyGame</code> is the name of the app you want to create, and the path points to the <code>game</code> directory of your Ren'Py game.</p>
+
+<p>This will produce an Xcode project in <code>app-mygame</code>. This should be ready to build and run on a device.</p>
+
+<h2>Build Requirements</h2>
+
+<p>If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you will need the following software:</p>
+
+<ul>
+<li>Xcode</li>
+<li>Mercurial</li>
+<li>Cython</li>
+</ul><p>Build the software by changing into the <code>dependencies</code> directory, and running <code>./scripts/build.sh</code>. This will download and build Ren'Py and its dependencies.</p>
+
+<h2>License</h2>
+
+<p>Some portions of Ren'iOS are based on works licensed under the LGPL (various versions). Therefore these portions are also licensed under the LGPL.</p>
+
+<p>Because of these portions which must be licensed under an LGPL, the single license that applies to Ren'iOS taken as a whole is the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL Version 3</a>.</p>
+
+<p>In addition to that license, those portions of Ren'iOS that are not required to be licensed under the LGPL are also individually licensed under the <a href="http://directory.fsf.org/wiki/License:Expat">MIT (Expat) license</a>.</p>
+
+<p>Each file/directory in Ren'iOS contains a permissions notice that indicates which license(s) apply to that file/directory.</p>
+
+<p>An application binary that you build using Ren'iOS should not itself need to be licensed under the LGPL.</p>
+
+<p>Copyright 2012, 2013 Chris Mear <a href="mailto:chris@feedmechocolate.com">chris@feedmechocolate.com</a></p>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/chrismear">chrismear</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
