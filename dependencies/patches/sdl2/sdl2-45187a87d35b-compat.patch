@@ -2508,3 +2508,18 @@ index 2d263dd..ccefab4 100644
  
      /* Set working directory to resource path */
      [[NSFileManager defaultManager] changeCurrentDirectoryPath: [[NSBundle mainBundle] resourcePath]];
+diff --git a/src/video/uikit/SDL_uikitview.m b/src/video/uikit/SDL_uikitview.m
+index a54cc50..d37103d 100644
+--- a/src/video/uikit/SDL_uikitview.m
++++ b/src/video/uikit/SDL_uikitview.m
+@@ -266,8 +266,8 @@
+ {
+     if ([string length] == 0) {
+         /* it wants to replace text with nothing, ie a delete */
+-        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_DELETE);
+-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_DELETE);
++        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_BACKSPACE);
++        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_BACKSPACE);
+     }
+     else {
+         /* go through all the characters in the string we've been sent
