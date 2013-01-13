@@ -9,32 +9,12 @@ https://github.com/chrismear/renios/wiki/Downloads
 
 **NOTE:** This is still very early, proof-of-concept code. There are known bugs and missing UI. It is not ready to use for a public release of a game.
 
-Packaging Requirements
-----------------------
+Documentation
+-------------
 
-To package your Ren'Py game and build it for iOS, you will need the binary distribution of Ren'iOS, and Xcode 4.5 or higher.
+Documentation (still a work in progress) can be found here:
 
-Packaging Instructions
-----------------------
-
-In the renios directory, run:
-
-    ./tools/create-xcode-project MyGame /path/to/your/game/directory
-
-where `MyGame` is the name of the app you want to create, and the path points to the `game` directory of your Ren'Py game.
-
-This will produce an Xcode project in `app-mygame`. This should be ready to build and run on a device.
-
-Build Requirements
-------------------
-
-If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you will need the following software:
-
-* Xcode
-* Mercurial
-* Cython
-
-Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh`. This will download and build Ren'Py and its dependencies.
+http://chrismear.github.com/renios/
 
 License
 -------
