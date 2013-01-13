@@ -1809,3 +1809,16 @@ index 611abfe..bb5edca 100644
                  print "Logging to", fn
  
              if self.append:
+diff --git a/renpy/main.py b/renpy/main.py
+index b70ae07..0da6fbb 100644
+--- a/renpy/main.py
++++ b/renpy/main.py
+@@ -226,6 +226,8 @@ def main():
+     renpy.game.exception_info = 'After loading the script.'
+ 
+     # Find the save directory.
++    if renpy.ios:
++        renpy.config.savedir = os.environ.get('RENIOS_SAVE_DIRECTORY', None)
+     if renpy.config.savedir is None:
+         renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
+ 
