@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Ren’iOS 0.3 Documentation &mdash; Ren&#39;iOS 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="top" title="Ren&#39;iOS 0.3 documentation" href="#" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+    <li><a href="#">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ren-ios-version-documentation">
+<h1>Ren&#8217;iOS 0.3 Documentation<a class="headerlink" href="#ren-ios-version-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Ren&#8217;iOS helps you package a <a class="reference external" href="http://www.renpy.org">Ren&#8217;Py</a> game into an app that will run on iOS. It builds versions of Ren&#8217;Py and its dependencies that will run on iOS, and provides scripts to help you assemble these with your game into an Xcode project that will build for iOS.</p>
+<p>You can download a pre-built binary distribution from here:</p>
+<p><a class="reference external" href="https://github.com/chrismear/renios/wiki/Downloads">https://github.com/chrismear/renios/wiki/Downloads</a></p>
+<p>Source code and issue tracking is here:</p>
+<p><a class="reference external" href="https://github.com/chrismear/renios">https://github.com/chrismear/renios</a></p>
+<p><strong>NOTE:</strong> This is still very early, proof-of-concept code. There are known bugs and missing UI. It is not ready to use for a public release of a game.</p>
+<div class="section" id="packaging-requirements">
+<h2>Packaging Requirements<a class="headerlink" href="#packaging-requirements" title="Permalink to this headline">¶</a></h2>
+<p>To package your Ren&#8217;Py game and build it for iOS, you will need the binary distribution of Ren&#8217;iOS, and <a class="reference external" href="https://itunes.apple.com/gb/app/xcode/id497799835?mt=12">Xcode 4.5</a> or higher.</p>
+</div>
+<div class="section" id="packaging-instructions">
+<h2>Packaging Instructions<a class="headerlink" href="#packaging-instructions" title="Permalink to this headline">¶</a></h2>
+<p>In the renios directory, run:</p>
+<div class="highlight-python"><pre>./tools/create-xcode-project MyGame /path/to/your/game/directory</pre>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">MyGame</span></tt> is the name of the app you want to create, and the path points to the <tt class="docutils literal"><span class="pre">game</span></tt> directory of your Ren&#8217;Py game.</p>
+<p>This will produce an Xcode project in <tt class="docutils literal"><span class="pre">app-mygame</span></tt>. This should be ready to build and run on a device.</p>
+</div>
+<div class="section" id="build-requirements">
+<h2>Build Requirements<a class="headerlink" href="#build-requirements" title="Permalink to this headline">¶</a></h2>
+<p>If you want to use Ren&#8217;iOS to build Ren&#8217;Py and its dependencies from source, you will need the following software:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://itunes.apple.com/gb/app/xcode/id497799835?mt=12">Xcode</a></li>
+<li><a class="reference external" href="http://mercurial.selenic.com">Mercurial</a></li>
+<li><a class="reference external" href="http://cython.org">Cython</a></li>
+</ul>
+<p>Build the software by changing into the <cite>dependencies</cite> directory, and running <cite>./scripts/build.sh</cite>. This will download and build Ren&#8217;Py and its dependencies.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Some portions of Ren&#8217;iOS are based on works licensed under the LGPL (various versions). Therefore these portions are also licensed under the LGPL.</p>
+<p>Because of these portions which must be licensed under an LGPL, the single license that applies to Ren&#8217;iOS taken as a whole is the <a class="reference external" href="http://www.gnu.org/copyleft/lesser.html">LGPL Version 3</a>.</p>
+<p>In addition to that license, those portions of Ren&#8217;iOS that are not required to be licensed under the LGPL are also individually licensed under the <a class="reference external" href="http://directory.fsf.org/wiki/License:Expat">MIT (Expat) license</a>.</p>
+<p>Each file/directory in Ren&#8217;iOS contains a permissions notice that indicates which license(s) apply to that file/directory.</p>
+<p>An application binary that you build using Ren&#8217;iOS should not itself need to be licensed under the LGPL.</p>
+<p>Copyright 2012, 2013 Chris Mear &lt;<a class="reference external" href="mailto:chris&#37;&#52;&#48;feedmechocolate&#46;com">chris<span>&#64;</span>feedmechocolate<span>&#46;</span>com</a>&gt;</p>
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxlocaltoc">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ren&#8217;iOS 0.3 Documentation</a><ul>
+<li><a class="reference internal" href="#packaging-requirements">Packaging Requirements</a></li>
+<li><a class="reference internal" href="#packaging-instructions">Packaging Instructions</a></li>
+<li><a class="reference internal" href="#build-requirements">Build Requirements</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+    <li><a href="#">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2013, Chris Mear.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
