@@ -13,12 +13,16 @@ You can download a pre-built binary distribution from here:
 
 https://github.com/chrismear/renios/wiki/Downloads
 
+Source code and issue tracking is here:
+
+https://github.com/chrismear/renios
+
 **NOTE:** This is still very early, proof-of-concept code. There are known bugs and missing UI. It is not ready to use for a public release of a game.
 
 Packaging Requirements
 ----------------------
 
-To package your Ren'Py game and build it for iOS, you will need the binary distribution of Ren'iOS, and Xcode 4.5 or higher.
+To package your Ren'Py game and build it for iOS, you will need the binary distribution of Ren'iOS, and `Xcode 4.5 <https://itunes.apple.com/gb/app/xcode/id497799835?mt=12>`_ or higher.
 
 Packaging Instructions
 ----------------------
@@ -36,9 +40,9 @@ Build Requirements
 
 If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you will need the following software:
 
-* Xcode
-* Mercurial
-* Cython
+* `Xcode <https://itunes.apple.com/gb/app/xcode/id497799835?mt=12>`_
+* `Mercurial <http://mercurial.selenic.com>`_
+* `Cython <http://cython.org>`_
 
 Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh`. This will download and build Ren'Py and its dependencies.
 
@@ -47,7 +51,7 @@ License
 
 Some portions of Ren'iOS are based on works licensed under the LGPL (various versions). Therefore these portions are also licensed under the LGPL.
 
-Because of these portions which must be licensed under an LGPL, the single license that applies to Ren'iOS taken as a whole is the LGPL Version 3.
+Because of these portions which must be licensed under an LGPL, the single license that applies to Ren'iOS taken as a whole is the `LGPL Version 3 <http://www.gnu.org/copyleft/lesser.html>`_.
 
 In addition to that license, those portions of Ren'iOS that are not required to be licensed under the LGPL are also individually licensed under the `MIT (Expat) license <http://directory.fsf.org/wiki/License:Expat>`_.
 
