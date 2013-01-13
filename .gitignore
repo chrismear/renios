@@ -4,3 +4,4 @@ dependencies/tmp/*
 xcuserdata
 /app-*
 /dist/*
+/sphinx/_build
