@@ -3,3 +3,4 @@ dependencies/cache/*
 dependencies/tmp/*
 xcuserdata
 /app-*
+/dist/*

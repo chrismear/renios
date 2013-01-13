@@ -11,12 +11,14 @@ if [ "X$VERSION" == "X" ]; then
   exit 1
 fi
 
-try mkdir renios-$VERSION
-try mkdir renios-$VERSION/dependencies
+try rm -rf dist/renios-$VERSION
+try mkdir -p dist/renios-$VERSION
+try mkdir -p dist/renios-$VERSION/dependencies
 
-try cp -a dependencies/build renios-$VERSION/dependencies/build
-try cp -a template renios-$VERSION/template
-try cp -a tools renios-$VERSION/tools
+try cp -a dependencies/build dist/renios-$VERSION/dependencies/build
+try cp -a template dist/renios-$VERSION/template
+try cp -a tools dist/renios-$VERSION/tools
 
+try pushd dist
 try tar -cvjf renios-$VERSION.tbz renios-$VERSION
-
+try popd
