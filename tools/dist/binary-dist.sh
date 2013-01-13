@@ -18,6 +18,7 @@ try mkdir -p dist/renios-$VERSION/dependencies
 try cp -a dependencies/build dist/renios-$VERSION/dependencies/build
 try cp -a template dist/renios-$VERSION/template
 try cp -a tools dist/renios-$VERSION/tools
+try cp -a README.md dist/renios-$VERSION/README.md
 
 try pushd dist
 try tar -cvjf renios-$VERSION.tbz renios-$VERSION
