@@ -536,10 +536,10 @@ index 4eaf095..802808e 100644
         this structure, and GCC will use the alignment of the largest datatype
 diff --git a/src/SDL_compat.c b/src/SDL_compat.c
 new file mode 100644
-index 0000000..7eb82ce
+index 0000000..333d024
 --- /dev/null
 +++ b/src/SDL_compat.c
-@@ -0,0 +1,1816 @@
+@@ -0,0 +1,1822 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2012 Sam Lantinga <slouken@libsdl.org>
@@ -816,6 +816,12 @@ index 0000000..7eb82ce
 +                    int capslock = !!(event->key.keysym.mod & KMOD_CAPS);
 +                    if ((shifted ^ capslock) != 0) {
 +                        unicode = SDL_toupper(unicode);
++                    }
++                } else if (unicode == '-') {
++                    int shifted = !!(event->key.keysym.mod & KMOD_SHIFT);
++                    int capslock = !!(event->key.keysym.mod & KMOD_CAPS);
++                    if ((shifted ^ capslock) != 0) {
++                        unicode = '_';
 +                    }
 +                }
 +            }
