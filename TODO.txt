@@ -1,9 +1,0 @@
-BUILD
-
-RUNTIME
-
-PACKAGING
-
-OTHER
-* Remove large example games from repo; to be replaced with Xcode project template containing necessary support files.
-* Make a 'Ren'Py Player' app? (Allowing the user to import in zip files of any Ren'Py game, and play it.) (Actually, this probably won't fly due to the App Store restriction on executing downloaded code.)
