@@ -2508,11 +2508,76 @@ index 2d263dd..ccefab4 100644
  
      /* Set working directory to resource path */
      [[NSFileManager defaultManager] changeCurrentDirectoryPath: [[NSBundle mainBundle] resourcePath]];
+diff --git a/src/video/uikit/SDL_uikitview.h b/src/video/uikit/SDL_uikitview.h
+index c60830a..9486dc2 100644
+--- a/src/video/uikit/SDL_uikitview.h
++++ b/src/video/uikit/SDL_uikitview.h
+@@ -38,6 +38,7 @@
+ 
+     SDL_TouchID touchId;
+     SDL_FingerID leftFingerDown;
++    SDL_FingerID rightFingerDown;
+ #ifndef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+     UITouch *finger[MAX_SIMULTANEOUS_TOUCHES];
+ #endif
 diff --git a/src/video/uikit/SDL_uikitview.m b/src/video/uikit/SDL_uikitview.m
-index a54cc50..d37103d 100644
+index a54cc50..41ec25a 100644
 --- a/src/video/uikit/SDL_uikitview.m
 +++ b/src/video/uikit/SDL_uikitview.m
-@@ -266,8 +266,8 @@
+@@ -82,7 +82,7 @@
+     SDL_Window *window = self->viewcontroller.window;
+     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
+     SDL_DisplayModeData *displaymodedata = (SDL_DisplayModeData *) display->current_mode.driverdata;
+-    
++
+     if (normalize) {
+         CGRect bounds = [self bounds];
+         point.x /= bounds.size.width;
+@@ -100,16 +100,15 @@
+     UITouch *touch = (UITouch*)[enumerator nextObject];
+ 
+     while (touch) {
+-        if (!leftFingerDown) {
++        if (!leftFingerDown && !rightFingerDown) {
+             CGPoint locationInView = [self touchLocation:touch shouldNormalize:NO];
+ 
+             /* send moved event */
+             SDL_SendMouseMotion(NULL, 0, locationInView.x, locationInView.y);
+ 
+-            /* send mouse down event */
+-            SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_LEFT);
+-
+             leftFingerDown = (SDL_FingerID)touch;
++        } else if (!rightFingerDown) {
++            rightFingerDown = (SDL_FingerID)touch;
+         }
+ 
+         CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
+@@ -143,10 +142,21 @@
+ 
+     while(touch) {
+         if ((SDL_FingerID)touch == leftFingerDown) {
+-            /* send mouse up */
+-            SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++            if (!rightFingerDown) {
++                /* send mouse down event */
++                SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_LEFT);
++
++                /* send mouse up */
++                SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++            }
++
+             leftFingerDown = 0;
+         }
++        if ((SDL_FingerID)touch == rightFingerDown) {
++            SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_RIGHT);
++            SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_RIGHT);
++            rightFingerDown = 0;
++        }
+ 
+         CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
+ #ifdef IPHONE_TOUCH_EFFICIENT_DANGEROUS
+@@ -266,8 +276,8 @@
  {
      if ([string length] == 0) {
          /* it wants to replace text with nothing, ie a delete */
