@@ -2363,7 +2363,7 @@ index 0000000..333d024
 +
 +/* vi: set ts=4 sw=4 expandtab: */
 diff --git a/src/audio/coreaudio/SDL_coreaudio.c b/src/audio/coreaudio/SDL_coreaudio.c
-index 1747bb2..0ffcf3e 100644
+index 1747bb2..cfeb4e7 100644
 --- a/src/audio/coreaudio/SDL_coreaudio.c
 +++ b/src/audio/coreaudio/SDL_coreaudio.c
 @@ -25,7 +25,7 @@
@@ -2390,6 +2390,15 @@ index 1747bb2..0ffcf3e 100644
                  /* Generate the data */
                  SDL_mutexP(this->mixer_lock);
                  (*this->spec.callback)(this->spec.userdata,
+@@ -380,7 +382,7 @@ prepare_audiounit(_THIS, const char *devname, int iscapture,
+         return 0;
+     }
+ #endif
+-    
++
+     SDL_zero(desc);
+     desc.componentType = kAudioUnitType_Output;
+     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 @@ -445,6 +447,7 @@ prepare_audiounit(_THIS, const char *devname, int iscapture,
      /* Allocate a sample buffer */
      this->hidden->bufferOffset = this->hidden->bufferSize = this->spec.size;
@@ -2398,6 +2407,15 @@ index 1747bb2..0ffcf3e 100644
  
      result = AudioUnitInitialize(this->hidden->audioUnit);
      CHECK_RESULT("AudioUnitInitialize");
+@@ -545,7 +548,7 @@ COREAUDIO_Init(SDL_AudioDriverImpl * impl)
+        behavior.  If this is common, we can add an SDL hint for this.
+     */
+     AudioSessionInitialize(NULL, NULL, NULL, nil);
+-    UInt32 category = kAudioSessionCategory_AmbientSound;
++    UInt32 category = kAudioSessionCategory_SoloAmbientSound;
+     AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(UInt32), &category);
+ #endif
+ 
 diff --git a/src/video/SDL_surface.c b/src/video/SDL_surface.c
 index 7788d67..75f8708 100644
 --- a/src/video/SDL_surface.c
