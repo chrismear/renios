@@ -35,12 +35,8 @@ int main(int argc, char *argv[])
     
     size_t scriptsPathSize = 1024;
     const char *scriptsPath = malloc(scriptsPathSize);
-    // FIXME: Buffer overflow if path > 1024 bytes
-    scriptsPath = RENIOS_CopyGameDirectoryToLibraryIfNecessary();
-    if (!scriptsPath) {
-        return 1;
-    }
-    
+    scriptsPath = RENIOS_ScriptsPath();
+
     // Get current working directory, which is the app root,
     // and also the bundle root.
     size_t cwdSize = 512;

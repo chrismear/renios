@@ -22,4 +22,4 @@
  */
 
 int RENIOS_SetSaveDirectoryEnv();
-const char * RENIOS_CopyGameDirectoryToLibraryIfNecessary();
+const char * RENIOS_ScriptsPath();
