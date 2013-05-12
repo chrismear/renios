@@ -36,6 +36,14 @@
 		8B1EA0CD169ED89F004E4254 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CC169ED89F004E4254 /* scripts */; };
 		8B1EA0CF169ED92A004E4254 /* include in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CE169ED92A004E4254 /* include */; };
 		8B1EA0D1169ED943004E4254 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0D0169ED943004E4254 /* lib */; };
+ 		8B7C60A1174003F000805B95 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C6099174003F000805B95 /* Icon-72.png */; };
+ 		8B7C60A2174003F000805B95 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609A174003F000805B95 /* Icon-72@2x.png */; };
+ 		8B7C60A3174003F000805B95 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609B174003F000805B95 /* Icon-Small-50.png */; };
+ 		8B7C60A4174003F000805B95 /* Icon-Small-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609C174003F000805B95 /* Icon-Small-50@2x.png */; };
+ 		8B7C60A5174003F000805B95 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609D174003F000805B95 /* Icon-Small.png */; };
+ 		8B7C60A6174003F000805B95 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609E174003F000805B95 /* Icon-Small@2x.png */; };
+ 		8B7C60A7174003F000805B95 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C609F174003F000805B95 /* Icon.png */; };
+ 		8B7C60A8174003F000805B95 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B7C60A0174003F000805B95 /* Icon@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +79,14 @@
 		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ##APPID##/scripts; sourceTree = "<group>"; };
 		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../dependencies/build/python/embed/include; sourceTree = "<group>"; };
 		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../dependencies/build/python/lib; sourceTree = "<group>"; };
+ 		8B7C6099174003F000805B95 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "##APPID##/icons/Icon-72.png"; sourceTree = "<group>"; };
+ 		8B7C609A174003F000805B95 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@2x.png"; path = "##APPID##/icons/Icon-72@2x.png"; sourceTree = "<group>"; };
+ 		8B7C609B174003F000805B95 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "##APPID##/icons/Icon-Small-50.png"; sourceTree = "<group>"; };
+ 		8B7C609C174003F000805B95 /* Icon-Small-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50@2x.png"; path = "##APPID##/icons/Icon-Small-50@2x.png"; sourceTree = "<group>"; };
+ 		8B7C609D174003F000805B95 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small.png"; path = "##APPID##/icons/Icon-Small.png"; sourceTree = "<group>"; };
+ 		8B7C609E174003F000805B95 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small@2x.png"; path = "##APPID##/icons/Icon-Small@2x.png"; sourceTree = "<group>"; };
+ 		8B7C609F174003F000805B95 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ##APPID##/icons/Icon.png; sourceTree = "<group>"; };
+ 		8B7C60A0174003F000805B95 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "##APPID##/icons/Icon@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +194,14 @@
 		8B1EA0CB169ED87D004E4254 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+ 				8B7C6099174003F000805B95 /* Icon-72.png */,
+ 				8B7C609A174003F000805B95 /* Icon-72@2x.png */,
+ 				8B7C609B174003F000805B95 /* Icon-Small-50.png */,
+ 				8B7C609C174003F000805B95 /* Icon-Small-50@2x.png */,
+ 				8B7C609D174003F000805B95 /* Icon-Small.png */,
+ 				8B7C609E174003F000805B95 /* Icon-Small@2x.png */,
+ 				8B7C609F174003F000805B95 /* Icon.png */,
+ 				8B7C60A0174003F000805B95 /* Icon@2x.png */,
 				8B1EA0D0169ED943004E4254 /* lib */,
 				8B1EA0CE169ED92A004E4254 /* include */,
 				8B1EA0CC169ED89F004E4254 /* scripts */,
@@ -239,6 +263,14 @@
 				8B1EA0CD169ED89F004E4254 /* scripts in Resources */,
 				8B1EA0CF169ED92A004E4254 /* include in Resources */,
 				8B1EA0D1169ED943004E4254 /* lib in Resources */,
+ 				8B7C60A1174003F000805B95 /* Icon-72.png in Resources */,
+ 				8B7C60A2174003F000805B95 /* Icon-72@2x.png in Resources */,
+ 				8B7C60A3174003F000805B95 /* Icon-Small-50.png in Resources */,
+ 				8B7C60A4174003F000805B95 /* Icon-Small-50@2x.png in Resources */,
+ 				8B7C60A5174003F000805B95 /* Icon-Small.png in Resources */,
+ 				8B7C60A6174003F000805B95 /* Icon-Small@2x.png in Resources */,
+ 				8B7C60A7174003F000805B95 /* Icon.png in Resources */,
+ 				8B7C60A8174003F000805B95 /* Icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
