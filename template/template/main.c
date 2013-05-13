@@ -63,6 +63,10 @@ int main(int argc, char *argv[])
 
     //    setenv("RENPY_SCALE_FACTOR", "2", 1);
 
+    setenv("RENPY_RENDERER", "gl", 1);
+    setenv("RENPY_GL_ENVIRON", "shader_es", 1);
+    setenv("RENPY_GL_RTT", "fbo", 1);
+
     Py_SetProgramName(cwd);
 
     Py_SetPythonHome(cwd);

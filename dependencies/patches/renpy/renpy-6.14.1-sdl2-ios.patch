@@ -69,7 +69,7 @@ index d29d829..7e89170 100644
      is->first_frame = 1;
  
 diff --git a/module/glcompat.h b/module/glcompat.h
-index 0921592..f612551 100644
+index 0921592..e8e631d 100644
 --- a/module/glcompat.h
 +++ b/module/glcompat.h
 @@ -13,10 +13,26 @@
@@ -122,6 +122,14 @@ index 0921592..f612551 100644
  typedef GLuint GLhandleARB;
  typedef GLchar GLcharARB;
  
+@@ -69,6 +78,7 @@ typedef GLchar GLcharARB;
+ #define glGenFramebuffersEXT glGenFramebuffers
+ #define glDeleteFramebuffersEXT glDeleteFramebuffers
+ #define glCheckFramebufferStatusEXT glCheckFramebufferStatus
++#define GL_FRAMEBUFFER_BINDING_EXT GL_FRAMEBUFFER_BINDING
+ 
+ #define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_INFO_LOG_LENGTH
+ #define GL_OBJECT_COMPILE_STATUS_ARB GL_COMPILE_STATUS
 diff --git a/module/ios.c b/module/ios.c
 new file mode 100644
 index 0000000..f3f8ea7
@@ -1110,18 +1118,9 @@ index fd7950d..0afa4f8 100644
          GL_VIEWPORT
          GL_VIEWPORT_BIT
 diff --git a/renpy/gl/gldraw.pyx b/renpy/gl/gldraw.pyx
-index 277e78f..ebcb964 100644
+index 277e78f..66a8bcc 100644
 --- a/renpy/gl/gldraw.pyx
 +++ b/renpy/gl/gldraw.pyx
-@@ -132,7 +132,7 @@ cdef class GLDraw:
-         self.upscale_factor = 1.0
- 
-         # Should we use the fast (but incorrect) dissolve mode?
--        self.fast_dissolve = False # renpy.android
-+        self.fast_dissolve = True # renpy.android
- 
-         # Should we always report pixels as being always opaque?
-         self.always_opaque = renpy.android
 @@ -146,6 +146,8 @@ cdef class GLDraw:
          can. It returns True if it was succesful, or False if OpenGL isn't
          working for some reason.
@@ -1763,6 +1762,38 @@ index 0000000..5baeaf6
 +        self.viewport_w = width
 +        self.viewport_h = height
 \ No newline at end of file
+diff --git a/renpy/gl/glrtt_fbo.pyx b/renpy/gl/glrtt_fbo.pyx
+index dc11339..e8c7b56 100644
+--- a/renpy/gl/glrtt_fbo.pyx
++++ b/renpy/gl/glrtt_fbo.pyx
+@@ -29,6 +29,9 @@ import renpy
+ 
+ # The framebuffer object we use.
+ cdef GLuint fbo
++
++# The OS framebuffer to reset to
++cdef GLint defaultFbo
+     
+ class FboRtt(Rtt):
+     """
+@@ -67,6 +70,8 @@ class FboRtt(Rtt):
+         to render the texture.
+         """
+         
++        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &defaultFbo)
++
+         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+ 
+         glFramebufferTexture2DEXT(
+@@ -81,7 +86,7 @@ class FboRtt(Rtt):
+ 
+         draw_func(x, y, w, h)
+ 
+-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
++        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, defaultFbo)
+         
+ 
+     def get_size_limit(self, dimension):
 diff --git a/renpy/loadsave.py b/renpy/loadsave.py
 index 1fbad00..3b77a7f 100644
 --- a/renpy/loadsave.py
