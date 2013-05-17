@@ -14,7 +14,7 @@ Documentation
 
 Documentation (still a work in progress) can be found here:
 
-http://chrismear.github.com/renios/
+http://chrismear.github.io/renios/
 
 License
 -------
