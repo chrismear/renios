@@ -487,6 +487,19 @@ index 369cfa1..bdc3dba 100644
              pcm_ok = True
          except:
              if renpy.config.debug_sound:
+diff --git a/renpy/config.py b/renpy/config.py
+index 46b6b5d..0295571 100644
+--- a/renpy/config.py
++++ b/renpy/config.py
+@@ -384,7 +384,7 @@ inspector = None
+ reject_backslash = True
+ 
+ # Hide the mouse.
+-mouse_hide_time = 30
++mouse_hide_time = 0
+ 
+ # Called when we can't load an image.
+ missing_image_callback = None
 diff --git a/renpy/display/behavior.py b/renpy/display/behavior.py
 index ee878cb..9b78ed8 100644
 --- a/renpy/display/behavior.py
