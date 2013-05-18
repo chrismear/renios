@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
     setenv("RENPY_RENDERER", "gl", 1);
     setenv("RENPY_GL_ENVIRON", "shader_es", 1);
     setenv("RENPY_GL_RTT", "fbo", 1);
+    
+    setenv("RENPY_VARIANT", RENIOS_ScreenVariant(), 1);
 
     Py_SetProgramName(cwd);
 

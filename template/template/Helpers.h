@@ -23,3 +23,4 @@
 
 int RENIOS_SetSaveDirectoryEnv();
 const char * RENIOS_ScriptsPath();
+const char * RENIOS_ScreenVariant();

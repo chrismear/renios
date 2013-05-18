@@ -22,6 +22,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 int RENIOS_SetSaveDirectoryEnv()
 {
@@ -53,4 +54,16 @@ const char * RENIOS_ScriptsPath()
                                           stringByAppendingPathComponent:@"scripts"];
     return [scriptsResourceDirectory cStringUsingEncoding:NSUTF8StringEncoding];
 
+}
+
+const char * RENIOS_ScreenVariant()
+{
+    UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    if (userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        NSLog(@"Setting variant: tablet touch");
+        return "tablet touch";
+    } else {
+        NSLog(@"Setting variant: phone touch");
+        return "phone touch";
+    }
 }
