@@ -501,21 +501,10 @@ index 46b6b5d..0295571 100644
  # Called when we can't load an image.
  missing_image_callback = None
 diff --git a/renpy/display/behavior.py b/renpy/display/behavior.py
-index ee878cb..44038cf 100644
+index ee878cb..4c31a4d 100644
 --- a/renpy/display/behavior.py
 +++ b/renpy/display/behavior.py
-@@ -775,6 +775,10 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
-             self.editable = replaces.editable
-             self.caret_pos = replaces.caret_pos
- 
-+        if renpy.ios:
-+            import ios
-+            ios.show_keyboard()
-+
-         self.update_text(self.content, self.editable)
- 
- 
-@@ -864,6 +868,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
+@@ -864,6 +864,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
              renpy.display.render.redraw(self, 0)
              raise renpy.display.core.IgnoreEvent()
  
@@ -527,7 +516,7 @@ index ee878cb..44038cf 100644
          elif ev.type == pygame.KEYDOWN and ev.unicode:
              if ord(ev.unicode[0]) < 32:
                  return None
-@@ -884,6 +893,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
+@@ -884,6 +889,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
  
              raise renpy.display.core.IgnoreEvent()
  
