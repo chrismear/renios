@@ -2541,7 +2541,7 @@ index c60830a..ce106b9 100644
      UITouch *finger[MAX_SIMULTANEOUS_TOUCHES];
  #endif
 diff --git a/src/video/uikit/SDL_uikitview.m b/src/video/uikit/SDL_uikitview.m
-index a54cc50..d5fe02e 100644
+index a54cc50..3999f08 100644
 --- a/src/video/uikit/SDL_uikitview.m
 +++ b/src/video/uikit/SDL_uikitview.m
 @@ -82,7 +82,7 @@
@@ -2596,7 +2596,7 @@ index a54cc50..d5fe02e 100644
          }
  
          CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
-@@ -142,12 +158,103 @@
+@@ -142,12 +158,121 @@
      UITouch *touch = (UITouch*)[enumerator nextObject];
  
      while(touch) {
@@ -2615,6 +2615,9 @@ index a54cc50..d5fe02e 100644
 +                         * whole touch sequence as if it were a just a single-finger touch.
 +                         */
 +                        SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++
++                        // End of mouse motion; reset pointer to 0,0
++                        SDL_SendMouseMotion(NULL, 0, 0, 0);
 +                    } else {
 +                        /*
 +                         * This touch sequence involved two fingers being placed down within
@@ -2637,6 +2640,9 @@ index a54cc50..d5fe02e 100644
 +                         * finger touch.
 +                         */
 +                        SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++
++                        // End of mouse motion; reset pointer to 0,0
++                        SDL_SendMouseMotion(NULL, 0, 0, 0);
 +                    } else {
 +                        /*
 +                         * The two fingers touched the screen within 0.1s of each other,
@@ -2645,7 +2651,9 @@ index a54cc50..d5fe02e 100644
 +                         */
 +                        SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_RIGHT);
 +                        SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_RIGHT);
-+                    }
++
++                        // End of mouse motion; reset pointer to 0,0
++                        SDL_SendMouseMotion(NULL, 0, 0, 0);                    }
 +                    /*
 +                     * As this is the end of the touch sequence, we can reset our state
 +                     * variables.
@@ -2657,6 +2665,10 @@ index a54cc50..d5fe02e 100644
 +                // No second finger was involved in ths touch sequence.
 +                if (leftMouseDownSent == SDL_TRUE) {
 +                    SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++
++
++                    // End of mouse motion; reset pointer to 0,0
++                    SDL_SendMouseMotion(NULL, 0, 0, 0);
 +                } else {
 +                    // The touch start and touch end occurred before the delayed
 +                    // mouse-down had a chance to fire. Cancel it, and do
@@ -2664,6 +2676,9 @@ index a54cc50..d5fe02e 100644
 +                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendLeftMouseDown) object:nil];
 +                    SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_LEFT);
 +                    SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_LEFT);
++
++                    // End of mouse motion; reset pointer to 0,0
++                    SDL_SendMouseMotion(NULL, 0, 0, 0);
 +                }
 +                leftMouseDownSent = SDL_FALSE;
 +            }
@@ -2690,6 +2705,9 @@ index a54cc50..d5fe02e 100644
 +                     */
 +                    SDL_SendMouseButton(NULL, SDL_PRESSED, SDL_BUTTON_RIGHT);
 +                    SDL_SendMouseButton(NULL, SDL_RELEASED, SDL_BUTTON_RIGHT);
++
++                    // End of mouse motion; reset pointer to 0,0
++                    SDL_SendMouseMotion(NULL, 0, 0, 0);
 +                }
 +                // End of touch sequence, so reset variables.
 +                leftMouseDownSent = SDL_FALSE;
@@ -2702,7 +2720,7 @@ index a54cc50..d5fe02e 100644
          CGPoint locationInView = [self touchLocation:touch shouldNormalize:YES];
  #ifdef IPHONE_TOUCH_EFFICIENT_DANGEROUS
          SDL_SendFingerDown(touchId, (long)touch,
-@@ -266,8 +373,8 @@
+@@ -266,8 +391,8 @@
  {
      if ([string length] == 0) {
          /* it wants to replace text with nothing, ie a delete */
