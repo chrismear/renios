@@ -41,4 +41,4 @@ try cp -a $DEPBUILDROOT/renpy/common $APPDIR/$APPID/scripts/
 try cp -a $DEPBUILDROOT/renpy/renpy $APPDIR/$APPID/scripts/
 
 echo "Copying in your game files"
-try cp -a $SRCDIR $APPDIR/$APPID/scripts/game
+try cp -a "$SRCDIR" $APPDIR/$APPID/scripts/game
