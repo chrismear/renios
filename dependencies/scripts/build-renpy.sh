@@ -59,7 +59,6 @@ try cp -R "$TMPROOT/renpy-${RENPY_VERSION}-sdk/module/iosbuild/usr/local/lib/pyt
 
 try rm -rdf $BUILDROOT/renpy
 try mkdir -p $BUILDROOT/renpy
-try cp -a "$TMPROOT/renpy-${RENPY_VERSION}-sdk/common" "$BUILDROOT/renpy/"
 try cp -a "$TMPROOT/renpy-${RENPY_VERSION}-sdk/renpy" "$BUILDROOT/renpy/"
 
 popd

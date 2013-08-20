@@ -37,7 +37,6 @@ try find $APPDIR -type f -exec sed -i '' "s/##APPID##/$APPID/g" {} \;
 try find $APPDIR -type f -exec sed -i '' "s/##APPNAME##/$APPNAME/g" {} \;
 
 echo "Copying in support files"
-try cp -a $DEPBUILDROOT/renpy/common $APPDIR/$APPID/scripts/
 try cp -a $DEPBUILDROOT/renpy/renpy $APPDIR/$APPID/scripts/
 
 echo "Copying in your game files"

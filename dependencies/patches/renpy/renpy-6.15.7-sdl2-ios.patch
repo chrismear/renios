@@ -1,0 +1,1887 @@
+diff --git a/module/IMG_savepng.c b/module/IMG_savepng.c
+index 54a4032..90465b8 100644
+--- a/module/IMG_savepng.c
++++ b/module/IMG_savepng.c
+@@ -26,9 +26,11 @@
+  */
+ #include <stdlib.h>
+ #include <SDL/SDL.h>
+-#include <SDL/SDL_byteorder.h>
++#include <SDL/SDL_compat.h>
++#include <SDL/SDL_endian.h>
+ #include <png.h>
+ #include <zlib.h>
++#include "sdl_blitmap.h"
+ #include "IMG_savepng.h"
+ 
+ #ifndef png_voidp
+@@ -127,17 +129,17 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 		}
+ 		png_set_PLTE(png_ptr,info_ptr,palette,fmt->palette->ncolors);
+ 		if (surf->flags&SDL_SRCCOLORKEY) {
+-			palette_alpha=(Uint8 *)malloc((fmt->colorkey+1)*sizeof(Uint8));
++			palette_alpha=(Uint8 *)malloc((surf->map->info.colorkey+1)*sizeof(Uint8));
+ 			if (!palette_alpha) {
+ 				SDL_SetError("Couldn't create memory for palette transparency");
+ 				goto savedone;
+ 			}
+ 			/* FIXME: memset? */
+-			for (i=0;i<(fmt->colorkey+1);i++) {
++			for (i=0;i<(surf->map->info.colorkey+1);i++) {
+ 				palette_alpha[i]=255;
+ 			}
+-			palette_alpha[fmt->colorkey]=0;
+-			png_set_tRNS(png_ptr,info_ptr,palette_alpha,fmt->colorkey+1,NULL);
++			palette_alpha[surf->map->info.colorkey]=0;
++			png_set_tRNS(png_ptr,info_ptr,palette_alpha,surf->map->info.colorkey+1,NULL);
+ 		}
+ 	}else{ /* Truecolor */
+ 		if (fmt->Amask) {
+@@ -229,7 +231,7 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
+ 				goto savedone;
+ 			}
+ 			if(surf->flags&SDL_SRCALPHA){
+-				temp_alpha=fmt->alpha;
++				temp_alpha=surf->map->info.a;
+ 				used_alpha=1;
+ 				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
+ 			}else{
+diff --git a/module/ffdecode.c b/module/ffdecode.c
+index 62797db..4d89504 100644
+--- a/module/ffdecode.c
++++ b/module/ffdecode.c
+@@ -1288,7 +1288,7 @@ static int stream_component_open(VideoState *is, int stream_index)
+         is->video_current_pts_time = av_gettime();
+ 
+         packet_queue_init(&is->videoq);
+-        is->video_tid = SDL_CreateThread(video_thread, is);
++        is->video_tid = SDL_CreateThread(video_thread, "renpyvideothread", is);
+         break;
+     default:
+         break;
+@@ -1598,7 +1598,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
+     is->quit_mutex = SDL_CreateMutex();
+     is->quit_cond = SDL_CreateCond();
+     
+-    is->parse_tid = SDL_CreateThread(decode_thread, is);
++    is->parse_tid = SDL_CreateThread(decode_thread, "renpydecodethread", is);
+ 
+     is->first_frame = 1;
+ 
+diff --git a/module/glcompat.h b/module/glcompat.h
+index e442786..0451cba 100644
+--- a/module/glcompat.h
++++ b/module/glcompat.h
+@@ -14,9 +14,23 @@
+ 
+ #define RENPY_GLES_2
+ 
++#elif __APPLE__
++
++#include "TargetConditionals.h"
++
++#if TARGET_OS_IPHONE    
++
++#define RENPY_GLES_2
++#include <ES2/gl.h>
++#include <ES2/glext.h>
++
++#endif
++
+ #elif defined ANGLE
+ 
+ #define RENPY_GLES_2
++#include <EGL/egl.h>
++#include <GLES2/gl2.h>
+ 
+ #else
+ 
+@@ -27,9 +41,6 @@
+ 
+ #if defined RENPY_GLES_1
+ 
+-#include <GLES/gl.h>
+-#include <GLES/glext.h>
+-
+ #define glOrtho glOrthof
+ 
+ #define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
+@@ -51,15 +62,8 @@
+ 
+ #endif
+ 
+-
+ #if defined RENPY_GLES_2
+ 
+-#ifndef ANDROID
+-#include <EGL/egl.h>
+-#endif
+-
+-#include <GLES2/gl2.h>
+-
+ typedef GLuint GLhandleARB;
+ typedef GLchar GLcharARB;
+ 
+@@ -72,6 +76,7 @@ typedef GLchar GLcharARB;
+ #define glGenFramebuffersEXT glGenFramebuffers
+ #define glDeleteFramebuffersEXT glDeleteFramebuffers
+ #define glCheckFramebufferStatusEXT glCheckFramebufferStatus
++#define GL_FRAMEBUFFER_BINDING_EXT GL_FRAMEBUFFER_BINDING
+ 
+ #define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_INFO_LOG_LENGTH
+ #define GL_OBJECT_COMPILE_STATUS_ARB GL_COMPILE_STATUS
+diff --git a/module/include/pygame.pxd b/module/include/pygame.pxd
+index 5815f53..fba3022 100644
+--- a/module/include/pygame.pxd
++++ b/module/include/pygame.pxd
+@@ -18,6 +18,4 @@ cdef extern from "pygame/pygame.h":
+     enum:
+         SDL_SRCALPHA
+     
+-cdef extern int SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) nogil
+-    
+-        
+\ No newline at end of file
++cdef extern int SDL_BlitSurface(SDL_Surface *src, const SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) nogil
+diff --git a/module/ios.c b/module/ios.c
+new file mode 100644
+index 0000000..f3f8ea7
+--- /dev/null
++++ b/module/ios.c
+@@ -0,0 +1,26 @@
++#include <Python.h>
++#include <SDL/SDL.h>
++#include <SDL/SDL_keyboard.h>
++
++static PyObject *ios_show_keyboard(PyObject *self, PyObject *args)
++{
++  int result = SDL_ShowScreenKeyboard(SDL_VideoWindow);
++  return Py_BuildValue("i", result);
++}
++
++static PyObject *ios_hide_keyboard(PyObject *self, PyObject *args)
++{
++  int result = SDL_HideScreenKeyboard(SDL_VideoWindow);
++  return Py_BuildValue("i", result);
++}
++
++static PyMethodDef IosMethods[] = {
++  {"show_keyboard", ios_show_keyboard, METH_VARARGS, "Show the screen keyboard"},
++  {"hide_keyboard", ios_hide_keyboard, METH_VARARGS, "Hide the screen keyboard"},
++  {NULL, NULL, 0, NULL}
++};
++
++PyMODINIT_FUNC initios(void)
++{
++  (void) Py_InitModule("ios", IosMethods);
++}
+diff --git a/module/maketegl.py b/module/maketegl.py
+index 6191650..10b654a 100644
+--- a/module/maketegl.py
++++ b/module/maketegl.py
+@@ -44,7 +44,7 @@ OPENGL_1_2 = True
+ OPENGL_1_3 = True
+ OPENGL_1_4 = False
+ OPENGL_1_5 = False
+-OPENGL_2_0 = False
++OPENGL_2_0 = True
+ OPENGL_2_1 = False
+ GL_ARB_IMAGING = False
+ GL_ARB_MULTITEXTURE = True
+@@ -700,6 +700,7 @@ def generate_tegl():
+         declare("LinkProgram",GLuint)
+         #declare("ShaderSource",GLuint,GLsizei,GLvoid**,GLint[])
+         #handcoded("ShaderSource",4)
++        declare("ShaderSource",GLuint,GLsizei,GLvoid[1][1],GLint[1])
+         declare("UseProgram",GLuint)
+         declare("Uniform1f",GLint,GLfloat)
+         declare("Uniform2f",GLint,GLfloat,GLfloat)
+diff --git a/module/sdl_blitmap.h b/module/sdl_blitmap.h
+new file mode 100644
+index 0000000..15232c6
+--- /dev/null
++++ b/module/sdl_blitmap.h
+@@ -0,0 +1,31 @@
++typedef struct
++{
++    Uint8 *src;
++    int src_w, src_h;
++    int src_pitch;
++    int src_skip;
++    Uint8 *dst;
++    int dst_w, dst_h;
++    int dst_pitch;
++    int dst_skip;
++    SDL_PixelFormat *src_fmt;
++    SDL_PixelFormat *dst_fmt;
++    Uint8 *table;
++    int flags;
++    Uint32 colorkey;
++    Uint8 r, g, b, a;
++} SDL_BlitInfo;
++
++typedef struct SDL_BlitMap
++{
++    SDL_Surface *dst;
++    int identity;
++    SDL_blit blit;
++    void *data;
++    SDL_BlitInfo info;
++
++    /* the version count matches the destination; mismatch indicates
++       an invalid mapping */
++    Uint32 dst_palette_version;
++    Uint32 src_palette_version;
++} SDL_BlitMap;
+diff --git a/module/setup.py b/module/setup.py
+index 9f6dacf..d22252c 100644
+--- a/module/setup.py
++++ b/module/setup.py
+@@ -8,7 +8,7 @@ import os
+ os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+ 
+ import setuplib
+-from setuplib import android, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
++from setuplib import android, ios, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
+ 
+ # These control the level of optimization versus debugging.
+ setuplib.extra_compile_args = [ "-Wno-unused-function" ]
+@@ -67,7 +67,7 @@ if has_fribidi and not android:
+ # Sound.
+ pymodule("pysdlsound.__init__")
+ 
+-if not android:
++if not (android):
+ 
+     sound = [ "avformat", "avcodec", "avutil", "z" ]
+     macros = [ ]
+@@ -93,6 +93,8 @@ cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
+ # Gl.
+ if android:
+     glew_libs = [ 'GLESv2', 'z', 'm' ]
++elif ios:
++    glew_libs = [ 'OpenGLES' ]
+ elif has_libglew:
+     glew_libs = [ 'GLEW' ]
+ else:
+@@ -100,12 +102,21 @@ else:
+ 
+ cython("renpy.gl.gldraw", libs=glew_libs )
+ cython("renpy.gl.gltexture", libs=glew_libs)
+-cython("renpy.gl.glenviron_shader", libs=glew_libs)
+-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
+-cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not android)
++cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not ios)
++cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not (android or ios))
++cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not (android or ios))
++cython("renpy.gl.glenviron_shader_es", libs=glew_libs)
+ cython("renpy.gl.glrtt_copy", libs=glew_libs)
+ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
+ 
++# UI
++if ios:
++    cmodule(
++        "ios",
++        ["ios.c"],
++        sdl
++        )
++
+ # Angle
+ def anglecopy(fn):
+     if android:
+diff --git a/module/setuplib.py b/module/setuplib.py
+index 48cd065..dc7f980 100644
+--- a/module/setuplib.py
++++ b/module/setuplib.py
+@@ -9,6 +9,7 @@ import distutils.core
+ 
+ # This flag determines if we are compiling for Android or not.
+ android = "RENPY_ANDROID" in os.environ
++ios = "RENIOS_IOS" in os.environ
+ 
+ # The cython command.
+ cython_command = os.environ.get("RENPY_CYTHON", None)
+@@ -19,7 +20,7 @@ cython_command = os.environ.get("RENPY_CYTHON", None)
+ 
+ # The install variable is a list of directories that have Ren'Py
+ # dependencies installed in them.
+-if not android:
++if not (android or ios):
+     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
+     install = install.split("::")
+     install = [ os.path.abspath(i) for i in install ]
+@@ -45,7 +46,7 @@ def include(header, directory=None, optional=True):
+         If given, returns False rather than abandoning the process.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+@@ -84,7 +85,7 @@ def library(name, optional=False):
+         rather than reporting an error.
+     """
+     
+-    if android:
++    if (android or ios):
+         return True
+     
+     for i in install:
+diff --git a/renpy/__init__.py b/renpy/__init__.py
+index a4321d5..92ef529 100644
+--- a/renpy/__init__.py
++++ b/renpy/__init__.py
+@@ -115,6 +115,7 @@ def import_all():
+     import renpy.style #@UnresolvedImport
+     import renpy.substitutions #@UnresolvedImport
+     import renpy.translation #@UnresolvedImport
++    import renpy.translator
+ 
+     import renpy.display.presplash #@UnresolvedImport
+     import renpy.display.pgrender #@UnresolvedImport
+@@ -263,15 +264,22 @@ windows = False
+ macintosh = False
+ linux = False
+ android = False
++ios = False
+ 
+-import platform
++# Ren'iOS
++# mac_ver() tries to use expat, which we don't have in our Python.
++# Remove this checking code, and hard-code platform as 'ios'.
+ 
+-if platform.win32_ver()[0]:
+-    windows = True
+-elif platform.mac_ver()[0]:
+-    macintosh = True
+-else:
+-    linux = True
++# import platform
++
++# if platform.win32_ver()[0]:
++#     windows = True
++# elif platform.mac_ver()[0]:
++#     macintosh = True
++# else:
++#     linux = True
++
++ios = True
+     
+ # The android init code in renpy.py will set linux=False and android=True.
+ 
+diff --git a/renpy/audio/audio.py b/renpy/audio/audio.py
+index b0bbdfd..88be31f 100644
+--- a/renpy/audio/audio.py
++++ b/renpy/audio/audio.py
+@@ -593,7 +593,7 @@ def init():
+             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
+ 
+         try:
+-            pss.init(renpy.config.sound_sample_rate, 2, bufsize, False)
++            pss.init(renpy.config.sound_sample_rate, 2, bufsize, True)
+             pcm_ok = True
+         except:
+             if renpy.config.debug_sound:
+diff --git a/renpy/config.py b/renpy/config.py
+index 391371a..ca8bdb8 100644
+--- a/renpy/config.py
++++ b/renpy/config.py
+@@ -316,7 +316,7 @@ inspector = None
+ reject_backslash = True
+ 
+ # Hide the mouse.
+-mouse_hide_time = 30
++mouse_hide_time = 0
+ 
+ # Called when we can't load an image.
+ missing_image_callback = None
+diff --git a/renpy/display/behavior.py b/renpy/display/behavior.py
+index 525e796..08e605b 100644
+--- a/renpy/display/behavior.py
++++ b/renpy/display/behavior.py
+@@ -862,6 +862,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
+             renpy.display.render.redraw(self, 0)
+             raise renpy.display.core.IgnoreEvent()
+ 
++        elif map_event(ev, "drag_deactivate"):
++            if renpy.ios:
++                import ios
++                ios.show_keyboard()
++
+         elif ev.type == pygame.KEYDOWN and ev.unicode:
+             if ord(ev.unicode[0]) < 32:
+                 return None
+@@ -882,6 +887,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
+ 
+             raise renpy.display.core.IgnoreEvent()
+ 
++
+ # A map from adjustment to lists of displayables that want to be redrawn
+ # if the adjustment changes.
+ adj_registered = { }
+diff --git a/renpy/display/core.py b/renpy/display/core.py
+index 2f1fce5..1cbcd06 100644
+--- a/renpy/display/core.py
++++ b/renpy/display/core.py
+@@ -53,6 +53,7 @@ REDRAW = pygame.USEREVENT + 7
+ # All events except for TIMEEVENT and REDRAW
+ ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
+ 
++
+ # The number of msec between periodic events.
+ PERIODIC_INTERVAL = 50
+ 
+@@ -61,10 +62,10 @@ time_base = None
+ 
+ def init_time():
+     global time_base
+-    time_base = time.time() - pygame.time.get_ticks() / 1000.0
++    time_base = time.time() - pygame.pygametime.get_ticks() / 1000.0
+ 
+ def get_time():
+-    return time_base + pygame.time.get_ticks() / 1000.0
++    return time_base + pygame.pygametime.get_ticks() / 1000.0
+ 
+ 
+ def displayable_by_tag(layer, tag):
+@@ -1179,7 +1180,7 @@ class Interface(object):
+             self.safe_mode = True
+             
+         # Setup periodic event.
+-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
++        pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
+ 
+         # Don't grab the screen.
+         pygame.event.set_grab(False)
+@@ -1361,7 +1362,7 @@ class Interface(object):
+                 physical_size = renpy.game.preferences.physical_size
+                 
+         # Setup screen.
+-        fullscreen = renpy.game.preferences.fullscreen
++        fullscreen = True # renpy.game.preferences.fullscreen
+         
+         # If we're in fullscreen mode, and changing to another mode, go to
+         # windowed mode first.
+@@ -1420,7 +1421,7 @@ class Interface(object):
+             renpy.config.screen_height,
+             )
+ 
+-        if draw:
++        if draw and not self.minimized:
+             renpy.display.draw.draw_screen(surftree, fullscreen_video)
+ 
+         renpy.display.render.mark_sweep()
+@@ -1583,7 +1584,7 @@ class Interface(object):
+ 
+         ev = pygame.event.poll()
+ 
+-        if ev.type == pygame.NOEVENT:
++        if ev.type == pygame.FIRSTEVENT:
+             # Seems to prevent the CPU from speeding up.
+             renpy.display.draw.event_peek_sleep()
+             return None
+@@ -1746,9 +1747,9 @@ class Interface(object):
+ 
+             android.sound.pause_all()
+ 
+-            pygame.time.set_timer(PERIODIC, 0)
+-            pygame.time.set_timer(REDRAW, 0)
+-            pygame.time.set_timer(TIMEEVENT, 0)
++            pygame.pygametime.set_timer(PERIODIC, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
+ 
+             # The game has to be saved.
+             renpy.loadsave.save("_reload-1")
+@@ -1759,7 +1760,7 @@ class Interface(object):
+             # auto-reload.
+             renpy.loadsave.unlink_save("_reload-1")
+ 
+-            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
++            pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
+ 
+             android.sound.unpause_all()
+             
+@@ -1773,6 +1774,16 @@ class Interface(object):
+ 
+         self.minimized = True
+ 
++        if renpy.ios:
++            # android.sound.pause_all()
++
++            pygame.pygametime.set_timer(PERIODIC, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
++
++            # The game has to be saved.
++            renpy.loadsave.save("_reload-1")
++
+         renpy.display.log.write("The window was minimized.")
+         
+     
+@@ -1789,6 +1800,15 @@ class Interface(object):
+         
+         self.minimized = False
+ 
++        if renpy.ios:
++            # Since we came back to life, we can get rid of the
++            # auto-reload.
++            renpy.loadsave.unlink_save("_reload-1")
++
++            pygame.pygametime.set_timer(PERIODIC, PERIODIC_INTERVAL)
++
++            # android.sound.unpause_all()
++
+         renpy.display.log.write("The window was restored.")
+ 
+         if renpy.windows:
+@@ -2135,7 +2155,8 @@ class Interface(object):
+             while rv is None:
+ 
+                 # Check for a change in fullscreen preference.                
+-                if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
++                # if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
++                if self.display_reset:
+                     self.set_mode()
+                     needs_redraw = True
+ 
+@@ -2145,7 +2166,14 @@ class Interface(object):
+                     
+                 # Redraw the screen.
+                 if (self.force_redraw or
+-                    ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
++                    ((first_pass or not (
++                        # pygame.event.peek(ALL_EVENTS)
++                        # 0 to TIMEVENT-1
++                        # TIMEVENT + 1 to REDRAW - 1
++                        pygame.event.peek_range(0, TIMEEVENT - 1) or
++                        pygame.event.peek_range(TIMEEVENT + 1, REDRAW - 1)
++                      )
++                     ) and 
+                      renpy.display.draw.should_redraw(needs_redraw, first_pass))):
+ 
+                     self.force_redraw = False
+@@ -2187,7 +2215,7 @@ class Interface(object):
+                     needs_redraw = False
+                     first_pass = False
+ 
+-                    pygame.time.set_timer(REDRAW, 0)
++                    pygame.pygametime.set_timer(REDRAW, 0)
+                     pygame.event.clear([REDRAW])
+                     old_redraw_time = None
+ 
+@@ -2225,18 +2253,18 @@ class Interface(object):
+                                 pygame.event.post(self.redraw_event)
+                             except:
+                                 pass
+-                            pygame.time.set_timer(REDRAW, 0)
++                            pygame.pygametime.set_timer(REDRAW, 0)
+                         else:
+-                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
++                            pygame.pygametime.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                         
+                         old_redraw_time = redraw_time
+                 else:
+                     redraw_in = 3600
+-                    pygame.time.set_timer(REDRAW, 0)
++                    pygame.pygametime.set_timer(REDRAW, 0)
+ 
+                 # Handle the timeout timer.
+                 if not self.timeout_time:
+-                    pygame.time.set_timer(TIMEEVENT, 0)
++                    pygame.pygametime.set_timer(TIMEEVENT, 0)
+                 else:
+                     time_left = self.timeout_time - get_time() 
+                     time_left = min(time_left, 3600)
+@@ -2244,11 +2272,11 @@ class Interface(object):
+                     
+                     if time_left <= 0:
+                         self.timeout_time = None
+-                        pygame.time.set_timer(TIMEEVENT, 0)
++                        pygame.pygametime.set_timer(TIMEEVENT, 0)
+                         self.post_time_event()
+                     elif self.timeout_time != old_timeout_time:
+                         # Always set to at least 1ms.
+-                        pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
++                        pygame.pygametime.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
+                         old_timeout_time = self.timeout_time
+ 
+                 # Predict images, if we haven't done so already.
+@@ -2283,7 +2311,7 @@ class Interface(object):
+                 else:
+                     ev = self.event_wait()
+                     
+-                if ev.type == pygame.NOEVENT:
++                if ev.type == pygame.FIRSTEVENT:
+                     continue
+ 
+                 if renpy.config.profile:
+@@ -2439,10 +2467,10 @@ class Interface(object):
+             renpy.display.im.cache.end_tick()
+                 
+             # We no longer disable periodic between interactions.
+-            # pygame.time.set_timer(PERIODIC, 0)
++            # pygame.pygametime.set_timer(PERIODIC, 0)
+ 
+-            pygame.time.set_timer(TIMEEVENT, 0)
+-            pygame.time.set_timer(REDRAW, 0)
++            pygame.pygametime.set_timer(TIMEEVENT, 0)
++            pygame.pygametime.set_timer(REDRAW, 0)
+ 
+             renpy.game.context().runtime += end_time - start_time
+ 
+diff --git a/renpy/display/swdraw.py b/renpy/display/swdraw.py
+index 8d02e68..8c8dd04 100644
+--- a/renpy/display/swdraw.py
++++ b/renpy/display/swdraw.py
+@@ -908,7 +908,7 @@ class SWDraw(object):
+             return True
+         
+         next_frame = self.next_frame
+-        now = pygame.time.get_ticks()
++        now = pygame.pygametime.get_ticks()
+ 
+         frametime = 1000.0 / framerate
+ 
+diff --git a/renpy/gl/gl.pxd b/renpy/gl/gl.pxd
+index fd7950d..0afa4f8 100644
+--- a/renpy/gl/gl.pxd
++++ b/renpy/gl/gl.pxd
+@@ -439,6 +439,98 @@ cdef extern from "glcompat.h":
+     void glMultiTexCoord4ivARB(GLenum, GLint *)
+     void glMultiTexCoord4sARB(GLenum, GLshort, GLshort, GLshort, GLshort)
+     void glMultiTexCoord4svARB(GLenum, GLshort *)
++    void glBlendEquationSeparate(GLenum, GLenum)
++    void glDrawBuffers(GLsizei, GLenum *)
++    void glStencilOpSeparate(GLenum, GLenum, GLenum, GLenum)
++    void glStencilFuncSeparate(GLenum, GLenum, GLint, GLuint)
++    void glStencilMaskSeparate(GLenum, GLuint)
++    void glAttachShader(GLuint, GLuint)
++    void glBindAttribLocation(GLuint, GLuint, GLchar *)
++    void glCompileShader(GLuint)
++    GLuint glCreateProgram()
++    GLuint glCreateShader(GLenum)
++    void glDeleteProgram(GLuint)
++    void glDeleteShader(GLuint)
++    void glDetachShader(GLuint, GLuint)
++    void glDisableVertexAttribArray(GLuint)
++    void glEnableVertexAttribArray(GLuint)
++    void glGetActiveAttrib(GLuint, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
++    void glGetActiveUniform(GLuint, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
++    void glGetAttachedShaders(GLuint, GLsizei, GLsizei *, GLubyte *)
++    GLint glGetAttribLocation(GLuint, GLchar *)
++    void glGetProgramiv(GLuint, GLenum, GLint *)
++    void glGetProgramInfoLog(GLuint, GLsizei, GLsizei *, GLchar *)
++    void glGetShaderiv(GLuint, GLenum, GLint *)
++    void glGetShaderInfoLog(GLuint, GLsizei, GLsizei *, GLchar *)
++    void glGetShaderSource(GLuint, GLsizei, GLsizei *, GLchar *)
++    GLint glGetUniformLocation(GLuint, GLchar *)
++    void glGetUniformfv(GLuint, GLint, GLfloat *)
++    void glGetUniformiv(GLuint, GLint, GLint *)
++    void glGetVertexAttribdv(GLuint, GLenum, GLdouble *)
++    void glGetVertexAttribfv(GLuint, GLenum, GLfloat *)
++    void glGetVertexAttribiv(GLuint, GLenum, GLint *)
++    GLboolean glIsProgram(GLuint)
++    GLboolean glIsShader(GLuint)
++    void glLinkProgram(GLuint)
++    void glShaderSource(GLuint, GLsizei, GLvoid * *, GLint *)
++    void glUseProgram(GLuint)
++    void glUniform1f(GLint, GLfloat)
++    void glUniform2f(GLint, GLfloat, GLfloat)
++    void glUniform3f(GLint, GLfloat, GLfloat, GLfloat)
++    void glUniform4f(GLint, GLfloat, GLfloat, GLfloat, GLfloat)
++    void glUniform1i(GLint, GLint)
++    void glUniform2i(GLint, GLint, GLint)
++    void glUniform3i(GLint, GLint, GLint, GLint)
++    void glUniform4i(GLint, GLint, GLint, GLint, GLint)
++    void glUniform1fv(GLint, GLsizei, GLfloat *)
++    void glUniform2fv(GLint, GLsizei, GLfloat *)
++    void glUniform3fv(GLint, GLsizei, GLfloat *)
++    void glUniform4fv(GLint, GLsizei, GLfloat *)
++    void glUniform1iv(GLint, GLsizei, GLint *)
++    void glUniform2iv(GLint, GLsizei, GLint *)
++    void glUniform3iv(GLint, GLsizei, GLint *)
++    void glUniform4iv(GLint, GLsizei, GLint *)
++    void glUniformMatrix2fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glUniformMatrix3fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glUniformMatrix4fv(GLint, GLsizei, GLboolean, GLfloat *)
++    void glValidateProgram(GLuint)
++    void glVertexAttrib1d(GLuint, GLdouble)
++    void glVertexAttrib1dv(GLuint, GLdouble *)
++    void glVertexAttrib1f(GLuint, GLfloat)
++    void glVertexAttrib1fv(GLuint, GLfloat *)
++    void glVertexAttrib1s(GLuint, GLshort)
++    void glVertexAttrib1sv(GLuint, GLshort *)
++    void glVertexAttrib2d(GLuint, GLdouble, GLdouble)
++    void glVertexAttrib2dv(GLuint, GLdouble *)
++    void glVertexAttrib2f(GLuint, GLfloat, GLfloat)
++    void glVertexAttrib2fv(GLuint, GLfloat *)
++    void glVertexAttrib2s(GLuint, GLshort, GLshort)
++    void glVertexAttrib2sv(GLuint, GLshort *)
++    void glVertexAttrib3d(GLuint, GLdouble, GLdouble, GLdouble)
++    void glVertexAttrib3dv(GLuint, GLdouble *)
++    void glVertexAttrib3f(GLuint, GLfloat, GLfloat, GLfloat)
++    void glVertexAttrib3fv(GLuint, GLfloat *)
++    void glVertexAttrib3s(GLuint, GLshort, GLshort, GLshort)
++    void glVertexAttrib3sv(GLuint, GLshort *)
++    void glVertexAttrib4Nbv(GLuint, GLbyte *)
++    void glVertexAttrib4Niv(GLuint, GLint *)
++    void glVertexAttrib4Nsv(GLuint, GLshort *)
++    void glVertexAttrib4Nub(GLuint, GLubyte, GLubyte, GLubyte, GLubyte)
++    void glVertexAttrib4Nubv(GLuint, GLubyte *)
++    void glVertexAttrib4Nuiv(GLuint, GLuint *)
++    void glVertexAttrib4Nusv(GLuint, GLushort *)
++    void glVertexAttrib4bv(GLuint, GLbyte *)
++    void glVertexAttrib4d(GLuint, GLdouble, GLdouble, GLdouble, GLdouble)
++    void glVertexAttrib4dv(GLuint, GLdouble *)
++    void glVertexAttrib4f(GLuint, GLfloat, GLfloat, GLfloat, GLfloat)
++    void glVertexAttrib4fv(GLuint, GLfloat *)
++    void glVertexAttrib4iv(GLuint, GLint *)
++    void glVertexAttrib4s(GLuint, GLshort, GLshort, GLshort, GLshort)
++    void glVertexAttrib4sv(GLuint, GLshort *)
++    void glVertexAttrib4ubv(GLuint, GLubyte *)
++    void glVertexAttrib4uiv(GLuint, GLuint *)
++    void glVertexAttrib4usv(GLuint, GLushort *)
++    void glVertexAttribPointer(GLuint, GLint, GLenum, GLboolean, GLsizei, GLubyte *)
+     void glVertexAttrib1dARB(GLuint, GLdouble)
+     void glVertexAttrib1dvARB(GLuint, GLdouble *)
+     void glVertexAttrib1fARB(GLuint, GLfloat)
+@@ -590,8 +682,12 @@ cdef extern from "glcompat.h":
+         GL_ACCUM_CLEAR_VALUE
+         GL_ACCUM_GREEN_BITS
+         GL_ACCUM_RED_BITS
++        GL_ACTIVE_ATTRIBUTES
++        GL_ACTIVE_ATTRIBUTE_MAX_LENGTH
+         GL_ACTIVE_TEXTURE
+         GL_ACTIVE_TEXTURE_ARB
++        GL_ACTIVE_UNIFORMS
++        GL_ACTIVE_UNIFORM_MAX_LENGTH
+         GL_ADD
+         GL_ADD_SIGNED
+         GL_ADD_SIGNED_ARB
+@@ -617,6 +713,7 @@ cdef extern from "glcompat.h":
+         GL_AND_REVERSE
+         GL_ARRAY_BUFFER_ARB
+         GL_ARRAY_BUFFER_BINDING_ARB
++        GL_ATTACHED_SHADERS
+         GL_ATTRIB_STACK_DEPTH
+         GL_AUTO_NORMAL
+         GL_AUX0
+@@ -634,14 +731,20 @@ cdef extern from "glcompat.h":
+         GL_BITMAP_TOKEN
+         GL_BLEND
+         GL_BLEND_DST
++        GL_BLEND_EQUATION_ALPHA
++        GL_BLEND_EQUATION_RGB
+         GL_BLEND_SRC
+         GL_BLUE
+         GL_BLUE_BIAS
+         GL_BLUE_BITS
+         GL_BLUE_SCALE
++        GL_BOOL
+         GL_BOOL_ARB
++        GL_BOOL_VEC2
+         GL_BOOL_VEC2_ARB
++        GL_BOOL_VEC3
+         GL_BOOL_VEC3_ARB
++        GL_BOOL_VEC4
+         GL_BOOL_VEC4_ARB
+         GL_BUFFER_ACCESS_ARB
+         GL_BUFFER_MAPPED_ARB
+@@ -712,6 +815,7 @@ cdef extern from "glcompat.h":
+         GL_COMBINE_RGB_ARB
+         GL_COMPILE
+         GL_COMPILE_AND_EXECUTE
++        GL_COMPILE_STATUS
+         GL_COMPRESSED_ALPHA
+         GL_COMPRESSED_INTENSITY
+         GL_COMPRESSED_LUMINANCE
+@@ -722,6 +826,7 @@ cdef extern from "glcompat.h":
+         GL_CONSTANT
+         GL_CONSTANT_ARB
+         GL_CONSTANT_ATTENUATION
++        GL_COORD_REPLACE
+         GL_COPY
+         GL_COPY_INVERTED
+         GL_COPY_PIXEL_TOKEN
+@@ -733,6 +838,7 @@ cdef extern from "glcompat.h":
+         GL_CURRENT_MATRIX_ARB
+         GL_CURRENT_MATRIX_STACK_DEPTH_ARB
+         GL_CURRENT_NORMAL
++        GL_CURRENT_PROGRAM
+         GL_CURRENT_RASTER_COLOR
+         GL_CURRENT_RASTER_DISTANCE
+         GL_CURRENT_RASTER_INDEX
+@@ -740,10 +846,12 @@ cdef extern from "glcompat.h":
+         GL_CURRENT_RASTER_POSITION_VALID
+         GL_CURRENT_RASTER_TEXTURE_COORDS
+         GL_CURRENT_TEXTURE_COORDS
++        GL_CURRENT_VERTEX_ATTRIB
+         GL_CURRENT_VERTEX_ATTRIB_ARB
+         GL_CW
+         GL_DECAL
+         GL_DECR
++        GL_DELETE_STATUS
+         GL_DEPTH
+         GL_DEPTH_ATTACHMENT_EXT
+         GL_DEPTH_BIAS
+@@ -765,6 +873,22 @@ cdef extern from "glcompat.h":
+         GL_DOUBLE
+         GL_DOUBLEBUFFER
+         GL_DRAW_BUFFER
++        GL_DRAW_BUFFER0
++        GL_DRAW_BUFFER1
++        GL_DRAW_BUFFER10
++        GL_DRAW_BUFFER11
++        GL_DRAW_BUFFER12
++        GL_DRAW_BUFFER13
++        GL_DRAW_BUFFER14
++        GL_DRAW_BUFFER15
++        GL_DRAW_BUFFER2
++        GL_DRAW_BUFFER3
++        GL_DRAW_BUFFER4
++        GL_DRAW_BUFFER5
++        GL_DRAW_BUFFER6
++        GL_DRAW_BUFFER7
++        GL_DRAW_BUFFER8
++        GL_DRAW_BUFFER9
+         GL_DRAW_PIXEL_TOKEN
+         GL_DST_ALPHA
+         GL_DST_COLOR
+@@ -797,11 +921,17 @@ cdef extern from "glcompat.h":
+         GL_FILL
+         GL_FLAT
+         GL_FLOAT
++        GL_FLOAT_MAT2
+         GL_FLOAT_MAT2_ARB
++        GL_FLOAT_MAT3
+         GL_FLOAT_MAT3_ARB
++        GL_FLOAT_MAT4
+         GL_FLOAT_MAT4_ARB
++        GL_FLOAT_VEC2
+         GL_FLOAT_VEC2_ARB
++        GL_FLOAT_VEC3
+         GL_FLOAT_VEC3_ARB
++        GL_FLOAT_VEC4
+         GL_FLOAT_VEC4_ARB
+         GL_FOG
+         GL_FOG_BIT
+@@ -814,7 +944,9 @@ cdef extern from "glcompat.h":
+         GL_FOG_MODE
+         GL_FOG_START
+         GL_FRAGMENT_PROGRAM_ARB
++        GL_FRAGMENT_SHADER
+         GL_FRAGMENT_SHADER_ARB
++        GL_FRAGMENT_SHADER_DERIVATIVE_HINT
+         GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB
+         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT
+         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT
+@@ -857,6 +989,7 @@ cdef extern from "glcompat.h":
+         GL_INDEX_SHIFT
+         GL_INDEX_WRITEMASK
+         GL_INFO_LOG_LENGTH
++        GL_INFO_LOG_LENGTH
+         GL_INT
+         GL_INTENSITY
+         GL_INTENSITY12
+@@ -865,8 +998,11 @@ cdef extern from "glcompat.h":
+         GL_INTENSITY8
+         GL_INTERPOLATE
+         GL_INTERPOLATE_ARB
++        GL_INT_VEC2
+         GL_INT_VEC2_ARB
++        GL_INT_VEC3
+         GL_INT_VEC3_ARB
++        GL_INT_VEC4
+         GL_INT_VEC4_ARB
+         GL_INVALID_ENUM
+         GL_INVALID_OPERATION
+@@ -909,6 +1045,7 @@ cdef extern from "glcompat.h":
+         GL_LINE_WIDTH
+         GL_LINE_WIDTH_GRANULARITY
+         GL_LINE_WIDTH_RANGE
++        GL_LINK_STATUS
+         GL_LIST_BASE
+         GL_LIST_BIT
+         GL_LIST_INDEX
+@@ -916,6 +1053,7 @@ cdef extern from "glcompat.h":
+         GL_LOAD
+         GL_LOGIC_OP
+         GL_LOGIC_OP_MODE
++        GL_LOWER_LEFT
+         GL_LUMINANCE
+         GL_LUMINANCE12
+         GL_LUMINANCE12_ALPHA12
+@@ -990,11 +1128,14 @@ cdef extern from "glcompat.h":
+         GL_MAX_CLIENT_ATTRIB_STACK_DEPTH
+         GL_MAX_CLIP_PLANES
+         GL_MAX_COLOR_ATTACHMENTS_EXT
++        GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+         GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB
+         GL_MAX_CUBE_MAP_TEXTURE_SIZE
++        GL_MAX_DRAW_BUFFERS
+         GL_MAX_ELEMENTS_INDICES
+         GL_MAX_ELEMENTS_VERTICES
+         GL_MAX_EVAL_ORDER
++        GL_MAX_FRAGMENT_UNIFORM_COMPONENTS
+         GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB
+         GL_MAX_LIGHTS
+         GL_MAX_LIST_NESTING
+@@ -1023,15 +1164,21 @@ cdef extern from "glcompat.h":
+         GL_MAX_PROGRAM_TEX_INSTRUCTIONS_ARB
+         GL_MAX_PROJECTION_STACK_DEPTH
+         GL_MAX_RENDERBUFFER_SIZE_EXT
++        GL_MAX_TEXTURE_COORDS
+         GL_MAX_TEXTURE_COORDS_ARB
++        GL_MAX_TEXTURE_IMAGE_UNITS
+         GL_MAX_TEXTURE_IMAGE_UNITS_ARB
+         GL_MAX_TEXTURE_SIZE
+         GL_MAX_TEXTURE_STACK_DEPTH
+         GL_MAX_TEXTURE_UNITS
+         GL_MAX_TEXTURE_UNITS_ARB
++        GL_MAX_VARYING_FLOATS
+         GL_MAX_VARYING_FLOATS_ARB
++        GL_MAX_VERTEX_ATTRIBS
+         GL_MAX_VERTEX_ATTRIBS_ARB
++        GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS
+         GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB
++        GL_MAX_VERTEX_UNIFORM_COMPONENTS
+         GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB
+         GL_MAX_VIEWPORT_DIMS
+         GL_MODELVIEW
+@@ -1138,6 +1285,8 @@ cdef extern from "glcompat.h":
+         GL_POINT_SIZE_RANGE
+         GL_POINT_SMOOTH
+         GL_POINT_SMOOTH_HINT
++        GL_POINT_SPRITE
++        GL_POINT_SPRITE_COORD_ORIGIN
+         GL_POINT_TOKEN
+         GL_POLYGON
+         GL_POLYGON_BIT
+@@ -1241,13 +1390,19 @@ cdef extern from "glcompat.h":
+         GL_RGB_SCALE_ARB
+         GL_RIGHT
+         GL_S
++        GL_SAMPLER_1D
+         GL_SAMPLER_1D_ARB
++        GL_SAMPLER_1D_SHADOW
+         GL_SAMPLER_1D_SHADOW_ARB
++        GL_SAMPLER_2D
+         GL_SAMPLER_2D_ARB
+         GL_SAMPLER_2D_RECT_ARB
+         GL_SAMPLER_2D_RECT_SHADOW_ARB
++        GL_SAMPLER_2D_SHADOW
+         GL_SAMPLER_2D_SHADOW_ARB
++        GL_SAMPLER_3D
+         GL_SAMPLER_3D_ARB
++        GL_SAMPLER_CUBE
+         GL_SAMPLER_CUBE_ARB
+         GL_SAMPLES
+         GL_SAMPLE_ALPHA_TO_COVERAGE
+@@ -1266,7 +1421,10 @@ cdef extern from "glcompat.h":
+         GL_SEPARATE_SPECULAR_COLOR
+         GL_SET
+         GL_SHADER_OBJECT_ARB
++        GL_SHADER_SOURCE_LENGTH
++        GL_SHADER_TYPE
+         GL_SHADE_MODEL
++        GL_SHADING_LANGUAGE_VERSION
+         GL_SHADING_LANGUAGE_VERSION_ARB
+         GL_SHININESS
+         GL_SHORT
+@@ -1303,6 +1461,13 @@ cdef extern from "glcompat.h":
+         GL_STATIC_READ_ARB
+         GL_STENCIL
+         GL_STENCIL_ATTACHMENT_EXT
++        GL_STENCIL_BACK_FAIL
++        GL_STENCIL_BACK_FUNC
++        GL_STENCIL_BACK_PASS_DEPTH_FAIL
++        GL_STENCIL_BACK_PASS_DEPTH_PASS
++        GL_STENCIL_BACK_REF
++        GL_STENCIL_BACK_VALUE_MASK
++        GL_STENCIL_BACK_WRITEMASK
+         GL_STENCIL_BITS
+         GL_STENCIL_BUFFER_BIT
+         GL_STENCIL_CLEAR_VALUE
+@@ -1490,8 +1655,10 @@ cdef extern from "glcompat.h":
+         GL_UNSIGNED_SHORT_5_5_5_1
+         GL_UNSIGNED_SHORT_5_6_5
+         GL_UNSIGNED_SHORT_5_6_5_REV
++        GL_UPPER_LEFT
+         GL_V2F
+         GL_V3F
++        GL_VALIDATE_STATUS
+         GL_VENDOR
+         GL_VERSION
+         GL_VERTEX_ARRAY
+@@ -1501,15 +1668,24 @@ cdef extern from "glcompat.h":
+         GL_VERTEX_ARRAY_STRIDE
+         GL_VERTEX_ARRAY_TYPE
+         GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB
++        GL_VERTEX_ATTRIB_ARRAY_ENABLED
+         GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB
++        GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
+         GL_VERTEX_ATTRIB_ARRAY_NORMALIZED_ARB
++        GL_VERTEX_ATTRIB_ARRAY_POINTER
+         GL_VERTEX_ATTRIB_ARRAY_POINTER_ARB
++        GL_VERTEX_ATTRIB_ARRAY_SIZE
+         GL_VERTEX_ATTRIB_ARRAY_SIZE_ARB
++        GL_VERTEX_ATTRIB_ARRAY_STRIDE
+         GL_VERTEX_ATTRIB_ARRAY_STRIDE_ARB
++        GL_VERTEX_ATTRIB_ARRAY_TYPE
+         GL_VERTEX_ATTRIB_ARRAY_TYPE_ARB
+         GL_VERTEX_PROGRAM_ARB
++        GL_VERTEX_PROGRAM_POINT_SIZE
+         GL_VERTEX_PROGRAM_POINT_SIZE_ARB
++        GL_VERTEX_PROGRAM_TWO_SIDE
+         GL_VERTEX_PROGRAM_TWO_SIDE_ARB
++        GL_VERTEX_SHADER
+         GL_VERTEX_SHADER_ARB
+         GL_VIEWPORT
+         GL_VIEWPORT_BIT
+diff --git a/renpy/gl/gldraw.pyx b/renpy/gl/gldraw.pyx
+index 2ff52aa..902dc96 100644
+--- a/renpy/gl/gldraw.pyx
++++ b/renpy/gl/gldraw.pyx
+@@ -146,6 +146,8 @@ cdef class GLDraw:
+         can. It returns True if it was succesful, or False if OpenGL isn't
+         working for some reason.
+         """
++
++        print "In GLDraw.set_mode()"
+         
+         cdef char *egl_error
+         
+@@ -186,7 +188,7 @@ cdef class GLDraw:
+         pwidth = max(vwidth / 2, pwidth)
+         pheight = max(vheight / 2, pheight)
+ 
+-        if renpy.android:
++        if renpy.android or renpy.ios:
+             pheight = self.display_info.current_h
+             pwidth = self.display_info.current_w
+         else:
+@@ -453,6 +455,21 @@ cdef class GLDraw:
+                 renpy.display.log.write("Initializing shader environment failed:")
+                 renpy.display.log.exception()
+                 self.environ = None
++        elif allow_shader and use_subsystem(
++            glenviron_shader_es,
++            'RENPY_GL_ENVIRON',
++            "shader_es",
++            "GL_APPLE_framebuffer_multisample"
++            ):
++            try:
++                renpy.display.log.write("Using shader environment (OpenGL ES).")
++                self.environ = glenviron_shader_es.ShaderESEnviron()
++                self.info["environ"] = "shader_es"
++                self.environ.init()
++            except Exception, e:
++                renpy.display.log.write("Initializing shader (OpenGL ES) environment failed.")
++                renpy.display.log.exception()
++                self.environ = None
+                 
+         if self.environ is None:
+             
+@@ -1257,3 +1274,8 @@ try:
+ except ImportError:
+     glenviron_limited = None
+ 
++try:
++    import glenviron_shader_es
++except ImportError:
++    glenviron_shader_es = None
++
+diff --git a/renpy/gl/glenviron_shader_es.pyx b/renpy/gl/glenviron_shader_es.pyx
+new file mode 100644
+index 0000000..5baeaf6
+--- /dev/null
++++ b/renpy/gl/glenviron_shader_es.pyx
+@@ -0,0 +1,585 @@
++#cython: profile=False
++# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
++#
++# Permission is hereby granted, free of charge, to any person
++# obtaining a copy of this software and associated documentation files
++# (the "Software"), to deal in the Software without restriction,
++# including without limitation the rights to use, copy, modify, merge,
++# publish, distribute, sublicense, and/or sell copies of the Software,
++# and to permit persons to whom the Software is furnished to do so,
++# subject to the following conditions:
++#
++# The above copyright notice and this permission notice shall be
++# included in all copies or substantial portions of the Software.
++#
++# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++DEF ANGLE = False
++
++from gl cimport *
++from gldraw cimport *
++
++cdef int round(double d):
++    return <int> (d + .5)
++
++
++VERTEX_SHADER1 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++
++varying vec2 TexCoord0;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++VERTEX_SHADER2 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++attribute vec2 VertexTexCoord1;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++    TexCoord1 = VertexTexCoord1;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++VERTEX_SHADER3 = """\
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform mat4 Projection;
++
++attribute vec4 Vertex;
++attribute vec2 VertexTexCoord0;
++attribute vec2 VertexTexCoord1;
++attribute vec2 VertexTexCoord2;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++varying vec2 TexCoord2;
++
++varying vec2 pos;
++
++void main() {
++    TexCoord0 = VertexTexCoord0;
++    TexCoord1 = VertexTexCoord1;
++    TexCoord2 = VertexTexCoord2;
++
++    pos = Vertex.xy;
++    gl_Position = Projection * Vertex;
++}
++"""
++
++
++
++
++BLIT_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++
++varying vec2 TexCoord0;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++        
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    gl_FragColor = color0 * Color;
++}
++"""
++
++BLEND_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++uniform sampler2D tex1;
++uniform float done;
++
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    vec4 color1 = texture2D(tex1, TexCoord1.st);
++
++    gl_FragColor = mix(color0, color1, done) * Color;
++}
++"""
++
++IMAGEBLEND_SHADER = """
++#ifdef GL_ES
++precision highp float;
++#endif
++
++uniform vec4 Color;
++uniform sampler2D tex0;
++uniform sampler2D tex1;
++uniform sampler2D tex2;
++uniform float offset;
++uniform float multiplier;
++        
++varying vec2 TexCoord0;
++varying vec2 TexCoord1;
++varying vec2 TexCoord2;
++
++varying vec2 pos;
++uniform vec2 clip0;
++uniform vec2 clip1;
++
++void main()
++{
++    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
++        discard;
++    }
++
++    vec4 color0 = texture2D(tex0, TexCoord0.st);
++    vec4 color1 = texture2D(tex1, TexCoord1.st);
++    vec4 color2 = texture2D(tex2, TexCoord2.st);
++
++    float a = clamp((color0.a + offset) * multiplier, 0.0, 1.0);
++
++    gl_FragColor = mix(color1, color2, a) * Color;
++}
++"""
++
++
++
++def check_status(shader, handle, type):
++    """
++    Checks the status of a shader or program. If it fails, then an
++    exception is raised.
++    """
++
++    cdef GLint status = 0
++    cdef GLint log_length = 0
++    
++    if shader:
++        glGetShaderiv(handle, type, &status)
++    else:    
++        glGetProgramiv(handle, type, &status)
++
++    if status == 1: # 0 for problems.
++        return
++        
++    if shader:
++        glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &log_length)
++    else:
++        glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &log_length)
++
++    log = ' ' * log_length
++    
++    if shader:
++        glGetShaderInfoLog(handle, log_length, &log_length, <char *> log)
++    else:
++        glGetProgramInfoLog(handle, log_length, &log_length, <char *> log)
++
++    raise Exception("Shader error: %s" % log)
++
++
++def compile_shader(kind, source):
++    """
++    Allocates and compiles a shader.
++    """
++
++    cdef char *sourceptr = <char *> source
++    cdef int lensource = len(source)
++    
++    handle = glCreateShader(kind)
++    glShaderSource(handle, 1, <GLvoid **> &sourceptr, &lensource)
++    glCompileShader(handle)
++
++    check_status(True, handle, GL_COMPILE_STATUS)
++
++    return handle
++
++
++def compile_program(vertex, fragment):
++    """
++    Compiles a pair of shaders into a program.
++    """
++    
++    vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex)
++    fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment)
++    
++    program = glCreateProgram()
++
++    glAttachShader(program, vertex_shader)
++    glAttachShader(program, fragment_shader)
++
++    glLinkProgram(program)
++
++    check_status(False, program, GL_LINK_STATUS)
++
++    glUseProgram(program)
++    
++    glDeleteShader(vertex_shader)
++    glDeleteShader(fragment_shader)
++    
++    return program
++
++cdef class Program(object):
++    """
++    Encapsulates a program.
++    """
++
++    cdef GLuint program
++
++    # Attributes.
++    cdef GLint Vertex
++    cdef GLint VertexTexCoord0
++    cdef GLint VertexTexCoord1
++    cdef GLint VertexTexCoord2
++    
++    # Uniforms.
++    cdef GLint Projection
++    cdef GLint Color    
++
++    cdef GLint tex0
++    cdef GLint tex1
++    cdef GLint tex2
++    
++    cdef GLint clip0
++    cdef GLint clip1
++    
++    cdef GLint offset
++    cdef GLint multiplier
++    cdef GLint done
++    
++    def __init__(self, vertex, fragment):
++        self.program = compile_program(vertex, fragment)
++        
++        self.Vertex = glGetAttribLocation(self.program, "Vertex")
++        self.VertexTexCoord0 = glGetAttribLocation(self.program, "VertexTexCoord0")
++        self.VertexTexCoord1 = glGetAttribLocation(self.program, "VertexTexCoord1")
++        self.VertexTexCoord2 = glGetAttribLocation(self.program, "VertexTexCoord2")
++        
++        self.Projection = glGetUniformLocation(self.program, "Projection")
++        self.tex0 = glGetUniformLocation(self.program, "tex0")
++        self.tex1 = glGetUniformLocation(self.program, "tex1")
++        self.tex2 = glGetUniformLocation(self.program, "tex2")
++        self.offset = glGetUniformLocation(self.program, "offset")
++        self.multiplier = glGetUniformLocation(self.program, "multiplier")
++        self.done = glGetUniformLocation(self.program, "done")
++        self.Color = glGetUniformLocation(self.program, "Color")
++        self.clip0 = glGetUniformLocation(self.program, "clip0")
++        self.clip1 = glGetUniformLocation(self.program, "clip1")
++
++    def disable_attribs(self):
++        # Disable the vertex attributes used by this program.
++        
++        if self.Vertex != -1:
++            glEnableVertexAttribArray(self.Vertex)
++
++        if self.VertexTexCoord0 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord0)
++        
++        if self.VertexTexCoord1 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord1)
++
++        if self.VertexTexCoord2 != -1:
++            glEnableVertexAttribArray(self.VertexTexCoord2)
++
++    def delete(self):
++        glDeleteProgram(self.program)
++
++        
++cdef class ShaderESEnviron(Environ):
++    """
++    This is an environment that uses shaders under OpenGL ES 2.
++    """
++    
++    cdef Program program
++    cdef float projection[16]
++
++    cdef Program blit_program
++    cdef Program blend_program
++    cdef Program imageblend_program
++
++    cdef double clip_x0
++    cdef double clip_y0
++    cdef double clip_x1
++    cdef double clip_y1
++
++    cdef int viewport_x
++    cdef int viewport_y
++    cdef int viewport_w
++    cdef int viewport_h
++
++    def init(self):
++
++        self.blit_program = Program(VERTEX_SHADER1, BLIT_SHADER)
++        self.blend_program = Program(VERTEX_SHADER2, BLEND_SHADER)
++        self.imageblend_program = Program(VERTEX_SHADER3, IMAGEBLEND_SHADER)
++
++        # The current program.
++        self.program = None        
++
++    def deinit(self):
++        """
++        Called before changing the GL context.
++        """
++
++        if self.program is not None:
++            self.program.disable_attribs()
++            self.program = None
++        
++        self.blit_program.delete()
++        self.blend_program.delete()
++        self.imageblend_program.delete()
++        
++    def activate(self, Program program):
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = program
++
++        glUseProgram(program.program)
++        glUniformMatrix4fv(program.Projection, 1, GL_FALSE, self.projection)
++        glUniform2f(program.clip0, self.clip_x0, self.clip_y0)
++        glUniform2f(program.clip1, self.clip_x1, self.clip_y1)
++
++    cdef void blit(self):
++
++        program = self.blit_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++        
++    cdef void blend(self, double fraction):
++        program = self.blend_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++            glUniform1i(program.tex1, 1)
++
++        glUniform1f(program.done, fraction)
++        
++    cdef void imageblend(self, double fraction, int ramp):
++
++        program = self.imageblend_program
++
++        if self.program is not program:
++            self.activate(program)
++            glUniform1i(program.tex0, 0)
++            glUniform1i(program.tex1, 1)
++            glUniform1i(program.tex2, 2)
++
++        # Prevent a DBZ if the user gives us a 0 ramp.
++        if ramp < 1:
++            ramp = 1
++            
++        # Compute the offset to apply to the alpha.            
++        start = -1.0
++        end = ramp / 256.0        
++        offset = start + ( end - start) * fraction
++
++        # Setup the multiplier and the offset.
++        glUniform1f(program.multiplier, 256.0 / ramp)
++        glUniform1f(program.offset, offset)
++
++    cdef void set_vertex(self, float *vertices):
++        glEnableVertexAttribArray(self.program.Vertex)
++        glVertexAttribPointer(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
++
++    cdef void set_texture(self, int unit, float *coords):
++        cdef tex
++        
++        if unit == 0:
++            tex = self.program.VertexTexCoord0
++        elif unit == 1:
++            tex = self.program.VertexTexCoord1
++        elif unit == 2 and RENPY_THIRD_TEXTURE:
++            tex = self.program.VertexTexCoord2
++        else:
++            return
++
++        if tex < 0:
++            return
++
++        if coords != NULL:           
++            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> coords)
++            glEnableVertexAttribArray(tex)
++        else:
++            glDisableVertexAttribArray(tex)
++            
++    cdef void set_color(self, float r, float g, float b, float a):
++        glUniform4f(self.program.Color, r, g, b, a)
++            
++    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
++        
++        self.projection[ 0] = 2 / (right - left)
++        self.projection[ 4] = 0
++        self.projection[ 8] = 0
++        self.projection[12] = -(right + left) / (right - left)
++        
++        self.projection[ 1] = 0
++        self.projection[ 5] = 2 / (top - bottom)
++        self.projection[ 9] = 0
++        self.projection[13] = -(top + bottom) / (top - bottom)
++
++        self.projection[ 2] = 0
++        self.projection[ 6] = 0
++        self.projection[10] = -2 / (far - near)
++        self.projection[14] = -(far + near) / (far - near)
++
++        self.projection[ 3] = 0
++        self.projection[ 7] = 0
++        self.projection[11] = 0
++        self.projection[15] = 1
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = None
++        
++    cdef void project(self, x, y, z, double *rv_x, double *rv_y, double *rv_z):
++        """
++        Given a point, projects it using the projection.
++        """
++        
++        rv_x[0] = x * self.projection[0] + y * self.projection[4] + z * self.projection[8] + self.projection[12]
++        rv_y[0] = x * self.projection[1] + y * self.projection[5] + z * self.projection[9] + self.projection[13]
++        rv_z[0] = x * self.projection[2] + y * self.projection[6] + z * self.projection[10] + self.projection[14]
++
++    cdef void set_clip(self, tuple clip_box, GLDraw draw):
++        
++        cdef double minx, miny, maxx, maxy, z
++        cdef double vwidth, vheight
++        cdef double px, py, pw, ph
++        cdef int cx, cy, cw, ch
++        cdef int psw, psh
++        
++        minx, miny, maxx, maxy = clip_box
++        psw, psh = draw.physical_size
++      
++        # The clipping box.  
++        self.clip_x0 = minx
++        self.clip_y0 = miny
++        self.clip_x1 = maxx
++        self.clip_y1 = maxy 
++        
++        # Set the scissor rectangle to be slightly larger than the 
++        # clipping box. This ensures everything that needs to be drawn
++        # is drawn, and we don't spend a lot of time shading clipped 
++        # fragments.
++        
++        if draw.clip_rtt_box is None:
++            
++            z = 0
++            
++            # Project to normalized coordinates.            
++            self.project(minx, miny, z, &minx, &miny, &z)
++            self.project(maxx, maxy, z, &maxx, &maxy, &z)
++            
++            # Convert to window coordinates.
++            minx = (minx + 1) * self.viewport_w / 2 + self.viewport_x
++            maxx = (maxx + 1) * self.viewport_w / 2 + self.viewport_x
++            miny = (miny + 1) * self.viewport_h / 2 + self.viewport_y
++            maxy = (maxy + 1) * self.viewport_h / 2 + self.viewport_y
++
++            # Increase the bounding box, to ensure every relevant pixel is 
++            # in it. The shader will take care of enforcing the actual box.
++            minx -= 1
++            maxx += 1          
++            miny += 1
++            maxy -= 1
++
++            if minx < 0:
++                minx = 0
++            if miny < 0:
++                miny = 0
++
++            glEnable(GL_SCISSOR_TEST)
++            glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
++
++        else:
++
++            cx, cy, cw, ch = draw.clip_rtt_box
++
++            glEnable(GL_SCISSOR_TEST)                            
++            glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
++
++        if self.program is not None:
++            self.program.disable_attribs()
++
++        self.program = None
++  
++    cdef void unset_clip(self, GLDraw draw):
++
++        glDisable(GL_SCISSOR_TEST)
++        
++        self.clip_x0 = 0
++        self.clip_y0 = 0
++        self.clip_x1 = 65535
++        self.clip_y1 = 65535
++
++        if self.program is not None:
++            self.program.disable_attribs()
++        
++        self.program = None
++
++    cdef void viewport(self, int x, int y, int width, int height):
++        glViewport(x, y, width, height)
++        self.viewport_x = x
++        self.viewport_y = y
++        self.viewport_w = width
++        self.viewport_h = height
+\ No newline at end of file
+diff --git a/renpy/gl/glrtt_fbo.pyx b/renpy/gl/glrtt_fbo.pyx
+index ff1f109..06240f1 100644
+--- a/renpy/gl/glrtt_fbo.pyx
++++ b/renpy/gl/glrtt_fbo.pyx
+@@ -29,6 +29,9 @@ import renpy
+ 
+ # The framebuffer object we use.
+ cdef GLuint fbo
++
++# The OS framebuffer to reset to
++cdef GLint defaultFbo
+     
+ class FboRtt(Rtt):
+     """
+@@ -67,6 +70,8 @@ class FboRtt(Rtt):
+         to render the texture.
+         """
+         
++        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &defaultFbo)
++
+         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+ 
+         glFramebufferTexture2DEXT(
+@@ -81,7 +86,7 @@ class FboRtt(Rtt):
+ 
+         draw_func(x, y, w, h)
+ 
+-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
++        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, defaultFbo)
+         
+ 
+     def get_size_limit(self, dimension):
+diff --git a/renpy/loadsave.py b/renpy/loadsave.py
+index 875445c..12ce931 100644
+--- a/renpy/loadsave.py
++++ b/renpy/loadsave.py
+@@ -239,6 +239,8 @@ def save(filename, extra_info='',
+     if renpy.config.save_dump:
+         save_dump(roots, renpy.game.log)
+ 
++    print "Ren'Py Trying to save to {}".format(renpy.config.savedir + "/" + filename)
++
+     rf = file(renpy.config.savedir + "/" + filename, "wb")
+     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
+ 
+@@ -360,6 +362,8 @@ def load(filename):
+     Loads the game state from `filename`. This function never returns.
+     """
+     
++    print "Ren'Py trying to load from: {}".format(renpy.config.savedir + "/" + filename + savegame_suffix)
++    
+     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
+     roots, log = loads(zf.read("log"))
+     zf.close()
+@@ -520,7 +524,9 @@ def MultiPersistent(name):
+     if not renpy.game.context().init_phase:
+         raise Exception("MultiPersistent objects must be created during the init phase.")
+     
+-    if sys.platform == 'win32':
++    if renpy.ios:
++        files = [ os.path.expanduser("~/Documents/Renpy/persistent") ]
++    elif sys.platform == 'win32':
+         files = [ os.path.expanduser("~/RenPy/Persistent") ]
+ 
+         if 'APPDATA' in os.environ:
+diff --git a/renpy/log.py b/renpy/log.py
+index 5bd98fb..dc9b5cc 100644
+--- a/renpy/log.py
++++ b/renpy/log.py
+@@ -79,7 +79,7 @@ class LogFile(object):
+             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
+             
+         
+-            if renpy.android:
++            if renpy.android or renpy.ios:
+                 print "Logging to", fn
+ 
+             if self.append:
+diff --git a/renpy/main.py b/renpy/main.py
+index 908e246..a957f8f 100644
+--- a/renpy/main.py
++++ b/renpy/main.py
+@@ -209,6 +209,8 @@ def main():
+     renpy.game.exception_info = 'After loading the script.'
+ 
+     # Find the save directory.
++    if renpy.ios:
++        renpy.config.savedir = os.environ.get('RENIOS_SAVE_DIRECTORY', None)
+     if renpy.config.savedir is None:
+         renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
+ 
+diff --git a/renpy/translator.py b/renpy/translator.py
+new file mode 100644
+index 0000000..e97ab7d
+--- /dev/null
++++ b/renpy/translator.py
+@@ -0,0 +1,102 @@
++# Translator class forward-ported from Ren'Py 6.14, for backwards
++# compatibility with games that access this class directly.
++
++import renpy
++import renpy.object
++import os
++
++class Translator(renpy.object.Object):
++    
++    def unquote(self, s):
++        s = s.replace("\\n", "\n")
++        s = s.replace("\\\\", "\\")
++        return s
++    
++    def quote(self, s):
++        s = s.replace("\\", "\\\\")
++        s = s.replace("\n", "\\n")
++        return s
++    
++    def __init__(self, language):
++        """
++        Loads the translation from the file `language`.rpt
++        """
++
++        self.language = language
++        self.translations = { }
++        
++        f = renpy.loader.load(language + ".rpt")
++        
++        old = None
++        
++        for l in f:
++            l = l.decode("utf-8")
++            l = l.rstrip()
++            
++            if not l:
++                continue
++            
++            if l[0] == '#':
++                continue
++            
++            s = self.unquote(l[2:])
++            
++            if l[0] == '<':
++                if old:
++                    raise Exception("String {0!r} does not have a translation.".format(old))
++                
++                old = s
++                
++            if l[0] == ">":
++                if old is None:
++                    raise Exception("Translation {0!r} doesn't belong to a string.".format(s))
++                
++                if old in self.translations:
++                    raise Exception("Multiple translations for {0!r}.".format(old))
++
++                self.translations[old] = s        
++                old = None
++        
++        f.close()
++        
++        if old is not None:
++            raise Exception("String {0!r} does not have a translation.".format(old))
++         
++    def update_translations(self, s):
++        """
++        Update the translations file.
++        """
++        
++        f = file(os.path.join(renpy.config.gamedir, self.language + ".rpt"), "ab")
++        
++        encoded = self.quote(s).encode("utf-8")
++        
++        f.write("\r\n")
++        f.write("< " + encoded + "\r\n")
++        f.write("> " + encoded + "\r\n")
++        f.close()
++        
++        self.translations[s] = s
++                
++    def translate(self, s):
++        """
++        Looks up `s` in the translation database. Returns the translation, or
++        `s` if no translation is found.
++        """
++        
++        old = s.rstrip()
++        
++        if not old:
++            return s
++        
++        new = self.translations.get(old, None)
++        
++        if new is not None:
++            return new
++        
++        if update_translations:        
++            self.update_translations(old)
++        
++        return s
++
++renpy.Translator = Translator
+\ No newline at end of file

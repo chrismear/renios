@@ -55,7 +55,7 @@ try mkdir -p $DESTROOT
 # Versions
 
 export PYTHON_VERSION=2.7.3
-export RENPY_VERSION=6.14.1
+export RENPY_VERSION=6.15.7
 export PYGAME_VERSION=1.9.1
 export SDL_VERSION=1.2.15
 export FREETYPE_VERSION=2.3.12
@@ -63,7 +63,7 @@ export FRIBIDI_VERSION=0.19.2
 export SDL2_REVISION=45187a87d35b
 export SDL2_TTF_REVISION=15fdede47c58
 export SDL2_IMAGE_REVISION=4a8d59cbf927
-export LIBAV_VERSION=0.7.6
+export LIBAV_VERSION=9.6
 
 # one method to deduplicate some symbol in libraries
 function deduplicate() {

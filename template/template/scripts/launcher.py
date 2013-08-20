@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 #@PydevCodeAnalysisIgnore
+
+# This file is part of Ren'Py. The license below applies to Ren'Py only. 
+# Games and other projects that use Ren'Py may use a different license.
+
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -21,7 +25,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 import os
 import sys
 import warnings
@@ -31,13 +34,33 @@ import warnings
 # Given the Ren'Py base directory (usually the directory containing
 # this file), this is expected to return the path to the common directory.
 def path_to_common(renpy_base):
-    return renpy_base + "/common"
+    return renpy_base + "/renpy/common"
 
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
     import renpy #@UnresolvedImport
     
+    # Android.
+    if renpy.android:
+        paths = [
+            os.path.join(os.environ["ANDROID_OLD_PUBLIC"], "game/saves"),
+            os.path.join(os.environ["ANDROID_PRIVATE"], "saves"),
+            os.path.join(os.environ["ANDROID_PUBLIC"], "saves"),
+            ]
+        
+        for rv in paths:
+            if os.path.isdir(rv):
+                break
+
+        print "Using savedir", rv
+                    
+        # We return the last path as the default.
+                    
+        return rv
+    
+    
+    # No save directory given.
     if not renpy.config.save_directory:
         return gamedir + "/saves"
 
@@ -55,10 +78,7 @@ def path_to_saves(gamedir):
         path = newpath
 
     # Otherwise, put the saves in a platform-specific location.
-    if renpy.android:
-        return gamedir + "/saves"
-
-    elif renpy.macintosh:
+    if renpy.macintosh:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
 
@@ -77,7 +97,7 @@ def path_to_saves(gamedir):
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
 def path_to_renpy_base():
-    renpy_base = os.path.dirname(sys.argv[0])
+    renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
     renpy_base = os.environ.get('RENPY_BASE', renpy_base)
     renpy_base = os.path.abspath(renpy_base)
 
@@ -108,12 +128,6 @@ if android:
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
-    os.environ["RENPY_GL_ENVIRON"] = "limited"
-
-#print "Ren'iOS: forcing renderer settings"
-#os.environ["RENPY_RENDERER"] = "gl"
-#os.environ["RENPY_GL_ENVIRON"] = "shader_es"
-
     
 def main():
     
@@ -146,18 +160,7 @@ def main():
     
     renpy.bootstrap.bootstrap(renpy_base)
 
-#import profile
-#profile.run('main()')
-
-#print "Test STDOUT"
-#
-#import trace
-#tracer = trace.Trace(
-#                     ignoredirs=[sys.prefix, sys.exec_prefix],
-#                     trace=1)
-#tracer.run('main()')
-
 if __name__ == "__main__":
     main()
 
-
+    
