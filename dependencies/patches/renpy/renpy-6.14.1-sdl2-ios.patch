@@ -1875,3 +1875,88 @@ index b70ae07..0da6fbb 100644
      if renpy.config.savedir is None:
          renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
  
+diff --git a/renpy/text/text.py b/renpy/text/text.py
+index 2316d37..03284f4 100644
+--- a/renpy/text/text.py
++++ b/renpy/text/text.py
+@@ -216,7 +216,7 @@ class TextSegment(object):
+         Return the list of glyphs corresponding to unicode string s.
+         """
+ 
+-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
++        fo = font.get_font(self.font, self.size * 2, self.bold, self.italic, 0, self.antialias)
+         rv = fo.glyphs(s)
+         
+         # Apply kerning to the glyphs.
+@@ -246,7 +246,7 @@ class TextSegment(object):
+             color = self.color
+             black_color = self.black_color
+         
+-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
++        fo = font.get_font(self.font, self.size * 2, self.bold, self.italic, di.outline, self.antialias)
+         fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough, black_color)
+ 
+     def assign_times(self, gt, glyphs):
+@@ -1259,6 +1259,9 @@ class Text(renpy.display.core.Displayable):
+ 
+     def render(self, width, height, st, at):
+ 
++        physical_width = width * 2
++        physical_height = height * 2
++
+         # If slow is None, the style decides if we're in slow text mode.
+         if self.slow is None:
+             if self.style.slow_cps:
+@@ -1273,13 +1276,13 @@ class Text(renpy.display.core.Displayable):
+         renders = { }
+ 
+         for i in self.displayables:
+-            renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
++            renders[i] = renpy.display.render.render(i, physical_width, self.style.size * 2, st, at)
+         
+         # Find the layout, and update to the new size and width if necessary.
+         layout = self.get_layout()
+ 
+-        if layout is None or layout.width != width or layout.height != height:
+-            layout = Layout(self, width, height, renders)
++        if layout is None or layout.width != physical_width or layout.height != physical_height:
++            layout = Layout(self, physical_width, physical_height, renders)
+             layout_cache_new[id(self)] = layout
+         
+         # The laid-out size of this Text.
+@@ -1295,7 +1298,9 @@ class Text(renpy.display.core.Displayable):
+             redraw = layout.redraw_typewriter(st)
+ 
+         # Blit text layers.
+-        rv = renpy.display.render.Render(w, h)
++        rv = renpy.display.render.Render(int(w/2), int(h/2))
++        rv.reverse = renpy.display.render.Matrix2D(0.5, 0, 0, 0.5)
++        rv.forward = renpy.display.render.Matrix2D(2, 0, 0, 2)
+ 
+         for o, color, xo, yo in layout.outlines:
+             tex = layout.textures[o, color]
+@@ -1332,19 +1337,20 @@ class Text(renpy.display.core.Displayable):
+                 # Bound blits to the surface.
+                 rv.blit(
+                     tex.subsurface((b_x, b_y, b_w, b_h)),
+-                    (b_x + xo + layout.xoffset - o, b_y + yo + layout.yoffset - o))
++                    rv.reverse.transform(b_x + xo + layout.xoffset - o, b_y + yo + layout.yoffset - o))
+ 
+         # Blit displayables.
+         for d, xo, yo, t in layout.displayable_blits:
+ 
+             if self.slow and t > st:
+                 continue
+-            
+-            rv.blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
++            # Do the transform (reverse/forward) here instead?
++            rv.blit(renders[d], rv.reverse.transform(xo + layout.xoffset, yo + layout.yoffset))
+ 
+         # Add in the focus areas.
+         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
+-            rv.add_focus(self, hyperlink, hx + layout.xoffset, hy + layout.yoffset, hw, hh)
++            hx_with_offset, hy_with_offset = rv.reverse.transform(hx + layout.xoffset, hy + layout.yoffset)
++            rv.add_focus(self, hyperlink, hx_with_offset, hy_with_offset, int(hw/2), int(hh/2))
+         
+         # Figure out if we need to redraw or call slow_done.
+         if self.slow:            
