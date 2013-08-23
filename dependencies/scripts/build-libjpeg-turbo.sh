@@ -15,6 +15,7 @@ try mv libjpeg-turbo-1.2.0 $TMPROOT
 pushd $TMPROOT/libjpeg-turbo-1.2.0
 
 echo 'Configuring libjpeg-turbo'
+try autoreconf -fiv
 try ./configure --prefix=$DESTROOT \
   --host=arm-apple-darwin \
   --enable-static=yes \
