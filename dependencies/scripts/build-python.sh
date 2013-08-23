@@ -31,7 +31,7 @@ try cp $RENIOSDEPROOT/src/python/ModulesSetup Modules/Setup.local
 try cp $RENIOSDEPROOT/src/python/_scproxy.py Lib/_scproxy.py
 
 echo 'Building for native machine'
-try ./configure CC="clang -Qunused-arguments -fcolor-diagnostics"
+try ./configure # CC="clang -Qunused-arguments -fcolor-diagnostics"
 try make python.exe Parser/pgen
 try mv python.exe hostpython
 try mv Parser/pgen Parser/hostpgen
