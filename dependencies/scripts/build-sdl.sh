@@ -17,7 +17,7 @@ try hg purge --all
 try hg up -r $SDL_REVISION
 
 echo 'Patching SDL source'
-try patch -p1 < $RENIOSDEPROOT/patches/sdl/sdl-$SDL_REVISION-compat.patch
+try patch -p1 < $RENIOSDEPROOT/patches/sdl/sdl-r$SDL_REVISION-renios.patch
 
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
