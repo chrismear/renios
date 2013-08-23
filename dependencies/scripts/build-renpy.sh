@@ -19,7 +19,7 @@ try pushd $TMPROOT/renpy-$RENPY_VERSION-sdk
 
 # Patch
 echo 'Patching RenPy SDK'
-try patch -p1 < $RENIOSDEPROOT/patches/renpy/renpy-$RENPY_VERSION-sdl2-ios.patch
+try patch -p1 < $RENIOSDEPROOT/patches/renpy/renpy-$RENPY_VERSION-renios.patch
 
 # Set environment variables for Python module cross-compile
 OLD_CC="$CC"
