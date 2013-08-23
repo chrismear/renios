@@ -19,7 +19,7 @@ try pushd $TMPROOT/pygame-${PYGAME_VERSION}release
 
 # Patch
 echo 'Patching pygame source'
-try patch -p1 < $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-sdl2-ios.patch
+try patch -p1 < $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-renios.patch
 
 # Set environment variables for Python module cross-compile
 OLD_CC="$CC"
