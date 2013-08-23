@@ -6,7 +6,7 @@
 if [ ! -d $TMPROOT/SDL ] ; then
   echo 'Cloning SDL source'
   try pushd $TMPROOT
-  try hg clone -u $SDL2_REVISION http://hg.libsdl.org/SDL SDL
+  try hg clone -u $SDL_REVISION http://hg.libsdl.org/SDL SDL
   try cd SDL
   try popd
 fi
@@ -14,10 +14,10 @@ fi
 pushd $TMPROOT/SDL
 try hg revert --all
 try hg purge --all
-try hg up -r $SDL2_REVISION
+try hg up -r $SDL_REVISION
 
 echo 'Patching SDL source'
-try patch -p1 < $RENIOSDEPROOT/patches/sdl2/sdl2-$SDL2_REVISION-compat.patch
+try patch -p1 < $RENIOSDEPROOT/patches/sdl/sdl-$SDL_REVISION-compat.patch
 
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
@@ -33,7 +33,7 @@ try rm -rdf $BUILDROOT/include/SDL
 try cp -a $TMPROOT/SDL/include $BUILDROOT/include/SDL
 
 try mkdir -p $BUILDROOT/bin
-try sed s:BUILDROOT:$BUILDROOT: <$RENIOSDEPROOT/src/sdl2/sdl-config >$BUILDROOT/bin/sdl-config
+try sed s:BUILDROOT:$BUILDROOT: <$RENIOSDEPROOT/src/sdl/sdl-config >$BUILDROOT/bin/sdl-config
 try chmod a+x $BUILDROOT/bin/sdl-config
 
 mkdir -p $BUILDROOT/pkgconfig
