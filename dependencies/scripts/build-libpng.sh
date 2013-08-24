@@ -18,7 +18,7 @@ pushd $TMPROOT/libpng-1.2.49
 
 echo 'Configuring libpng'
 try ./configure --prefix=$DESTROOT \
-  --host=arm-apple-darwin \
+  --host="$ARM_HOST" \
   --enable-static=yes \
   --enable-shared=no \
   CC="$ARM_CC" AR="$ARM_AR" \
@@ -32,12 +32,12 @@ popd
 
 echo 'Moving libpng build products into place'
 try cp $DESTROOT/lib/libpng12.a $BUILDROOT/lib
-try ln -s libpng12.a $BUILDROOT/lib/libpng.a
+try ln -sf libpng12.a $BUILDROOT/lib/libpng.a
 
 try cp -a $DESTROOT/include/libpng12 $BUILDROOT/include
 
 try rm -f $BUILDROOT/include/png.h
-try ln -s libpng12/png.h $BUILDROOT/include/png.h
+try ln -sf libpng12/png.h $BUILDROOT/include/png.h
 
 try rm -f $BUILDROOT/include/pngconf.h
-try ln -s libpng12/pngconf.h $BUILDROOT/include/pngconf.h
+try ln -sf libpng12/pngconf.h $BUILDROOT/include/pngconf.h

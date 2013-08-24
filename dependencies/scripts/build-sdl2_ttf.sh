@@ -21,11 +21,11 @@ try hg up -r $SDL2_TTF_REVISION
 set -x
 try ./configure --prefix=$DESTROOT \
   --with-freetype-prefix=$DESTROOT \
-  --host=arm-apple-darwin \
+  --host="$ARM_HOST" \
   --enable-static=yes \
   --enable-shared=no \
   --without-x \
-  --disable-sdl-test \
+  --disable-sdltest \
   CC="$ARM_CC" AR="$ARM_AR" \
   LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS" \
   SDL_CONFIG="$BUILDROOT/bin/sdl-config"

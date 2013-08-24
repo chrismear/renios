@@ -1,3 +1,5 @@
+#!/bin/bash
+
 try () {
   "$@" || exit -1
 }

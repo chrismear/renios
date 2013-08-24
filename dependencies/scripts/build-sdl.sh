@@ -21,14 +21,14 @@ try patch -p1 < $RENIOSDEPROOT/patches/sdl/sdl-r$SDL_REVISION-renios.patch
 
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
-try xcodebuild -project SDL.xcodeproj -target libSDL -configuration Debug -sdk iphoneos$SDKVER clean
-try xcodebuild -project SDL.xcodeproj -target libSDL -configuration Debug -sdk iphoneos$SDKVER
+try xcodebuild -project SDL.xcodeproj -target libSDL -configuration $RENIOSBUILDCONFIGURATION -sdk $SDKBASENAME$SDKVER -arch $RENIOSARCH clean
+try xcodebuild -project SDL.xcodeproj -target libSDL -configuration $RENIOSBUILDCONFIGURATION -sdk $SDKBASENAME$SDKVER -arch $RENIOSARCH
 popd
 
 popd
 
 # Yes, copy it over to a different name.
-try cp $TMPROOT/SDL/Xcode-iOS/SDL/build/Debug-iphoneos/libSDL2.a $BUILDROOT/lib/libSDL.a
+try cp $TMPROOT/SDL/Xcode-iOS/SDL/build/$RENIOSBUILDCONFIGURATION-$SDKBASENAME/libSDL2.a $BUILDROOT/lib/libSDL.a
 try rm -rdf $BUILDROOT/include/SDL
 try cp -a $TMPROOT/SDL/include $BUILDROOT/include/SDL
 

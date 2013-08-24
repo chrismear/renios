@@ -46,6 +46,25 @@ index 54a4032..90465b8 100644
  				used_alpha=1;
  				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
  			}else{
+diff --git a/module/core.c b/module/core.c
+index 88c0f99..d575e40 100644
+--- a/module/core.c
++++ b/module/core.c
+@@ -14,6 +14,14 @@
+ #undef GCC_MMX
+ #endif
+ 
++/* Fix for compiling for iOS simulator (iOS environment, but compiling for i386) */
++#if __APPLE__
++#include "TargetConditionals.h"
++#if TARGET_IPHONE_SIMULATOR
++#undef GCC_MMX
++#endif
++#endif
++
+ // Shows how to do this.
+ #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+ #endif 
 diff --git a/module/ffdecode.c b/module/ffdecode.c
 index d29d829..7e89170 100644
 --- a/module/ffdecode.c
@@ -441,6 +460,25 @@ index 48cd065..dc7f980 100644
          return True
      
      for i in install:
+diff --git a/module/subpixel.c b/module/subpixel.c
+index 68e964f..9936a10 100644
+--- a/module/subpixel.c
++++ b/module/subpixel.c
+@@ -16,6 +16,14 @@
+ #include "mmx.h"
+ #endif
+ 
++/* Fix for compiling for iOS simulator (iOS environment, but compiling for i386) */
++#if __APPLE__
++#include "TargetConditionals.h"
++#if TARGET_IPHONE_SIMULATOR
++#undef GCC_MMX
++#endif
++#endif
++
+ /* MMX Register assignments (between applications of the blitter core).
+  *
+  * mm0 - new row 0
 diff --git a/renpy/__init__.py b/renpy/__init__.py
 index 91239c9..b94adc4 100644
 --- a/renpy/__init__.py

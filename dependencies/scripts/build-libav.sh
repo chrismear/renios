@@ -36,8 +36,8 @@ try ./configure --prefix=$DESTROOT \
   --cc="$ARM_CC" \
   --sysroot="$SDKROOT" \
   --target-os=darwin \
-  --arch=arm \
-  --cpu=cortex-a8 \
+  --arch="$RENIOSARCH" \
+  --cpu="$RENIOSCPU" \
   --extra-cflags="$ARM_CFLAGS" \
   --extra-ldflags="$ARM_LDFLAGS" \
   --enable-cross-compile \

@@ -72,7 +72,7 @@ f.close()
 print 'Liblink redirect linking with', objects
 subprocess.call([
     '%s/usr/bin/ld' % environ.get('DEVROOT'), '-r',
-    '-o', output + '.o', '-arch', 'armv7'] + objects)
+    '-o', output + '.o', '-arch', environ.get('RENIOSARCH')] + objects)
 # subprocess.call([
 # "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin10-llvm-gcc-4.2",
 # "-isysroot", environ.get('SDKROOT'),

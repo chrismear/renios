@@ -39,7 +39,7 @@ try make distclean
 
 echo 'Building for iOS'
 try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-xcompile.patch
-export CPPFLAGS="-I$SDKROOT/usr/lib/gcc/arm-apple-darwin11/4.2.1/include/ -I$SDKROOT/usr/include/"
+export CPPFLAGS="-I$SDKROOT/usr/include/"
 export CPP="$CCACHE /usr/bin/cpp $CPPFLAGS"
 export MACOSX_DEPLOYMENT_TARGET=
 
@@ -53,7 +53,7 @@ try ./configure CC="$ARM_CC" LD="$ARM_LD" \
   CFLAGS="$ARM_CFLAGS" \
   LDFLAGS="$ARM_LDFLAGS -Lextralibs/" \
   --disable-toolbox-glue \
-  --host=armv7-apple-darwin \
+  --host="$ARM_HOST" \
   --prefix=/python \
     --without-doc-strings
 
