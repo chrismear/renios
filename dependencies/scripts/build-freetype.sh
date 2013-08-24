@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 if [ ! -f $CACHEROOT/freetype-$FREETYPE_VERSION.tar.gz ]; then
   try curl -L http://download.savannah.gnu.org/releases/freetype/freetype-old/freetype-$FREETYPE_VERSION.tar.gz > $CACHEROOT/freetype-$FREETYPE_VERSION.tar.gz

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 # http://libav.org/releases/libav-0.7.6.tar.gz
 

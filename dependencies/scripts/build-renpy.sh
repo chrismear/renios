@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 # Download Ren'Py SDK if necessary
 if [ ! -f $CACHEROOT/renpy-$RENPY_VERSION-sdk.tar.bz2 ]; then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 # Clone SDL if necessary
 if [ ! -d $TMPROOT/SDL ] ; then

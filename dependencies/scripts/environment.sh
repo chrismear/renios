@@ -2,10 +2,6 @@
 
 # From https://github.com/kivy/kivy-ios
 
-try () {
-  "$@" || exit -1
-}
-
 # Find iOS SDK paths
 
 export SDKVER=`xcodebuild -showsdks | fgrep "iphoneos" | tail -n 1 | awk '{print $2}'`
@@ -53,17 +49,3 @@ export SDL_REVISION=45187a87d35b
 export SDL2_TTF_REVISION=15fdede47c58
 export SDL2_IMAGE_REVISION=4a8d59cbf927
 export LIBAV_VERSION=0.7.6
-
-# one method to deduplicate some symbol in libraries
-function deduplicate() {
-  fn=$(basename $1)
-  echo "== Trying to remove duplicate symbol in $1"
-  try mkdir ddp
-  try cd ddp
-  try ar x $1
-  try ar rc $fn *.o
-  try ranlib $fn
-  try mv -f $fn $1
-  try cd ..
-  try rm -rf ddp
-}

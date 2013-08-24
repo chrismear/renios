@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 if [ ! -f $CACHEROOT/libjpeg-turbo-1.2.0.tar.gz ]; then
   echo 'Downloading libjpeg-turbo source'

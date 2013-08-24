@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 # Clone SDL_image if necessary
 if [ ! -d $TMPROOT/SDL_image ] ; then

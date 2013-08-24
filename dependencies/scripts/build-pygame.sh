@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 # Download pygame if necessary
 if [ ! -f $CACHEROOT/pygame-${PYGAME_VERSION}release.tar.gz ]; then

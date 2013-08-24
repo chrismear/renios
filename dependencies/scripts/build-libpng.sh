@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# ftp://ftp.simplesystems.org//pub/libpng/png/src/history/libpng12/libpng-1.2.49.tar.bz2
+. $(dirname $0)/utils.sh
 
-. $(dirname $0)/environment.sh
+# ftp://ftp.simplesystems.org//pub/libpng/png/src/history/libpng12/libpng-1.2.49.tar.bz2
 
 if [ ! -f $CACHEROOT/libpng-1.2.49.tar.bz2 ]; then
   echo 'Downloading libpng source'

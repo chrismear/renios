@@ -1,12 +1,12 @@
 #!/bin/bash
 
+. $(dirname $0)/utils.sh
+
 # From https://github.com/kivy/kivy-ios
 
 # credit to:
 # http://randomsplat.com/id5-cross-compiling-python-for-embedded-linux.html
 # http://latenitesoft.blogspot.com/2008/10/iphone-programming-tips-building-unix.html
-
-. $(dirname $0)/environment.sh
 
 # Download Python if necessary
 if [ ! -f $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2 ]; then

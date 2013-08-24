@@ -59,7 +59,7 @@ If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you
 * `Mercurial <http://mercurial.selenic.com>`_
 * `Cython <http://cython.org>`_
 
-Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh`. This will download and build Ren'Py and its dependencies.
+Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh all`. This will download and build Ren'Py and its dependencies.
 
 License
 -------

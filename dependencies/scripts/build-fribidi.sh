@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $(dirname $0)/environment.sh
+. $(dirname $0)/utils.sh
 
 if [ ! -f $CACHEROOT/fribidi-$FRIBIDI_VERSION.tar.gz ]; then
   try curl -L http://www.fribidi.org/download/fribidi-$FRIBIDI_VERSION.tar.gz > $CACHEROOT/fribidi-$FRIBIDI_VERSION.tar.gz
