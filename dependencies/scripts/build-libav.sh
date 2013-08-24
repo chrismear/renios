@@ -102,7 +102,32 @@ try make clean
 try make
 try make install
 
-# TODO: Deduplicate _inverse symbol from libavcodec and libavutil.
+# Deduplicate shared symbols from libavcodec and libavutil.
+# 
+# Manual instructions follow.
+# 
+# Thanks to
+#   http://atnan.com/blog/2012/01/12/avoiding-duplicate-symbol-errors-during-linking-by-removing-classes-from-static-libraries
+# which also includes instructions for doing this for fat binaries.
+# 
+# 1. List which .o files are in libavcodec.a and libavutil.a:
+#    $ ar -t libavcodec.a > libavcodec.list
+#    $ ar -t libavutil.a > libavutil.list
+# 2. Find common .o files:
+#    $ comm -12 libavcodec.list libavutil.list
+# 3. Extract libavcodec.a:
+#    $ mkdir libavcodec
+#    $ cd libavcodec
+#    $ ar -x ../libavcodec.a
+# 4. Delete the duplicated .o files, e.g.:
+#    $ rm log2_tab.o
+#    $ rm utils.o
+# 5. Repack the archive:
+#    libtool -static *.o -o ../libavcodec.a
+#
+# Or instead of steps 3-5, just ar -d libavcodec.a log2_tab.o
+
+try ar -d $DESTROOT/lib/libavcodec.a inverse.o
 
 # copy to buildroot
 

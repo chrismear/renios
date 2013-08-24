@@ -18,7 +18,7 @@
 		8B1EA0A9169ED7B1004E4254 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */; };
 		8B1EA0AA169ED7B1004E4254 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09F169ED775004E4254 /* ImageIO.framework */; };
 		8B1EA0AB169ED7B1004E4254 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09D169ED76D004E4254 /* MobileCoreServices.framework */; };
-		8B1EA0BA169ED815004E4254 /* libavcodecnoinverse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */; };
+		8B1EA0BA169ED815004E4254 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AC169ED815004E4254 /* libavcodec.a */; };
 		8B1EA0BB169ED815004E4254 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AD169ED815004E4254 /* libavformat.a */; };
 		8B1EA0BC169ED815004E4254 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AE169ED815004E4254 /* libavutil.a */; };
 		8B1EA0BD169ED815004E4254 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AF169ED815004E4254 /* libfreetype.a */; };
@@ -66,7 +66,7 @@
 		8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8B1EA0A3169ED780004E4254 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodecnoinverse.a; path = ../dependencies/build/lib/libavcodecnoinverse.a; sourceTree = "<group>"; };
+		8B1EA0AC169ED815004E4254 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../dependencies/build/lib/libavcodec.a; sourceTree = "<group>"; };
 		8B1EA0AD169ED815004E4254 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../dependencies/build/lib/libavformat.a; sourceTree = "<group>"; };
 		8B1EA0AE169ED815004E4254 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../dependencies/build/lib/libavutil.a; sourceTree = "<group>"; };
 		8B1EA0AF169ED815004E4254 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../dependencies/build/lib/libfreetype.a; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 				8B1EA078169ED3A0004E4254 /* UIKit.framework in Frameworks */,
 				8B1EA07A169ED3A0004E4254 /* Foundation.framework in Frameworks */,
 				8B1EA07C169ED3A0004E4254 /* CoreGraphics.framework in Frameworks */,
-				8B1EA0BA169ED815004E4254 /* libavcodecnoinverse.a in Frameworks */,
+				8B1EA0BA169ED815004E4254 /* libavcodec.a in Frameworks */,
 				8B1EA0BB169ED815004E4254 /* libavformat.a in Frameworks */,
 				8B1EA0BC169ED815004E4254 /* libavutil.a in Frameworks */,
 				8B1EA0BD169ED815004E4254 /* libfreetype.a in Frameworks */,
@@ -155,7 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				8B1EA0C8169ED84D004E4254 /* libz.dylib */,
-				8B1EA0AC169ED815004E4254 /* libavcodecnoinverse.a */,
+				8B1EA0AC169ED815004E4254 /* libavcodec.a */,
 				8B1EA0AD169ED815004E4254 /* libavformat.a */,
 				8B1EA0AE169ED815004E4254 /* libavutil.a */,
 				8B1EA0AF169ED815004E4254 /* libfreetype.a */,
