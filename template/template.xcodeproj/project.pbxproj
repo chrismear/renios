@@ -18,20 +18,6 @@
 		8B1EA0A9169ED7B1004E4254 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */; };
 		8B1EA0AA169ED7B1004E4254 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09F169ED775004E4254 /* ImageIO.framework */; };
 		8B1EA0AB169ED7B1004E4254 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA09D169ED76D004E4254 /* MobileCoreServices.framework */; };
-		8B1EA0BA169ED815004E4254 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AC169ED815004E4254 /* libavcodec.a */; };
-		8B1EA0BB169ED815004E4254 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AD169ED815004E4254 /* libavformat.a */; };
-		8B1EA0BC169ED815004E4254 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AE169ED815004E4254 /* libavutil.a */; };
-		8B1EA0BD169ED815004E4254 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0AF169ED815004E4254 /* libfreetype.a */; };
-		8B1EA0BE169ED815004E4254 /* libfribidi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B0169ED815004E4254 /* libfribidi.a */; };
-		8B1EA0BF169ED815004E4254 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B1169ED815004E4254 /* libjpeg.a */; };
-		8B1EA0C0169ED815004E4254 /* libpng12.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B2169ED815004E4254 /* libpng12.a */; };
-		8B1EA0C1169ED815004E4254 /* libpygame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B3169ED815004E4254 /* libpygame.a */; };
-		8B1EA0C2169ED815004E4254 /* libpython2.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B4169ED815004E4254 /* libpython2.7.a */; };
-		8B1EA0C3169ED815004E4254 /* librenpy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B5169ED815004E4254 /* librenpy.a */; };
-		8B1EA0C4169ED815004E4254 /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B6169ED815004E4254 /* libSDL.a */; };
-		8B1EA0C5169ED815004E4254 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B7169ED815004E4254 /* libSDL2_image.a */; };
-		8B1EA0C6169ED815004E4254 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */; };
-		8B1EA0C7169ED815004E4254 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0B9169ED815004E4254 /* libswscale.a */; };
 		8B1EA0CA169ED854004E4254 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B1EA0C8169ED84D004E4254 /* libz.dylib */; };
 		8B1EA0CD169ED89F004E4254 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CC169ED89F004E4254 /* scripts */; };
 		8B1EA0CF169ED92A004E4254 /* include in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EA0CE169ED92A004E4254 /* include */; };
@@ -66,24 +52,10 @@
 		8B1EA0A1169ED77B004E4254 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8B1EA0A3169ED780004E4254 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		8B1EA0A5169ED787004E4254 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		8B1EA0AC169ED815004E4254 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../dependencies/build/lib/libavcodec.a; sourceTree = "<group>"; };
-		8B1EA0AD169ED815004E4254 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../dependencies/build/lib/libavformat.a; sourceTree = "<group>"; };
-		8B1EA0AE169ED815004E4254 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../dependencies/build/lib/libavutil.a; sourceTree = "<group>"; };
-		8B1EA0AF169ED815004E4254 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../dependencies/build/lib/libfreetype.a; sourceTree = "<group>"; };
-		8B1EA0B0169ED815004E4254 /* libfribidi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfribidi.a; path = ../dependencies/build/lib/libfribidi.a; sourceTree = "<group>"; };
-		8B1EA0B1169ED815004E4254 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../dependencies/build/lib/libjpeg.a; sourceTree = "<group>"; };
-		8B1EA0B2169ED815004E4254 /* libpng12.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng12.a; path = ../dependencies/build/lib/libpng12.a; sourceTree = "<group>"; };
-		8B1EA0B3169ED815004E4254 /* libpygame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpygame.a; path = ../dependencies/build/lib/libpygame.a; sourceTree = "<group>"; };
-		8B1EA0B4169ED815004E4254 /* libpython2.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.7.a; path = ../dependencies/build/lib/libpython2.7.a; sourceTree = "<group>"; };
-		8B1EA0B5169ED815004E4254 /* librenpy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librenpy.a; path = ../dependencies/build/lib/librenpy.a; sourceTree = "<group>"; };
-		8B1EA0B6169ED815004E4254 /* libSDL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL.a; path = ../dependencies/build/lib/libSDL.a; sourceTree = "<group>"; };
-		8B1EA0B7169ED815004E4254 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../dependencies/build/lib/libSDL2_image.a; sourceTree = "<group>"; };
-		8B1EA0B8169ED815004E4254 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../dependencies/build/lib/libSDL2_ttf.a; sourceTree = "<group>"; };
-		8B1EA0B9169ED815004E4254 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ../dependencies/build/lib/libswscale.a; sourceTree = "<group>"; };
 		8B1EA0C8169ED84D004E4254 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8B1EA0CC169ED89F004E4254 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ##APPID##/scripts; sourceTree = "<group>"; };
-		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../dependencies/build/python/embed/include; sourceTree = "<group>"; };
-		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../dependencies/build/python/lib; sourceTree = "<group>"; };
+		8B1EA0CE169ED92A004E4254 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../dependencies/build/release/python/embed/include; sourceTree = "<group>"; };
+		8B1EA0D0169ED943004E4254 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../dependencies/build/release/python/lib; sourceTree = "<group>"; };
  		8B7C6099174003F000805B95 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "##APPID##/icons/Icon-72.png"; sourceTree = "<group>"; };
  		8B7C609A174003F000805B95 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@2x.png"; path = "##APPID##/icons/Icon-72@2x.png"; sourceTree = "<group>"; };
  		8B7C609B174003F000805B95 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "##APPID##/icons/Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -113,20 +85,6 @@
 				8B1EA078169ED3A0004E4254 /* UIKit.framework in Frameworks */,
 				8B1EA07A169ED3A0004E4254 /* Foundation.framework in Frameworks */,
 				8B1EA07C169ED3A0004E4254 /* CoreGraphics.framework in Frameworks */,
-				8B1EA0BA169ED815004E4254 /* libavcodec.a in Frameworks */,
-				8B1EA0BB169ED815004E4254 /* libavformat.a in Frameworks */,
-				8B1EA0BC169ED815004E4254 /* libavutil.a in Frameworks */,
-				8B1EA0BD169ED815004E4254 /* libfreetype.a in Frameworks */,
-				8B1EA0BE169ED815004E4254 /* libfribidi.a in Frameworks */,
-				8B1EA0BF169ED815004E4254 /* libjpeg.a in Frameworks */,
-				8B1EA0C0169ED815004E4254 /* libpng12.a in Frameworks */,
-				8B1EA0C1169ED815004E4254 /* libpygame.a in Frameworks */,
-				8B1EA0C2169ED815004E4254 /* libpython2.7.a in Frameworks */,
-				8B1EA0C3169ED815004E4254 /* librenpy.a in Frameworks */,
-				8B1EA0C4169ED815004E4254 /* libSDL.a in Frameworks */,
-				8B1EA0C5169ED815004E4254 /* libSDL2_image.a in Frameworks */,
-				8B1EA0C6169ED815004E4254 /* libSDL2_ttf.a in Frameworks */,
-				8B1EA0C7169ED815004E4254 /* libswscale.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +301,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -364,6 +323,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -377,17 +337,33 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					../dependencies/build/include/SDL,
-					../dependencies/build/python/include,
-					../dependencies/build/include,
+					../dependencies/build/debug/include/SDL,
+					../dependencies/build/debug/python/include,
+					../dependencies/build/debug/include,
 				);
 				INFOPLIST_FILE = "##APPID##/##APPID##-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../dependencies/build/lib\"",
+					"\"$(SRCROOT)/../dependencies/build/debug/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "-all_load";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-lavcodec",
+					"-lavformat",
+					"-lavutil",
+					"-lfreetype",
+					"-lfribidi",
+					"-ljpeg",
+					"-lpng12",
+					"-lpygame",
+					"-lpython2.7",
+					"-lrenpy",
+					"-lSDL",
+					"-lSDL2_image",
+					"-lSDL2_ttf",
+					"-lswscale",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
@@ -401,16 +377,32 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					../dependencies/build/include/SDL,
-					../dependencies/build/python/include,
-					../dependencies/build/include,
+					../dependencies/build/release/include/SDL,
+					../dependencies/build/release/python/include,
+					../dependencies/build/release/include,
 				);
 				INFOPLIST_FILE = "##APPID##/##APPID##-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../dependencies/build/lib\"",
+					"\"$(SRCROOT)/../dependencies/build/release/lib\"",
 				);
-				OTHER_LDFLAGS = "-all_load";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-lavcodec",
+					"-lavformat",
+					"-lavutil",
+					"-lfreetype",
+					"-lfribidi",
+					"-ljpeg",
+					"-lpng12",
+					"-lpygame",
+					"-lpython2.7",
+					"-lrenpy",
+					"-lSDL",
+					"-lSDL2_image",
+					"-lSDL2_ttf",
+					"-lswscale",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;

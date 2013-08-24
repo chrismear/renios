@@ -24,9 +24,7 @@ fi
 
 # Set up build locations
 export RENIOSDEPROOT="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
-export BUILDROOT="$RENIOSDEPROOT/build"
 export TMPROOT="$RENIOSDEPROOT/tmp"
-export DESTROOT="$RENIOSDEPROOT/tmp/root"
 export CACHEROOT="$RENIOSDEPROOT/cache"
 
 # Flags for ARM cross-compilation
@@ -40,17 +38,9 @@ export ARM_CFLAGS="$ARM_CFLAGS -miphoneos-version-min=$SDKVER"
 export ARM_LDFLAGS="-isysroot $SDKROOT"
 export ARM_LDFLAGS="$ARM_LDFLAGS -miphoneos-version-min=$SDKVER"
 
-# Release or debug?
-# export ARM_CFLAGS="$ARM_CFLAGS -O3"
-export ARM_CFLAGS="$ARM_CFLAGS -O0 -g"
-
-# create build directory if not found
-try mkdir -p $BUILDROOT
-try mkdir -p $BUILDROOT/include
-try mkdir -p $BUILDROOT/lib
+# create build directories if not found
 try mkdir -p $CACHEROOT
 try mkdir -p $TMPROOT
-try mkdir -p $DESTROOT
 
 # Versions
 
