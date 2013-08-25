@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; Ren&#39;iOS 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="top" title="Ren&#39;iOS 0.3 documentation" href="index.html" />
+    <link rel="next" title="Running your game on an iOS device" href="device.html" />
+    <link rel="prev" title="Ren’iOS 0.3 Documentation" href="index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="device.html" title="Running your game on an iOS device"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Ren’iOS 0.3 Documentation"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This page will help you get Ren&#8217;iOS installed, and show you how to build and run your first project.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>A game written in <a class="reference internal" href="glossary.html#term-ren-py"><em class="xref std std-term">Ren&#8217;Py</em></a> that you&#8217;d like to run on an iOS device!</li>
+<li>A Mac running Mac OS X 10.7.4 (Lion) or later.</li>
+<li><a class="reference internal" href="glossary.html#term-xcode"><em class="xref std std-term">Xcode</em></a> 4.6 or later. This is <a class="reference external" href="https://itunes.apple.com/gb/app/xcode/id497799835?mt=12">a free download from the Mac App Store</a>.</li>
+</ol>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Download the latest version of Ren&#8217;iOS from the <a class="reference external" href="https://github.com/chrismear/renios/releases">Ren&#8217;iOS releases page</a>. (Look for the green button that says something like renios-0.3.tbz.)</li>
+<li>Extract the download by double-clicking on it. This will create a folder named something like renios-0.3. It is possible your browser has automatically extracted the download for you, in which case the folder will already be there.</li>
+</ol>
+</div>
+<div class="section" id="packaging-instructions">
+<h2>Packaging Instructions<a class="headerlink" href="#packaging-instructions" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Open the <em>Terminal</em> app. This is found in Applications &gt; Utilities &gt; Terminal.</p>
+</li>
+<li><p class="first">Change to the renios-0.3 directory using <cite>cd</cite>. If you downloaded Ren&#8217;iOS following the instructions above, you can do this by typing the following command</p>
+<div class="highlight-python"><pre>cd Downloads/renios*</pre>
+</div>
+<p>and pressing Return.</p>
+</li>
+<li><p class="first">Come up with a single-word name for your game. For instance, if your game is called &#8216;The Holiday&#8217;, you might choose &#8216;TheHoliday&#8217; for its single-word name.</p>
+</li>
+<li><p class="first">Find the <cite>game</cite> folder for your game. One easy way to do this is to run Ren&#8217;Py, select your game from the list on the left, and then choose &#8216;game&#8217; from the &#8216;Open Directory&#8217; list.</p>
+</li>
+<li><p class="first">Back in the Terminal window, type the following:</p>
+<div class="highlight-python"><pre>./tools/create-xcode-project.sh MyGame</pre>
+</div>
+</li>
+</ol>
+<p>where <tt class="docutils literal"><span class="pre">MyGame</span></tt> is the single-word name you chose. Press space, but don&#8217;t press Return yet!</p>
+<ol class="arabic" start="6">
+<li><p class="first">Drag your <cite>game</cite> folder into the Terminal window. This will make Terminal type in the full path to your <cite>game</cite> directory automatically. You should end up with something like this:</p>
+<div class="highlight-python"><pre>./tools/create-xcode-project.sh MyGame /Users/yourname/Documents/RenPyProjects/My\ Game/Game</pre>
+</div>
+</li>
+</ol>
+<p>Now you can press Return.</p>
+<ol class="arabic simple" start="7">
+<li>Ren&#8217;iOS will do its work, printing several lines of text. If all goes well, the last line you should see is &#8220;Copying in your game files&#8221;.</li>
+</ol>
+</div>
+<div class="section" id="running-your-app">
+<h2>Running your app<a class="headerlink" href="#running-your-app" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>You now have an Xcode project. Find it by going to the renios-0.3 folder, and looking in the folder called something like <cite>app-mygame</cite>. Double-click the blue Xcode document to open it in Xcode.</li>
+<li>Near the top-left of the Xcode window, there is a drop-down menu where you can choose between &#8216;iOS Device&#8217;, &#8216;iPad Simulator&#8217;, and &#8216;iPhone Simulator&#8217;. Choose one of the simulator options.</li>
+<li>Press the &#8216;Run&#8217; button in the top-left. Xcode will do some work, and after a short while you should see a new window open. This is the iOS simulator, and it will automatically launch your game.</li>
+</ol>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Running on the simulator is one thing, but you are probably keen to see your game running on an actual iOS device. To find out more about how to set this up, read <a class="reference internal" href="device.html"><em>Running your game on an iOS device</em></a>.</p>
+<p>For further detailed instructions on how to use Ren&#8217;iOS, see <a class="reference internal" href="tasks.html"><em>Common tasks</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxlocaltoc">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#packaging-instructions">Packaging Instructions</a></li>
+<li><a class="reference internal" href="#running-your-app">Running your app</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Ren&#8217;iOS 0.3 Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="device.html"
+                        title="next chapter">Running your game on an iOS device</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/quickstart.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="device.html" title="Running your game on an iOS device"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Ren’iOS 0.3 Documentation"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2013, Chris Mear.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

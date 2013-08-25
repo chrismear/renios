@@ -1,0 +1,151 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Ren’iOS Reference &mdash; Ren&#39;iOS 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="top" title="Ren&#39;iOS 0.3 documentation" href="index.html" />
+    <link rel="next" title="Development of Ren’iOS" href="development.html" />
+    <link rel="prev" title="Common tasks" href="tasks.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="development.html" title="Development of Ren’iOS"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tasks.html" title="Common tasks"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ren-ios-reference">
+<h1>Ren&#8217;iOS Reference<a class="headerlink" href="#ren-ios-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="debug-vs-release">
+<h2>Debug vs Release<a class="headerlink" href="#debug-vs-release" title="Permalink to this headline">¶</a></h2>
+<p>Ren&#8217;iOS ships with &#8216;debug&#8217; and &#8216;release&#8217; versions of Ren&#8217;Py and its support libraries. Xcode will mostly take care of this for you automatically, using &#8216;debug&#8217; versions when you&#8217;re running your game on your own test device, and using &#8216;release&#8217; versions when you archive the project ready for sending to other people or submitting to the App Store.</p>
+<p>If you want to build and run the &#8216;release&#8217; version on your test device, you need to manually tell Xcode to do this:</p>
+<ol class="arabic simple">
+<li>From the menu bar, choose Product &gt; Scheme &gt; Edit Scheme....</li>
+<li>From the left-hand pane, choose &#8216;Run&#8217;.</li>
+<li>In the right-hand pane, select the &#8216;Info&#8217; tab.</li>
+<li>From &#8216;Build Configuration&#8217;, select &#8216;Release&#8217;.</li>
+<li>Press &#8216;OK&#8217;.</li>
+</ol>
+<p>Now when you choose Product &gt; Run, or use the &#8216;Run&#8217; button in the toolbar, the &#8216;release&#8217; versions will be used.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxlocaltoc">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ren&#8217;iOS Reference</a><ul>
+<li><a class="reference internal" href="#debug-vs-release">Debug vs Release</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tasks.html"
+                        title="previous chapter">Common tasks</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="development.html"
+                        title="next chapter">Development of Ren&#8217;iOS</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="development.html" title="Development of Ren’iOS"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tasks.html" title="Common tasks"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2013, Chris Mear.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
