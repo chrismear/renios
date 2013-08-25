@@ -19,6 +19,15 @@ https://github.com/chrismear/renios
 
 **NOTE:** This is still very early, proof-of-concept code. There are known bugs and missing UI. It is not ready to use for a public release of a game.
 
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   packaging
+   development
+   license
+
 Packaging Requirements
 ----------------------
 
@@ -34,57 +43,3 @@ In the renios directory, run::
 where ``MyGame`` is the name of the app you want to create, and the path points to the ``game`` directory of your Ren'Py game.
 
 This will produce an Xcode project in ``app-mygame``. This should be ready to build and run on a device.
-
-Debug vs Release
-----------------
-
-Ren'iOS ships with 'debug' and 'release' versions of Ren'Py and its support libraries. Xcode will mostly take care of this for you automatically, using 'debug' versions when you're running your game on your own test device, and using 'release' versions when you archive the project ready for sending to other people or submitting to the App Store.
-
-If you want to build and run the 'release' version on your test device, you need to manually tell Xcode to do this:
-
-1. From the menu bar, choose Product > Scheme > Edit Scheme....
-2. From the left-hand pane, choose 'Run'.
-3. In the right-hand pane, select the 'Info' tab.
-4. From 'Build Configuration', select 'Release'.
-5. Press 'OK'.
-
-Now when you choose Product > Run, or use the 'Run' button in the toolbar, the 'release' versions will be used.
-
-Build Requirements
-------------------
-
-If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you will need the following software:
-
-* `Xcode <https://itunes.apple.com/gb/app/xcode/id497799835?mt=12>`_
-* `Mercurial <http://mercurial.selenic.com>`_
-* `Cython <http://cython.org>`_
-
-Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh all`. This will download and build Ren'Py and its dependencies.
-
-License
--------
-
-Some portions of Ren'iOS are based on works licensed under the LGPL (various versions). Therefore these portions are also licensed under the LGPL.
-
-Because of these portions which must be licensed under an LGPL, the single license that applies to Ren'iOS taken as a whole is the `LGPL Version 3 <http://www.gnu.org/copyleft/lesser.html>`_.
-
-In addition to that license, those portions of Ren'iOS that are not required to be licensed under the LGPL are also individually licensed under the `MIT (Expat) license <http://directory.fsf.org/wiki/License:Expat>`_.
-
-Each file/directory in Ren'iOS contains a permissions notice that indicates which license(s) apply to that file/directory.
-
-An application binary that you build using Ren'iOS should not itself need to be licensed under the LGPL.
-
-Copyright 2012, 2013 Chris Mear <chris@feedmechocolate.com>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
