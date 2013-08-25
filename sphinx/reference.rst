@@ -1,6 +1,6 @@
-=========
-Packaging
-=========
+=================
+Ren'iOS Reference
+=================
 
 Debug vs Release
 ----------------

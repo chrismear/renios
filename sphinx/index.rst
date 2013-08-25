@@ -24,7 +24,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   packaging
+   tasks
+   reference
    development
    license
 
