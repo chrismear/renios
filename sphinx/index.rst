@@ -11,7 +11,7 @@ Ren'iOS helps you package a `Ren'Py <http://www.renpy.org>`_ game into an app th
 
 You can download a pre-built binary distribution from here:
 
-https://github.com/chrismear/renios/wiki/Downloads
+https://github.com/chrismear/renios/releases
 
 Source code and issue tracking is here:
 
