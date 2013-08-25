@@ -11,10 +11,19 @@ if [ "X$VERSION" == "X" ]; then
   exit 1
 fi
 
+# TODO Don't assume we're running from the renios root directory
+
+# Regenerate docs
+try pushd sphinx
+try make html
+try popd
+
 try rm -rf dist/renios-$VERSION
+
 try mkdir -p dist/renios-$VERSION
 try mkdir -p dist/renios-$VERSION/dependencies/build
 
+try cp -a sphinx/_build/html dist/renios-$VERSION/doc
 try cp -a dependencies/build/debug dist/renios-$VERSION/dependencies/build/debug
 try cp -a dependencies/build/release dist/renios-$VERSION/dependencies/build/release
 try cp -a template dist/renios-$VERSION/template
