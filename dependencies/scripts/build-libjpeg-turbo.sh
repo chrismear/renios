@@ -17,10 +17,10 @@ pushd $TMPROOT/libjpeg-turbo-1.2.0
 echo 'Configuring libjpeg-turbo'
 try autoreconf -fiv
 try ./configure --prefix=$DESTROOT \
-  --host=arm-apple-darwin \
+  --host="$ARM_HOST" \
   --enable-static=yes \
   --enable-shared=no \
-  CC="$ARM_CC" AR="$ARM_AR" \
+  CC="$ARM_REAL_CC" AR="$ARM_AR" \
   LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS"
 try make clean
 echo 'Building libjpeg-turbo'

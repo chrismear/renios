@@ -28,7 +28,7 @@ OLD_LDSHARED="$LDSHARED"
 export CC="$ARM_CC"
 export CFLAGS="$ARM_CFLAGS"
 export CFLAGS="$CFLAGS -I$BUILDROOT/include -I$BUILDROOT/include/SDL -I$BUILDROOT/include/freetype"
-export CFLAGS="$CFLAGS -I$SDKROOT/System/Library/Frameworks/OpenGLES.framework/Headers"
+export CFLAGS="$CFLAGS -I$IOSSDKROOT/System/Library/Frameworks/OpenGLES.framework/Headers"
 export LDSHARED="$RENIOSDEPROOT/scripts/liblink"
 
 HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"

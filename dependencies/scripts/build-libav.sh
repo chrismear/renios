@@ -34,10 +34,9 @@ pushd $TMPROOT/libav-$LIBAV_VERSION
 try ./configure --prefix=$DESTROOT \
   --disable-asm \
   --cc="$ARM_CC" \
-  --sysroot="$SDKROOT" \
+  --sysroot="$IOSSDKROOT" \
   --target-os=darwin \
-  --arch="$RENIOSARCH" \
-  --cpu="$RENIOSCPU" \
+  $LIBAV_CONFIGURE_ARCH_CPU \
   --extra-cflags="$ARM_CFLAGS" \
   --extra-ldflags="$ARM_LDFLAGS" \
   --enable-cross-compile \

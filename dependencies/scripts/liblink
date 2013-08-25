@@ -29,7 +29,7 @@ while i < len(sys.argv):
         continue
 
     if opt in ("--sysroot", "-isysroot", "-framework", "-undefined",
-            "-macosx_version_min"):
+            "-macosx_version_min", "-arch"):
         i += 1
         continue
 

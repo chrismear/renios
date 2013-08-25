@@ -300,7 +300,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -365,7 +365,7 @@
 					"-lswscale",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7s armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -404,7 +404,7 @@
 					"-lswscale",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7s armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

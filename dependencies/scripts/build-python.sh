@@ -39,13 +39,18 @@ try make distclean
 
 echo 'Building for iOS'
 try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-xcompile.patch
-export CPPFLAGS="-I$SDKROOT/usr/include/"
+export CPPFLAGS="-I$IOSSDKROOT/usr/include/"
 export CPP="$CCACHE /usr/bin/cpp $CPPFLAGS"
 export MACOSX_DEPLOYMENT_TARGET=
 
-# make a link to a differently named library for who knows what reason
-mkdir extralibs||echo "foo"
-ln -s "$SDKROOT/usr/lib/libgcc_s.1.dylib" extralibs/libgcc_s.10.4.dylib || echo "sdf"
+# Need libgcc, and need to extract the specific architecture we want. If we try to use
+# the universal binary when we're compiling for armv7s, ld chokes because it tries to
+# use the armv7 slice of this library.
+# 
+# Fail silently, because in some sitautions (e.g. iPhoneSimulator platform), this library
+# doesn't exist inside the SDK.
+mkdir -p extralibs
+xcrun -sdk $SDKBASENAME lipo "$IOSSDKROOT/usr/lib/libgcc_s.1.dylib" -thin $RENIOSARCH -output extralibs/libgcc_s.10.4.dylib
 
 try cp $RENIOSDEPROOT/src/python/ModulesSetup Modules/Setup.local
 
@@ -55,7 +60,7 @@ try ./configure CC="$ARM_CC" LD="$ARM_LD" \
   --disable-toolbox-glue \
   --host="$ARM_HOST" \
   --prefix=/python \
-    --without-doc-strings
+  --without-doc-strings
 
 try make HOSTPYTHON=./hostpython HOSTPGEN=./Parser/hostpgen \
      CROSS_COMPILE_TARGET=yes
