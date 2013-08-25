@@ -1,6 +1,6 @@
-===========
-Development
-===========
+======================
+Development of Ren'iOS
+======================
 
 Build Requirements
 ------------------
