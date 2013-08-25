@@ -13,9 +13,10 @@ fi
 
 try rm -rf dist/renios-$VERSION
 try mkdir -p dist/renios-$VERSION
-try mkdir -p dist/renios-$VERSION/dependencies
+try mkdir -p dist/renios-$VERSION/dependencies/build
 
-try cp -a dependencies/build dist/renios-$VERSION/dependencies/build
+try cp -a dependencies/build/debug dist/renios-$VERSION/dependencies/build/debug
+try cp -a dependencies/build/release dist/renios-$VERSION/dependencies/build/release
 try cp -a template dist/renios-$VERSION/template
 try cp -a tools dist/renios-$VERSION/tools
 try cp -a README.md dist/renios-$VERSION/README.md
