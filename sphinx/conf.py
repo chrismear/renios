@@ -184,7 +184,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'ReniOS.tex', u'Ren\'iOS Documentation',
+  ('index', 'ReniOS.tex', u'Ren\'iOS',
    u'Chris Mear', 'manual'),
 ]
 
@@ -214,7 +214,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'renios', u'Ren\'iOS Documentation',
+    ('index', 'renios', u'Ren\'iOS',
      [u'Chris Mear'], 1)
 ]
 
@@ -228,7 +228,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'ReniOS', u'Ren\'iOS Documentation',
+  ('index', 'ReniOS', u'Ren\'iOS',
    u'Chris Mear', 'ReniOS', 'One line description of project.',
    'Miscellaneous'),
 ]
