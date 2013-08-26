@@ -31,7 +31,7 @@
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="top" title="Ren&#39;iOS 0.3 documentation" href="index.html" />
     <link rel="next" title="Running your game on an iOS device" href="device.html" />
-    <link rel="prev" title="Ren’iOS 0.3 Documentation" href="index.html" /> 
+    <link rel="prev" title="Ren’iOS 0.3" href="index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -47,7 +47,7 @@
           <a href="device.html" title="Running your game on an iOS device"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="index.html" title="Ren’iOS 0.3 Documentation"
+          <a href="index.html" title="Ren’iOS 0.3"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
  
@@ -89,31 +89,26 @@
 </div>
 <p>and pressing Return.</p>
 </li>
-<li><p class="first">Come up with a single-word name for your game. For instance, if your game is called &#8216;The Holiday&#8217;, you might choose &#8216;TheHoliday&#8217; for its single-word name.</p>
-</li>
 <li><p class="first">Find the <cite>game</cite> folder for your game. One easy way to do this is to run Ren&#8217;Py, select your game from the list on the left, and then choose &#8216;game&#8217; from the &#8216;Open Directory&#8217; list.</p>
 </li>
 <li><p class="first">Back in the Terminal window, type the following:</p>
-<div class="highlight-python"><pre>./tools/create-xcode-project.sh MyGame</pre>
+<div class="highlight-python"><pre>./tools/create-xcode-project.sh "My Game"</pre>
 </div>
+<p>where <tt class="docutils literal"><span class="pre">My</span> <span class="pre">Game</span></tt> is the name of your game. Press space, but don&#8217;t press Return yet!</p>
 </li>
-</ol>
-<p>where <tt class="docutils literal"><span class="pre">MyGame</span></tt> is the single-word name you chose. Press space, but don&#8217;t press Return yet!</p>
-<ol class="arabic" start="6">
 <li><p class="first">Drag your <cite>game</cite> folder into the Terminal window. This will make Terminal type in the full path to your <cite>game</cite> directory automatically. You should end up with something like this:</p>
-<div class="highlight-python"><pre>./tools/create-xcode-project.sh MyGame /Users/yourname/Documents/RenPyProjects/My\ Game/Game</pre>
+<div class="highlight-python"><pre>./tools/create-xcode-project.sh "My Game" /Users/yourname/Documents/RenPyProjects/My\ Game/Game</pre>
 </div>
-</li>
-</ol>
 <p>Now you can press Return.</p>
-<ol class="arabic simple" start="7">
-<li>Ren&#8217;iOS will do its work, printing several lines of text. If all goes well, the last line you should see is &#8220;Copying in your game files&#8221;.</li>
+</li>
+<li><p class="first">Ren&#8217;iOS will do its work, printing several lines of text. If all goes well, the last line you should see is &#8220;Copying in your game files&#8221;.</p>
+</li>
 </ol>
 </div>
 <div class="section" id="running-your-app">
 <h2>Running your app<a class="headerlink" href="#running-your-app" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>You now have an Xcode project. Find it by going to the renios-0.3 folder, and looking in the folder called something like <cite>app-mygame</cite>. Double-click the blue Xcode document to open it in Xcode.</li>
+<li>You now have an Xcode project. Find it by going to the renios-0.3 folder, and looking in the folder called something like <cite>app-my-game</cite>. Double-click the blue Xcode document to open it in Xcode.</li>
 <li>Near the top-left of the Xcode window, there is a drop-down menu where you can choose between &#8216;iOS Device&#8217;, &#8216;iPad Simulator&#8217;, and &#8216;iPhone Simulator&#8217;. Choose one of the simulator options.</li>
 <li>Press the &#8216;Run&#8217; button in the top-left. Xcode will do some work, and after a short while you should see a new window open. This is the iOS simulator, and it will automatically launch your game.</li>
 </ol>
@@ -147,7 +142,7 @@
   </div>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Ren&#8217;iOS 0.3 Documentation</a></p>
+                        title="previous chapter">Ren&#8217;iOS 0.3</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="device.html"
                         title="next chapter">Running your game on an iOS device</a></p>
@@ -185,7 +180,7 @@
           <a href="device.html" title="Running your game on an iOS device"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="index.html" title="Ren’iOS 0.3 Documentation"
+          <a href="index.html" title="Ren’iOS 0.3"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">Ren&#39;iOS 0.3 documentation</a> &raquo;</li>
  
@@ -194,7 +189,7 @@
     </div>
 
     <div class="footer">
-        &copy; Copyright 2013, Chris Mear.
+        &copy; Copyright 2013, Chris Mear. This documentation is licensed under a Creative Commons Attribution 3.0 Unported License..
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->

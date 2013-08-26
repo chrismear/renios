@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-===============================
-Ren'iOS |version| Documentation
-===============================
+=================
+Ren'iOS |version|
+=================
 
 Ren'iOS helps you package a `Ren'Py <http://www.renpy.org>`_ game into an app that will run on iOS. It comes with versions of Ren'Py and its dependencies that will run on iOS, and provides scripts to help you assemble these with your game into an Xcode project that will build for iOS.
 
@@ -27,5 +27,7 @@ https://github.com/chrismear/renios/issues
    tasks
    reference
    development
-   license
+   licensing
    glossary
+
+This documentation is licensed under a `Creative Commons Attribution 3.0 Unported License <http://creativecommons.org/licenses/by/3.0/deed.en_GB>`_.
