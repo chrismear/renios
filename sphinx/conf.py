@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'iOS'
-copyright = u'2013, Chris Mear'
+copyright = u'2013, Chris Mear. This documentation is licensed under a Creative Commons Attribution 3.0 Unported License.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

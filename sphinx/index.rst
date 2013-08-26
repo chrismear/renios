@@ -29,3 +29,5 @@ https://github.com/chrismear/renios/issues
    development
    license
    glossary
+
+This documentation is licensed under a `Creative Commons Attribution 3.0 Unported License <http://creativecommons.org/licenses/by/3.0/deed.en_GB>`_.
