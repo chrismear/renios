@@ -32,15 +32,15 @@ Packaging Instructions
 
 4. Back in the Terminal window, type the following::
 
-    ./tools/create-xcode-project.sh "My Game"
+   ./tools/create-xcode-project.sh "My Game"
 
-where ``My Game`` is the name of your game. Press space, but don't press Return yet!
+   where ``My Game`` is the name of your game. Press space, but don't press Return yet!
 
 5. Drag your `game` folder into the Terminal window. This will make Terminal type in the full path to your `game` directory automatically. You should end up with something like this::
 
    ./tools/create-xcode-project.sh "My Game" /Users/yourname/Documents/RenPyProjects/My\ Game/Game 
 
-Now you can press Return.
+   Now you can press Return.
 
 6. Ren'iOS will do its work, printing several lines of text. If all goes well, the last line you should see is "Copying in your game files".
 
