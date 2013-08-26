@@ -38,7 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ##APPNAME##.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "##APPNAME##.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B1EA077169ED3A0004E4254 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8B1EA079169ED3A0004E4254 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8B1EA07B169ED3A0004E4254 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -197,7 +197,7 @@
 			);
 			dependencies = (
 			);
-			name = ##APPNAME##;
+			name = "##APPNAME##";
 			productName = ##APPID##;
 			productReference = 8B1EA073169ED3A0004E4254 /* ##APPNAME##.app */;
 			productType = "com.apple.product-type.application";

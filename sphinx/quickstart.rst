@@ -28,28 +28,26 @@ Packaging Instructions
 
    and pressing Return.
 
-3. Come up with a single-word name for your game. For instance, if your game is called 'The Holiday', you might choose 'TheHoliday' for its single-word name.
+3. Find the `game` folder for your game. One easy way to do this is to run Ren'Py, select your game from the list on the left, and then choose 'game' from the 'Open Directory' list.
 
-4. Find the `game` folder for your game. One easy way to do this is to run Ren'Py, select your game from the list on the left, and then choose 'game' from the 'Open Directory' list.
+4. Back in the Terminal window, type the following::
 
-5. Back in the Terminal window, type the following::
+    ./tools/create-xcode-project.sh "My Game"
 
-    ./tools/create-xcode-project.sh MyGame
+where ``My Game`` is the name of your game. Press space, but don't press Return yet!
 
-where ``MyGame`` is the single-word name you chose. Press space, but don't press Return yet!
+5. Drag your `game` folder into the Terminal window. This will make Terminal type in the full path to your `game` directory automatically. You should end up with something like this::
 
-6. Drag your `game` folder into the Terminal window. This will make Terminal type in the full path to your `game` directory automatically. You should end up with something like this::
-
-   ./tools/create-xcode-project.sh MyGame /Users/yourname/Documents/RenPyProjects/My\ Game/Game 
+   ./tools/create-xcode-project.sh "My Game" /Users/yourname/Documents/RenPyProjects/My\ Game/Game 
 
 Now you can press Return.
 
-7. Ren'iOS will do its work, printing several lines of text. If all goes well, the last line you should see is "Copying in your game files".
+6. Ren'iOS will do its work, printing several lines of text. If all goes well, the last line you should see is "Copying in your game files".
 
 Running your app
 ----------------
 
-1. You now have an Xcode project. Find it by going to the renios-|version| folder, and looking in the folder called something like `app-mygame`. Double-click the blue Xcode document to open it in Xcode.
+1. You now have an Xcode project. Find it by going to the renios-|version| folder, and looking in the folder called something like `app-my-game`. Double-click the blue Xcode document to open it in Xcode.
 
 2. Near the top-left of the Xcode window, there is a drop-down menu where you can choose between 'iOS Device', 'iPad Simulator', and 'iPhone Simulator'. Choose one of the simulator options.
 

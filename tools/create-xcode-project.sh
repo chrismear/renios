@@ -6,7 +6,8 @@ try () {
 
 APPNAME=$1
 SRCDIR=$2
-APPID=$(echo $APPNAME | tr '[A-Z]' '[a-z]')
+# Keep only alphanumeric characters, and turn spaces into hyphens.
+APPID=$(echo $APPNAME | tr -cd '[:alnum:] ' | tr ' ' '-')
 TEMPLATEDIR=$(dirname 0)/template
 APPDIR=$(dirname 0)/app-$APPID
 DEPBUILDROOT=$(dirname 0)/dependencies/build
