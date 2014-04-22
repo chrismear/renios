@@ -8,8 +8,8 @@ Requirements
 ------------
 
 1. A game written in :term:`Ren'Py` that you'd like to run on an iOS device!
-2. A Mac running Mac OS X 10.7.4 (Lion) or later.
-3. :term:`Xcode` 4.6 or later. This is `a free download from the Mac App Store <https://itunes.apple.com/gb/app/xcode/id497799835?mt=12>`_.
+2. A Mac running Mac OS X 10.8.4 (Mountain Lion) or later.
+3. :term:`Xcode` 5.1.1 or later. This is `a free download from the Mac App Store <https://itunes.apple.com/gb/app/xcode/id497799835?mt=12>`_.
 
 Installation
 ------------
