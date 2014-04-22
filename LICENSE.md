@@ -1,4 +1,4 @@
-Copyright 2012, 2013 Chris Mear <chris@feedmechocolate.com>
+Copyright 2012, 2013, 2014 Chris Mear <chris@feedmechocolate.com>
 
 Ren'iOS is licensed to you under the terms of the LGPL 2.1:
 

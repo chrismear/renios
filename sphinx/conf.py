@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'iOS'
-copyright = u'2013, Chris Mear. This documentation is licensed under a Creative Commons Attribution 3.0 Unported License.'
+copyright = u'2013, 2014 Chris Mear. This documentation is licensed under a Creative Commons Attribution 3.0 Unported License.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -249,7 +249,7 @@ texinfo_documents = [
 epub_title = u'Ren\'iOS'
 epub_author = u'Chris Mear'
 epub_publisher = u'Chris Mear'
-epub_copyright = u'2013, Chris Mear'
+epub_copyright = u'2013, 2014 Chris Mear'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
