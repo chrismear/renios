@@ -14,30 +14,30 @@ fi
 # # BUILD FOR SIMULATOR
 
 . $(dirname $0)/environment-simulator.sh
-
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
+. $(dirname $0)/environment-simulator.sh
 . $(dirname $0)/environment-release.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
 # # BUILD FOR DEVICE, ARMV7
 
 . $(dirname $0)/environment-armv7.sh
-
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
+. $(dirname $0)/environment-armv7.sh
 . $(dirname $0)/environment-release.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
 # BUILD FOR DEVICE, ARMV7S
 
 . $(dirname $0)/environment-armv7s.sh
-
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
+. $(dirname $0)/environment-armv7s.sh
 . $(dirname $0)/environment-release.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
