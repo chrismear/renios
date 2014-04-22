@@ -11,7 +11,7 @@ fi
 
 . $(dirname $0)/environment.sh
 
-# # BUILD FOR SIMULATOR
+# BUILD FOR SIMULATOR
 
 . $(dirname $0)/environment-simulator.sh
 . $(dirname $0)/environment-debug.sh
@@ -21,7 +21,7 @@ try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 . $(dirname $0)/environment-release.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
-# # BUILD FOR DEVICE, ARMV7
+# BUILD FOR DEVICE, ARMV7
 
 . $(dirname $0)/environment-armv7.sh
 . $(dirname $0)/environment-debug.sh

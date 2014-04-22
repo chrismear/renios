@@ -47,7 +47,7 @@ export MACOSX_DEPLOYMENT_TARGET=
 # the universal binary when we're compiling for armv7s, ld chokes because it tries to
 # use the armv7 slice of this library.
 # 
-# Fail silently, because in some sitautions (e.g. iPhoneSimulator platform), this library
+# Fail silently, because in some situations (e.g. iPhoneSimulator platform), this library
 # doesn't exist inside the SDK.
 mkdir -p extralibs
 xcrun -sdk $SDKBASENAME lipo "$IOSSDKROOT/usr/lib/libgcc_s.1.dylib" -thin $RENIOSARCH -output extralibs/libgcc_s.10.4.dylib
