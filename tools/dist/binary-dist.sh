@@ -29,6 +29,8 @@ try cp -a dependencies/build/release dist/renios-$VERSION/dependencies/build/rel
 try cp -a template dist/renios-$VERSION/template
 try cp -a tools dist/renios-$VERSION/tools
 try cp -a README.md dist/renios-$VERSION/README.md
+try cp -a LICENSE.md dist/renios-$VERSION/LICENSE.md
+try cp -a CHANGELOG.md dist/renios-$VERSION/CHANGELOG.md
 
 try pushd dist
 try tar -cvjf renios-$VERSION.tbz renios-$VERSION
