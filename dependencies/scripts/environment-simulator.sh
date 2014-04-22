@@ -20,16 +20,16 @@ if [ ! -d $DEVROOT ]; then
 fi
 
 # Flags for ARM cross-compilation
-export ARM_CC="$DEVROOT/usr/bin/i686-apple-darwin11-llvm-gcc-4.2"
+export ARM_CC=$(xcrun -find -sdk iphonesimulator clang)
 export ARM_REAL_CC=$ARM_CC
-export ARM_AR="$DEVROOT/usr/bin/ar"
-export ARM_LD="$DEVROOT/usr/bin/ld"
-export ARM_CFLAGS="-march=i386"
+export ARM_AR=$(xcrun -find -sdk iphonesimulator ar)
+export ARM_LD=$(xcrun -find -sdk iphonesimulator ld)
+export ARM_CFLAGS="-arch $RENIOSARCH"
 export ARM_CFLAGS="$ARM_CFLAGS -pipe -no-cpp-precomp"
 export ARM_CFLAGS="$ARM_CFLAGS -isysroot $IOSSDKROOT"
 export ARM_CFLAGS="$ARM_CFLAGS -miphoneos-version-min=$SDKVER"
-export ARM_LDFLAGS="-isysroot $IOSSDKROOT"
-# export ARM_LDFLAGS="$ARM_LDFLAGS -mios-simulator-version-min=$SDKVER"
+export ARM_LDFLAGS="-arch $RENIOSARCH -isysroot $IOSSDKROOT"
+export ARM_LDFLAGS="$ARM_LDFLAGS -miphoneos-version-min=$SDKVER"
 export ARM_HOST="i686-apple-darwin"
 
 export LIBAV_CONFIGURE_ARCH_CPU="--arch=$RENIOSARCH --cpu=$RENIOSCPU"
