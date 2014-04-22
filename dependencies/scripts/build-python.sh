@@ -31,7 +31,8 @@ try cp $RENIOSDEPROOT/src/python/ModulesSetup Modules/Setup.local
 try cp $RENIOSDEPROOT/src/python/_scproxy.py Lib/_scproxy.py
 
 echo 'Building for native machine'
-try ./configure # CC="clang -Qunused-arguments -fcolor-diagnostics"
+OSX_SDK_ROOT=`xcrun --sdk macosx --show-sdk-path`
+try ./configure CC="clang -Qunused-arguments -fcolor-diagnostics" CFLAGS="--sysroot=$OSX_SDK_ROOT"
 try make python.exe Parser/pgen
 try mv python.exe hostpython
 try mv Parser/pgen Parser/hostpgen
@@ -39,7 +40,6 @@ try make distclean
 
 echo 'Building for iOS'
 try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-xcompile.patch
-export CPPFLAGS="-I$IOSSDKROOT/usr/include/"
 export CPP="$CCACHE /usr/bin/cpp $CPPFLAGS"
 export MACOSX_DEPLOYMENT_TARGET=
 

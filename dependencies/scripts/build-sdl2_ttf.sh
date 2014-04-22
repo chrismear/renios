@@ -27,7 +27,8 @@ try ./configure --prefix=$DESTROOT \
   --without-x \
   --disable-sdltest \
   CC="$ARM_CC" AR="$ARM_AR" \
-  LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS" \
+  LDFLAGS="$ARM_LDFLAGS" \
+  CFLAGS="$ARM_CFLAGS -DHAVE_STRLCPY=1 -DHAVE_STRLEN=1" \
   SDL_CONFIG="$BUILDROOT/bin/sdl-config"
 
 try make clean
