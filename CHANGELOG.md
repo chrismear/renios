@@ -1,4 +1,4 @@
-# 0.3 / Unreleased
+# 0.3 / 2014-04-22
 
 * [FEATURE] Tapping on a Ren'Py text input shows the iOS soft keyboard for interaction.
 * [FEATURE] A two-finger tap is registered as a right-click (for bringing up the Ren'Py menu).
@@ -11,13 +11,14 @@
 * [PERFORMANCE] Speed of app's first start-up improved by removing unnecessary file copying.
 * [ENHANCEMENT] Mouse cursor is hidden by default.
 * [ENHANCEMENT] Mouse position is reset to corner when no touches are happening.
-* [ENHANCEMENT] Build scripts updated for Xcode 4.6.
 * [ENHANCEMENT] Ren'Py and dependencies are now built in 'release' configuration as well as 'debug' configuration.
 * [ENHANCEMENT] App binary now includes armv7s (native for iPhone 5 and iPad 4th generation) as well as armv7 architecture.
 * [BUGFIX] Other apps' audio is now silenced while our app is active.
 * [BUGFIX] create_xcode_project.sh now handles special characters in the game source directory.
 * [BUGFIX] create_xcode_project.sh now handles special characters and spaces in game names.
-* Ren'iOS is now licensed under LGPL 2.1 instead of LGPL 3. 
+* [BUGFIX] Build scripts updated for Xcode 5.1.
+* Ren'iOS is now licensed under LGPL 2.1 instead of LGPL 3.
+* Ren'iOS now requires Xcode 5.1.
 
 # 0.2 / 2013-01-10
 
