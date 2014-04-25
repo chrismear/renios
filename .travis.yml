@@ -1,5 +1,5 @@
 language: objective-c
-xcode_sdk: iphonesimulator
+xcode_sdk: iphonesimulator7.0
 install:
   - brew update
   - brew install nasm
@@ -10,4 +10,4 @@ script:
   - popd
   - ./tools/create-xcode-project.sh thequestion ./dependencies/tmp/renpy-6.14.1-sdk/the_question/game
   - cd app-thequestion
-  - xcrun xcodebuild
+  - xctool
