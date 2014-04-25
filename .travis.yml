@@ -4,6 +4,8 @@ install:
   - brew update
   - brew install nasm
   - sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments easy_install cython
+  - echo '[extensions]' >> ~/.hgrc
+  - echo 'purge = ' >> ~/.hgrc
 script:
   - pushd dependencies
   - ./scripts/build.sh all
