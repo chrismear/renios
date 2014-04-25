@@ -6,7 +6,7 @@ install:
   - sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments easy_install cython
 script:
   - pushd dependencies
-  - ./script/build.sh all
+  - ./scripts/build.sh all
   - popd
   - ./tools/create-xcode-project.sh thequestion ./dependencies/tmp/renpy-6.14.1-sdk/the_question/game
   - cd app-thequestion
