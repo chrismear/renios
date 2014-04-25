@@ -2,7 +2,7 @@ language: objective-c
 install:
   - brew update
   - brew install nasm
-  - easy_install cython
+  - sudo easy_install cython
 script:
   - pushd dependencies
   - ./script/build.sh all
