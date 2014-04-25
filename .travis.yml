@@ -1,11 +1,11 @@
 language: objective-c
 install:
- - sudo apt-get update
- - sudo apt-get install mercurial cython nasm
- script:
- - pushd dependencies
- - ./script/build.sh all
- - popd
- - ./tools/create-xcode-project.sh thequestion ./dependencies/tmp/renpy-6.14.1-sdk/the_question/game
- - cd app-thequestion
- - xcrun xcodebuild
+  - sudo apt-get update
+  - sudo apt-get install mercurial cython nasm
+script:
+  - pushd dependencies
+  - ./script/build.sh all
+  - popd
+  - ./tools/create-xcode-project.sh thequestion ./dependencies/tmp/renpy-6.14.1-sdk/the_question/game
+  - cd app-thequestion
+  - xcrun xcodebuild
