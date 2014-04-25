@@ -1,7 +1,8 @@
 language: objective-c
 install:
-  - sudo apt-get update
-  - sudo apt-get install mercurial cython nasm
+  - brew update
+  - brew install mercurial nasm
+  - easy_install cython
 script:
   - pushd dependencies
   - ./script/build.sh all
