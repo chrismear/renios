@@ -11,5 +11,6 @@ If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you
 * `Mercurial <http://mercurial.selenic.com>`_ with the 'purge' extension enabled
 * `Cython <http://cython.org>`_
 * `nasm  <http://www.nasm.us>`_
+* `autoconf <http://www.gnu.org/software/autoconf/>`_
 
 Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh all`. This will download and build Ren'Py and its dependencies.
