@@ -1,7 +1,7 @@
 language: objective-c
 install:
   - brew update
-  - brew install mercurial nasm
+  - brew install nasm
   - easy_install cython
 script:
   - pushd dependencies
