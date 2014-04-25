@@ -88,6 +88,9 @@ if [ "$RENIOSCOMPONENT" == "all" ]; then
   try lipo -create -output $RENIOSDEPROOT/build/debug/lib/librenpy.a -arch i386 $RENIOSDEPROOT/build/iphonesimulator-i386/debug/lib/librenpy.a -arch armv7 $RENIOSDEPROOT/build/iphoneos-armv7/debug/lib/librenpy.a -arch armv7s $RENIOSDEPROOT/build/iphoneos-armv7s/debug/lib/librenpy.a
   try lipo -create -output $RENIOSDEPROOT/build/debug/lib/libswscale.a -arch i386 $RENIOSDEPROOT/build/iphonesimulator-i386/debug/lib/libswscale.a -arch armv7 $RENIOSDEPROOT/build/iphoneos-armv7/debug/lib/libswscale.a -arch armv7s $RENIOSDEPROOT/build/iphoneos-armv7s/debug/lib/libswscale.a
   try pushd $RENIOSDEPROOT/build/debug/lib
+  # Strip debugging symbols to avoid "Unable to open object file" errors
+  # TODO: So what is the point of having a separate debug build anymore?
+  try xcrun strip -Sxr *.a
   try ln -sf libpng12.a libpng.a
   try popd
 
@@ -118,6 +121,8 @@ if [ "$RENIOSCOMPONENT" == "all" ]; then
   try lipo -create -output $RENIOSDEPROOT/build/release/lib/librenpy.a -arch i386 $RENIOSDEPROOT/build/iphonesimulator-i386/release/lib/librenpy.a -arch armv7 $RENIOSDEPROOT/build/iphoneos-armv7/release/lib/librenpy.a -arch armv7s $RENIOSDEPROOT/build/iphoneos-armv7s/release/lib/librenpy.a
   try lipo -create -output $RENIOSDEPROOT/build/release/lib/libswscale.a -arch i386 $RENIOSDEPROOT/build/iphonesimulator-i386/release/lib/libswscale.a -arch armv7 $RENIOSDEPROOT/build/iphoneos-armv7/release/lib/libswscale.a -arch armv7s $RENIOSDEPROOT/build/iphoneos-armv7s/release/lib/libswscale.a
   try pushd $RENIOSDEPROOT/build/release/lib
+  # Strip debugging symbols to avoid "Unable to open object file" errors
+  try xcrun strip -Sxr *.a
   try ln -sf libpng12.a libpng.a
   try popd
 
