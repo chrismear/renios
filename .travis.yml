@@ -1,7 +1,7 @@
 language: objective-c
 install:
   - brew update
-  - brew install nasm
+  - brew install nasm automake autoconf
   - sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments easy_install cython
   - echo '[extensions]' >> ~/.hgrc
   - echo 'purge = ' >> ~/.hgrc
