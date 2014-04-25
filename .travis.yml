@@ -1,4 +1,5 @@
 language: objective-c
+xcode_sdk: iphonesimulator
 install:
   - brew update
   - brew install nasm
