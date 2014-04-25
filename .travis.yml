@@ -2,7 +2,7 @@ language: objective-c
 install:
   - brew update
   - brew install nasm
-  - sudo easy_install cython
+  - sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments easy_install cython
 script:
   - pushd dependencies
   - ./script/build.sh all
