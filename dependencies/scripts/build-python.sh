@@ -11,7 +11,7 @@
 # Download Python if necessary
 if [ ! -f $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2 ]; then
   echo 'Downloading Python source'
-  curl http://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.bz2 > $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2
+  curl -L http://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.bz2 > $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2
 fi
 
 # Clean any previous extractions,
