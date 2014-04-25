@@ -19,6 +19,7 @@ try hg up -r $SDL2_TTF_REVISION
 # try patch -p1 < $RENIOSDEPROOT/patches/SDL_ttf/SDL_ttf-$SDL2_TTF_REVISION-ios.patch
 
 set -x
+echo "Configuring SDL_ttf"
 try ./configure --prefix=$DESTROOT \
   --with-freetype-prefix=$DESTROOT \
   --host="$ARM_HOST" \
@@ -31,10 +32,12 @@ try ./configure --prefix=$DESTROOT \
   CFLAGS="$ARM_CFLAGS -DHAVE_STRLCPY=1 -DHAVE_STRLEN=1" \
   SDL_CONFIG="$BUILDROOT/bin/sdl-config"
 
+echo "Building SDL_ttf"
 try make clean
 try make libSDL2_ttf.la
 
 popd
 
+echo "Moving SDL_ttf build products into place"
 try cp $TMPROOT/SDL_ttf/.libs/libSDL2_ttf.a $BUILDROOT/lib/libSDL2_ttf.a
 try cp -a $TMPROOT/SDL_ttf/SDL_ttf.h $BUILDROOT/include

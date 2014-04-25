@@ -41,11 +41,13 @@ try $HOSTPYTHON setup.py build_ext -g
 rm -rdf iosbuild
 try $HOSTPYTHON setup.py install --root iosbuild
 
+echo "Linking and deduplicating pygame libraries"
 rm -rf $BUILDROOT/lib/libpygame.a
 bd=$TMPROOT/pygame-${PYGAME_VERSION}release/build/lib.macosx-*/pygame
 try $RENIOSDEPROOT/scripts/biglink $BUILDROOT/lib/libpygame.a $bd
 deduplicate $BUILDROOT/lib/libpygame.a
 
+echo "Moving pygame build products into place"
 # Strip away the large stuff
 # find iosbuild/ | grep -E '*\.(py|pyc|so\.o|so\.a|so\.libs)$$' | xargs rm
 rm -rdf "$BUILDROOT/python/lib/python2.7/site-packages/pygame"

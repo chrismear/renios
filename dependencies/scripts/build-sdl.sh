@@ -19,6 +19,7 @@ try hg up -r $SDL_REVISION
 echo 'Patching SDL source'
 try patch -p1 < $RENIOSDEPROOT/patches/sdl/sdl-r$SDL_REVISION-renios.patch
 
+echo 'Building SDL'
 
 pushd $TMPROOT/SDL/Xcode-iOS/SDL
 try xcodebuild -project SDL.xcodeproj -target libSDL -configuration $RENIOSBUILDCONFIGURATION -sdk $SDKBASENAME$SDKVER -arch $RENIOSARCH clean

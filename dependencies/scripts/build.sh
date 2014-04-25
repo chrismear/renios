@@ -11,11 +11,17 @@ fi
 
 . $(dirname $0)/environment.sh
 
+echo "STARTING REN'IOS BUILD"
+
 # BUILD FOR SIMULATOR
+
+echo "BUILDING FOR SIMULATOR (DEBUG)"
 
 . $(dirname $0)/environment-simulator.sh
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
+
+echo "BUILDING FOR SIMULATOR (RELEASE)"
 
 . $(dirname $0)/environment-simulator.sh
 . $(dirname $0)/environment-release.sh
@@ -23,9 +29,13 @@ try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
 # BUILD FOR DEVICE, ARMV7
 
+echo "BUILDING FOR ARMV7 (DEBUG)"
+
 . $(dirname $0)/environment-armv7.sh
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
+
+echo "BUILDING FOR ARMV7 (RELEASE)"
 
 . $(dirname $0)/environment-armv7.sh
 . $(dirname $0)/environment-release.sh
@@ -33,9 +43,13 @@ try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
 # BUILD FOR DEVICE, ARMV7S
 
+echo "BUILDING FOR ARMV7S (DEBUG)"
+
 . $(dirname $0)/environment-armv7s.sh
 . $(dirname $0)/environment-debug.sh
 try $(dirname $0)/build-$RENIOSCOMPONENT.sh
+
+echo "BUILDING FOR ARMV7S (RELEASE)"
 
 . $(dirname $0)/environment-armv7s.sh
 . $(dirname $0)/environment-release.sh
@@ -43,7 +57,7 @@ try $(dirname $0)/build-$RENIOSCOMPONENT.sh
 
 if [ "$RENIOSCOMPONENT" == "all" ]; then
 
-  echo "Producing fat binaries"
+  echo "PRODUCING FAT BINARIES"
 
   # PRODUCE FAT BINARIES
 
@@ -108,3 +122,5 @@ if [ "$RENIOSCOMPONENT" == "all" ]; then
   try popd
 
 fi
+
+echo "REN'IOS BUILD COMPLETE"

@@ -3,6 +3,7 @@
 . $(dirname $0)/utils.sh
 
 if [ ! -f $CACHEROOT/fribidi-$FRIBIDI_VERSION.tar.gz ]; then
+  echo "Downloading fribidi source"
   try curl -L http://www.fribidi.org/download/fribidi-$FRIBIDI_VERSION.tar.gz > $CACHEROOT/fribidi-$FRIBIDI_VERSION.tar.gz
 fi
 if [ ! -d $TMPROOT/fribidi-$FRIBIDI_VERSION ]; then
@@ -16,6 +17,8 @@ fi
 # fi
 
 # lib not found, compile it
+
+echo "Configuring fribidi"
 pushd $TMPROOT/fribidi-$FRIBIDI_VERSION
 try ./configure --prefix=$DESTROOT \
   --host=arm-apple-darwin \
@@ -28,11 +31,13 @@ try ./configure --prefix=$DESTROOT \
 # Hack to fix broken stringize detection
 try echo "#define HAVE_STRINGIZE 1" >> $TMPROOT/fribidi-$FRIBIDI_VERSION/config.h
 
+echo "Building fribidi"
 try make clean
 try make
 try make install
 
 # copy to buildroot
+echo "Moving fribidi build products into place"
 cp $DESTROOT/lib/libfribidi.a $BUILDROOT/lib/libfribidi.a
 rm -rdf $BUILDROOT/include/fribidi
 cp -a $DESTROOT/include/fribidi $BUILDROOT/include

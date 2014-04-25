@@ -34,6 +34,7 @@ try hg up -r $SDL2_IMAGE_REVISION
 # try make clean
 # try make libSDL2_image.la
 
+echo "Building SDL_image"
 try pushd $TMPROOT/SDL_image/Xcode-iOS
 try xcodebuild -project SDL_image.xcodeproj -target libSDL_image -configuration $RENIOSBUILDCONFIGURATION -sdk $SDKBASENAME$SDKVER -arch $RENIOSARCH clean
 try xcodebuild -project SDL_image.xcodeproj -target libSDL_image -configuration $RENIOSBUILDCONFIGURATION -sdk $SDKBASENAME$SDKVER -arch $RENIOSARCH
@@ -41,5 +42,6 @@ popd
 
 popd
 
+echo "Moving SDL_image products into place"
 try cp $TMPROOT/SDL_image/Xcode-iOS/build/$RENIOSBUILDCONFIGURATION-$SDKBASENAME/libSDL2_image.a $BUILDROOT/lib/libSDL2_image.a
 try cp -a $TMPROOT/SDL_image/SDL_image.h $BUILDROOT/include

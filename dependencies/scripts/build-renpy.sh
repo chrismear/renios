@@ -33,6 +33,7 @@ export LDSHARED="$RENIOSDEPROOT/scripts/liblink"
 
 HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
 
+echo "Building RenPy"
 pushd module
 export RENIOS_IOS=1
 export RENPY_CYTHON='/usr/local/bin/cython'
@@ -41,9 +42,13 @@ try $HOSTPYTHON setup.py build_ext -g
 rm -rdf iosbuild
 try $HOSTPYTHON setup.py install --root iosbuild
 
+echo "Linking and deduplicating RenPy build products"
+
 bd=$TMPROOT/renpy-${RENPY_VERSION}-sdk/module/build/lib.macosx-*
 try $RENIOSDEPROOT/scripts/biglink $BUILDROOT/lib/librenpy.a $bd $bd/pysdlsound $bd/renpy/display $bd/renpy/gl $bd/renpy/text
 deduplicate $BUILDROOT/lib/librenpy.a
+
+echo "Moving RenPy build products into place"
 
 # Copy stub *.so files into site-packages, so Python interpreter knows these modules exist.
 rm -rdf "$BUILDROOT/python/lib/python2.7/site-packages/pysdlsound"

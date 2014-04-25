@@ -30,6 +30,7 @@ set -x
 # try cp $RENIOSDEPROOT/scripts/gas-preprocessor.pl $TMPROOT/libav-$LIBAV_VERSION/
 
 # lib not found, compile it
+echo "Configuring libav"
 pushd $TMPROOT/libav-$LIBAV_VERSION
 try ./configure --prefix=$DESTROOT \
   --disable-asm \
@@ -97,6 +98,7 @@ try ./configure --prefix=$DESTROOT \
   --disable-vdpau \
   --disable-filters \
   --disable-bsfs 
+echo "Building libav"
 try make clean
 try make
 try make install
@@ -126,10 +128,11 @@ try make install
 #
 # Or instead of steps 3-5, just ar -d libavcodec.a log2_tab.o
 
+echo "Deduplicating libav libraries"
 try ar -d $DESTROOT/lib/libavcodec.a inverse.o
 
 # copy to buildroot
-
+echo "Moving libav build products into place"
 try cp $DESTROOT/lib/libavcodec.a $BUILDROOT/lib
 try cp $DESTROOT/lib/libavdevice.a $BUILDROOT/lib
 try cp $DESTROOT/lib/libavfilter.a $BUILDROOT/lib
