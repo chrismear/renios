@@ -12,5 +12,6 @@ If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you
 * `Cython <http://cython.org>`_
 * `nasm  <http://www.nasm.us>`_
 * `autoconf <http://www.gnu.org/software/autoconf/>`_
+* `automake <http://www.gnu.org/software/automake/>`_
 
 Build the software by changing into the `dependencies` directory, and running `./scripts/build.sh all`. This will download and build Ren'Py and its dependencies.
