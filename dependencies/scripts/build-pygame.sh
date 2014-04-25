@@ -12,7 +12,7 @@ fi
 rm -rf $TMPROOT/pygame-${PYGAME_VERSION}release
 # then extract pygame source to cache directory
 echo 'Extracting pygame source'
-try tar -xzf $CACHEROOT/pygame-${PYGAME_VERSION}release.tar.gz
+try tar -xzf $CACHEROOT/pygame-${PYGAME_VERSION}release.tar.gz 2>&1 >/dev/null
 try mv pygame-${PYGAME_VERSION}release $TMPROOT
 
 try pushd $TMPROOT/pygame-${PYGAME_VERSION}release
@@ -34,12 +34,12 @@ HOSTPYTHON="$RENIOSDEPROOT/tmp/Python-$PYTHON_VERSION/hostpython"
 
 echo 'Configuring pygame source'
 export RENIOS_IOS=1
-try $HOSTPYTHON config.py
+try $HOSTPYTHON config.py 2>&1 >/dev/null
 
 echo 'Building pygame'
-try $HOSTPYTHON setup.py build_ext -g
+try $HOSTPYTHON setup.py build_ext -g 2>&1 >/dev/null
 rm -rdf iosbuild
-try $HOSTPYTHON setup.py install --root iosbuild
+try $HOSTPYTHON setup.py install --root iosbuild 2>&1 >/dev/null
 
 echo "Linking and deduplicating pygame libraries"
 rm -rf $BUILDROOT/lib/libpygame.a

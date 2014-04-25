@@ -9,7 +9,7 @@ fi
 
 echo "Unpacking freetype"
 try rm -rf $TMPROOT/freetype-$FREETYPE_VERSION
-try tar xvf $CACHEROOT/freetype-$FREETYPE_VERSION.tar.gz
+try tar xvf $CACHEROOT/freetype-$FREETYPE_VERSION.tar.gz 2>&1 >/dev/null
 try mv freetype-$FREETYPE_VERSION $TMPROOT
 
 # if [ -f $TMPROOT/freetype-$FREETYPE_VERSION/libfreetype-arm7.a ]; then
@@ -24,11 +24,11 @@ try ./configure --prefix=$DESTROOT \
   --enable-static=yes \
   --enable-shared=no \
   CC="$ARM_CC" AR="$ARM_AR" \
-  LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS"
+  LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS" 2>&1 >/dev/null
 echo "Building freetype"
-try make clean
-try make
-try make install
+try make clean 2>&1 >/dev/null
+try make 2>&1 >/dev/null
+try make install 2>&1 >/dev/null
 
 # copy to buildroot
 echo "Moving freetype build products into place"

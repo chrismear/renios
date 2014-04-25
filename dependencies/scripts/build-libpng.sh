@@ -11,7 +11,7 @@ fi
 
 try rm -rf $TMPROOT/libpng-1.2.49
 echo 'Extracting libpng source'
-try tar xjf $CACHEROOT/libpng-1.2.49.tar.bz2
+try tar xjf $CACHEROOT/libpng-1.2.49.tar.bz2 2>&1 >/dev/null
 try mv libpng-1.2.49 $TMPROOT
 
 pushd $TMPROOT/libpng-1.2.49
@@ -22,11 +22,11 @@ try ./configure --prefix=$DESTROOT \
   --enable-static=yes \
   --enable-shared=no \
   CC="$ARM_CC" AR="$ARM_AR" \
-  LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS"
-try make clean
+  LDFLAGS="$ARM_LDFLAGS" CFLAGS="$ARM_CFLAGS" 2>&1 >/dev/null
+try make clean 2>&1 >/dev/null
 echo 'Building libpng'
-try make
-try make install
+try make 2>&1 >/dev/null
+try make install 2>&1 >/dev/null
 
 popd
 

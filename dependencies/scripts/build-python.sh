@@ -18,7 +18,7 @@ fi
 rm -rf $TMPROOT/Python-$PYTHON_VERSION
 # then extract Python source to cache directory
 echo 'Extracting Python source'
-try tar -xjf $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2
+try tar -xjf $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2 2>&1 >/dev/null
 try mv Python-$PYTHON_VERSION $TMPROOT
 try pushd $TMPROOT/Python-$PYTHON_VERSION
 
@@ -32,12 +32,12 @@ try cp $RENIOSDEPROOT/src/python/_scproxy.py Lib/_scproxy.py
 
 echo 'Building for native machine'
 OSX_SDK_ROOT=`xcrun --sdk macosx --show-sdk-path`
-try ./configure CC="clang -Qunused-arguments -fcolor-diagnostics" CFLAGS="--sysroot=$OSX_SDK_ROOT"
-try make
-try make Parser/pgen
+try ./configure CC="clang -Qunused-arguments -fcolor-diagnostics" CFLAGS="--sysroot=$OSX_SDK_ROOT" 2>&1 >/dev/null
+try make 2>&1 >/dev/null
+try make Parser/pgen 2>&1 >/dev/null
 try mv python.exe hostpython
 try mv Parser/pgen Parser/hostpgen
-try make distclean
+try make distclean 2>&1 >/dev/null
 
 echo 'Building for iOS'
 try patch -p1 < $RENIOSDEPROOT/patches/python/Python-$PYTHON_VERSION-xcompile.patch
@@ -51,7 +51,7 @@ export MACOSX_DEPLOYMENT_TARGET=
 # Fail silently, because in some situations (e.g. iPhoneSimulator platform), this library
 # doesn't exist inside the SDK.
 mkdir -p extralibs
-xcrun -sdk $SDKBASENAME lipo "$IOSSDKROOT/usr/lib/libgcc_s.1.dylib" -thin $RENIOSARCH -output extralibs/libgcc_s.10.4.dylib
+xcrun -sdk $SDKBASENAME lipo "$IOSSDKROOT/usr/lib/libgcc_s.1.dylib" -thin $RENIOSARCH -output extralibs/libgcc_s.10.4.dylib 2>&1 >/dev/null
 
 try cp $RENIOSDEPROOT/src/python/ModulesSetup Modules/Setup.local
 
@@ -61,16 +61,16 @@ try ./configure CC="$ARM_CC" LD="$ARM_LD" \
   --disable-toolbox-glue \
   --host="$ARM_HOST" \
   --prefix=/python \
-  --without-doc-strings
+  --without-doc-strings 2>&1 >/dev/null
 
 try make HOSTPYTHON=./hostpython HOSTPGEN=./Parser/hostpgen \
-     CROSS_COMPILE_TARGET=yes
+     CROSS_COMPILE_TARGET=yes 2>&1 >/dev/null
 
-try make install HOSTPYTHON=./hostpython CROSS_COMPILE_TARGET=yes prefix="$BUILDROOT/python"
+try make install HOSTPYTHON=./hostpython CROSS_COMPILE_TARGET=yes prefix="$BUILDROOT/python" 2>&1 >/dev/null
 
 try mv -f $BUILDROOT/python/lib/libpython2.7.a $BUILDROOT/lib/
 
-deduplicate $BUILDROOT/lib/libpython2.7.a
+deduplicate $BUILDROOT/lib/libpython2.7.a 2>&1 >/dev/null
 
 echo "Starting reducing python 2.7"
 
@@ -91,7 +91,7 @@ try pushd $BUILDROOT/python/lib/python2.7
 rm config/libpython2.7.a config/python.o config/config.c.in config/makesetup
 mv config ..
 mv site-packages ..
-zip -r ../python27.zip *
+zip -r ../python27.zip * 2>&1 >/dev/null
 rm -rf *
 mv ../config .
 mv ../site-packages .

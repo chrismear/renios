@@ -12,7 +12,7 @@ fi
 rm -rdf $TMPROOT/renpy-$RENPY_VERSION-sdk
 # then extract Python source to cache directory
 echo 'Extracting RenPy SDK'
-try tar -xjf $CACHEROOT/renpy-$RENPY_VERSION-sdk.tar.bz2
+try tar -xjf $CACHEROOT/renpy-$RENPY_VERSION-sdk.tar.bz2 2>&1 >/dev/null
 try mv renpy-$RENPY_VERSION-sdk $TMPROOT
 
 try pushd $TMPROOT/renpy-$RENPY_VERSION-sdk
@@ -37,10 +37,10 @@ echo "Building RenPy"
 pushd module
 export RENIOS_IOS=1
 export RENPY_CYTHON='/usr/local/bin/cython'
-try $HOSTPYTHON setup.py build_ext -g
+try $HOSTPYTHON setup.py build_ext -g 2>&1 >/dev/null
 
 rm -rdf iosbuild
-try $HOSTPYTHON setup.py install --root iosbuild
+try $HOSTPYTHON setup.py install --root iosbuild 2>&1 >/dev/null
 
 echo "Linking and deduplicating RenPy build products"
 

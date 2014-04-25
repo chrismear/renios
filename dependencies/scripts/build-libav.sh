@@ -10,7 +10,7 @@ if [ ! -f $CACHEROOT/libav-$LIBAV_VERSION.tar.gz ]; then
 fi
 if [ ! -d $TMPROOT/libav-$LIBAV_VERSION ]; then
   try rm -rf $TMPROOT/libav-$LIBAV_VERSION
-  try tar xvf $CACHEROOT/libav-$LIBAV_VERSION.tar.gz
+  try tar xvf $CACHEROOT/libav-$LIBAV_VERSION.tar.gz 2>&1 >/dev/null
   try mv libav-$LIBAV_VERSION $TMPROOT
 fi
 
@@ -97,11 +97,11 @@ try ./configure --prefix=$DESTROOT \
   --disable-devices \
   --disable-vdpau \
   --disable-filters \
-  --disable-bsfs 
+  --disable-bsfs 2>&1 >/dev/null
 echo "Building libav"
-try make clean
-try make
-try make install
+try make clean 2>&1 >/dev/null
+try make 2>&1 >/dev/null
+try make install 2>&1 >/dev/null
 
 # Deduplicate shared symbols from libavcodec and libavutil.
 # 

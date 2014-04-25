@@ -30,11 +30,11 @@ try ./configure --prefix=$DESTROOT \
   CC="$ARM_CC" AR="$ARM_AR" \
   LDFLAGS="$ARM_LDFLAGS" \
   CFLAGS="$ARM_CFLAGS -DHAVE_STRLCPY=1 -DHAVE_STRLEN=1" \
-  SDL_CONFIG="$BUILDROOT/bin/sdl-config"
+  SDL_CONFIG="$BUILDROOT/bin/sdl-config" 2>&1 >/dev/null
 
 echo "Building SDL_ttf"
-try make clean
-try make libSDL2_ttf.la
+try make clean 2>&1 >/dev/null
+try make libSDL2_ttf.la 2>&1 >/dev/null
 
 popd
 
