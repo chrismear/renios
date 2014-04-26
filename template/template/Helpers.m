@@ -60,10 +60,10 @@ const char * RENIOS_ScreenVariant()
 {
     UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if (userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        NSLog(@"Setting variant: tablet touch");
-        return "tablet touch";
+        NSLog(@"Setting variant: medium tablet touch");
+        return "medium tablet touch";
     } else {
-        NSLog(@"Setting variant: phone touch");
-        return "phone touch";
+        NSLog(@"Setting variant: small phone touch");
+        return "small phone touch";
     }
 }
