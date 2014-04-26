@@ -17,6 +17,7 @@ try mv libpng-1.2.49 $TMPROOT
 pushd $TMPROOT/libpng-1.2.49
 
 echo 'Configuring libpng'
+try autoreconf -fiv
 try ./configure --prefix=$DESTROOT \
   --host="$ARM_HOST" \
   --enable-static=yes \
