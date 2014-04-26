@@ -6,7 +6,7 @@
 
 if [ ! -f $CACHEROOT/libpng-1.2.49.tar.bz2 ]; then
   echo 'Downloading libpng source'
-  try curl ftp://ftp.simplesystems.org//pub/libpng/png/src/history/libpng12/libpng-1.2.49.tar.bz2 > $CACHEROOT/libpng-1.2.49.tar.bz2
+  try curl -L http://downloads.sourceforge.net/project/libpng/libpng12/older-releases/1.2.49/libpng-1.2.49.tar.bz2 > $CACHEROOT/libpng-1.2.49.tar.bz2
 fi
 
 try rm -rf $TMPROOT/libpng-1.2.49
