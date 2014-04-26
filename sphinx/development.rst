@@ -13,12 +13,13 @@ If you want to use Ren'iOS to build Ren'Py and its dependencies from source, you
 * `nasm  <http://www.nasm.us>`_
 * `autoconf <http://www.gnu.org/software/autoconf/>`_
 * `automake <http://www.gnu.org/software/automake/>`_
+* `libtool <http://www.gnu.org/software/libtool/libtool.html>`_
 
 If you have `Homebrew <http://brew.sh>`_ installed, you can get everything except Xcode and Cython by running:
 
    ::
 
-      brew install mercurial nasm autoconf automake
+      brew install mercurial nasm autoconf automake libtool
 
 Cython can be installed by running:
 
