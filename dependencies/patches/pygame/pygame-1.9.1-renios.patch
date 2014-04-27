@@ -1743,6 +1743,28 @@ index 0000000..f915b33
 +#endif
 +    MODINIT_RETURN (module);
 +}
+diff --git a/src/scale_mmx64.c b/src/scale_mmx64.c
+index fa38255..85b0dd7 100644
+--- a/src/scale_mmx64.c
++++ b/src/scale_mmx64.c
+@@ -425,7 +425,7 @@ filter_expand_X_MMX(Uint8 *srcpix, Uint8 *dstpix, int height, int srcpitch, int
+              " movl             %5,      %%ecx;           "
+              " pxor          %%mm0,      %%mm0;           "
+              "1:                                          "
+-             " movsxl         (%3),      %%rax;           " /* get xidx0[x] */
++             " movslq         (%3),      %%rax;           " /* get xidx0[x] */
+              " add              $4,         %3;           "
+              " movq           (%0),      %%mm1;           " /* load mult0 */
+              " add              $8,         %0;           "
+@@ -500,7 +500,7 @@ filter_expand_X_SSE(Uint8 *srcpix, Uint8 *dstpix, int height, int srcpitch, int
+              " movl             %5,      %%ecx;           "
+              " pxor          %%mm0,      %%mm0;           "
+              "1:                                          "
+-             " movsxl         (%3),      %%rax;           " /* get xidx0[x] */
++             " movslq         (%3),      %%rax;           " /* get xidx0[x] */
+              " add              $4,         %3;           "
+              " movq           (%0),      %%mm1;           " /* load mult0 */
+              " add              $8,         %0;           "
 diff --git a/src/surface.c b/src/surface.c
 index 1984d96..003fa36 100644
 --- a/src/surface.c

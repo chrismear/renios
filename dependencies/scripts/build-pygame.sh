@@ -19,7 +19,16 @@ try pushd $TMPROOT/pygame-${PYGAME_VERSION}release
 
 # Patch
 echo 'Patching pygame source'
-try patch -p1 < $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-renios.patch
+# Ordinary 'patch' command chokes on this patch, so use Git's patch application command
+# instead.
+# 
+# Our current working directory is inside a gitignore'd directory, so although git-apply
+# usually works outside of a Git working directory, it will do nothing if we try and
+# run it here. Instead, make a new Git repository, apply the patch, and then remove
+# the temporary repository.
+try git init
+try git apply $RENIOSDEPROOT/patches/pygame/pygame-$PYGAME_VERSION-renios.patch
+try rm -rf .git
 
 # Set environment variables for Python module cross-compile
 OLD_CC="$CC"
