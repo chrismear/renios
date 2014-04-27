@@ -1,3 +1,14 @@
+# unreleased
+
+* [ENHANCEMENT] Ren'Py's screen variant is now also set with 'small' or 'medium' depending on device.
+* [ENHANCEMENT] Device build now includes an arm64 build (native for iPhone 5s, iPad Air and iPad mini 2nd generation).
+* [ENHANCEMENT] Simulator build is now built for x86_64 as well as i386.
+* [ENHANCEMENT] Documentation for building from source is expanded.
+* [ENHANCEMENT] Build script output is now more concise and helpful.
+* [BUGFIX] The status bar no longer appears on iPhone running iOS 7.
+* [BUGFIX] A build bug involving a missing 'python.exe' target is fixed.
+* [BUGFIX] Broken dependency download for Python and libpng are fixed.
+
 # 0.3 / 2014-04-22
 
 * [FEATURE] Tapping on a Ren'Py text input shows the iOS soft keyboard for interaction.
