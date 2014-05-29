@@ -7,6 +7,9 @@ export RENIOSDEPROOT="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 export TMPROOT="$RENIOSDEPROOT/tmp"
 export CACHEROOT="$RENIOSDEPROOT/cache"
 
+# Set up path to include our gas-preprocessor.pl
+export $PATH="$RENIOSDEPROOT/scripts:$PATH"
+
 # create build directories if not found
 try mkdir -p $CACHEROOT
 try mkdir -p $TMPROOT
